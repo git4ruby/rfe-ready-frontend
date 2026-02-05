@@ -1,0 +1,14 @@
+---
+:concurrency: 5
+:queues:
+  - [default, 5]
+  - [ai_processing, 3]
+  - [embeddings, 2]
+  - [exports, 2]
+  - [maintenance, 1]
+
+:scheduler:
+  :schedule:
+    data_retention_cleanup:
+      cron: "0 2 * * *"
+      class: DataRetentionCleanupJob
