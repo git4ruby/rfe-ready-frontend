@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useCasesStore } from '../stores/cases'
+import { useAuthStore } from '../stores/auth'
 import { useNotificationStore } from '../stores/notification'
 import {
   ArrowLeftIcon,
@@ -11,6 +12,12 @@ import {
   PencilSquareIcon,
   PhotoIcon,
   ArrowDownTrayIcon,
+  PlayIcon,
+  CheckIcon,
+  PaperAirplaneIcon,
+  ArchiveBoxIcon,
+  ArrowPathIcon,
+  TrashIcon,
 } from '@heroicons/vue/24/outline'
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
@@ -24,10 +31,14 @@ const props = defineProps({
 })
 
 const route = useRoute()
+const router = useRouter()
 const casesStore = useCasesStore()
+const authStore = useAuthStore()
 const notify = useNotificationStore()
 
 const activeTab = ref('overview')
+const actionLoading = ref(null)
+const showDeleteConfirm = ref(false)
 
 const tabs = [
   { key: 'overview', label: 'Overview', icon: DocumentTextIcon },
@@ -53,6 +64,50 @@ const attorneyName = computed(() => {
   if (!attorney) return 'Not assigned'
   return `${attorney.first_name} ${attorney.last_name}`
 })
+
+// Status-based action visibility
+const canStartAnalysis = computed(() =>
+  caseData.value?.status === 'draft' && authStore.canEdit
+)
+const canMarkReviewed = computed(() =>
+  caseData.value?.status === 'analyzing' && authStore.isAttorney
+)
+const canMarkResponded = computed(() =>
+  caseData.value?.status === 'review' && authStore.isAttorney
+)
+const canArchive = computed(() =>
+  ['draft', 'review', 'responded'].includes(caseData.value?.status) && authStore.canEdit
+)
+const canReopen = computed(() =>
+  caseData.value?.status === 'archived' && authStore.isAdmin
+)
+const canDelete = computed(() => authStore.isAdmin)
+
+async function performAction(actionName, storeFn) {
+  actionLoading.value = actionName
+  try {
+    await storeFn(props.id)
+    notify.success(`Case ${actionName.replace('_', ' ')} successful.`)
+  } catch (err) {
+    notify.error(err.response?.data?.error || `Failed to ${actionName.replace('_', ' ')}.`)
+  } finally {
+    actionLoading.value = null
+  }
+}
+
+async function handleDelete() {
+  actionLoading.value = 'delete'
+  try {
+    await casesStore.deleteCase(props.id)
+    notify.success('Case deleted.')
+    router.push('/cases')
+  } catch (err) {
+    notify.error(err.response?.data?.error || 'Failed to delete case.')
+  } finally {
+    actionLoading.value = null
+    showDeleteConfirm.value = false
+  }
+}
 </script>
 
 <template>
@@ -74,7 +129,7 @@ const attorneyName = computed(() => {
 
       <!-- Case header -->
       <div class="bg-white shadow rounded-lg p-6 mb-6">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <div class="flex items-center gap-3">
               <h1 class="text-2xl font-bold text-gray-900">
@@ -87,11 +142,97 @@ const attorneyName = computed(() => {
               <span v-if="caseData.beneficiary_name"> &mdash; {{ caseData.beneficiary_name }}</span>
             </p>
           </div>
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 flex-wrap">
             <DeadlineIndicator
               v-if="caseData.rfe_deadline"
               :deadline="caseData.rfe_deadline"
             />
+
+            <!-- Workflow actions -->
+            <button
+              v-if="canStartAnalysis"
+              @click="performAction('start_analysis', casesStore.startAnalysis)"
+              :disabled="actionLoading"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50 transition-colors"
+            >
+              <PlayIcon class="h-4 w-4" />
+              Start Analysis
+            </button>
+
+            <button
+              v-if="canMarkReviewed"
+              @click="performAction('mark_reviewed', casesStore.markReviewed)"
+              :disabled="actionLoading"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-500 disabled:opacity-50 transition-colors"
+            >
+              <CheckIcon class="h-4 w-4" />
+              Complete Review
+            </button>
+
+            <button
+              v-if="canMarkResponded"
+              @click="performAction('mark_responded', casesStore.markResponded)"
+              :disabled="actionLoading"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50 transition-colors"
+            >
+              <PaperAirplaneIcon class="h-4 w-4" />
+              Mark Responded
+            </button>
+
+            <button
+              v-if="canReopen"
+              @click="performAction('reopen', casesStore.reopenCase)"
+              :disabled="actionLoading"
+              class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+            >
+              <ArrowPathIcon class="h-4 w-4" />
+              Reopen
+            </button>
+
+            <button
+              v-if="canArchive"
+              @click="performAction('archive', casesStore.archiveCase)"
+              :disabled="actionLoading"
+              class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            >
+              <ArchiveBoxIcon class="h-4 w-4" />
+              Archive
+            </button>
+
+            <button
+              v-if="canDelete"
+              @click="showDeleteConfirm = true"
+              :disabled="actionLoading"
+              class="inline-flex items-center gap-1.5 rounded-lg border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+            >
+              <TrashIcon class="h-4 w-4" />
+              Delete
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delete confirmation modal -->
+      <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm mx-4">
+          <h3 class="text-lg font-semibold text-gray-900">Delete Case</h3>
+          <p class="mt-2 text-sm text-gray-500">
+            Are you sure you want to delete <strong>{{ caseData.case_number }}</strong>? This action cannot be undone.
+          </p>
+          <div class="mt-4 flex justify-end gap-3">
+            <button
+              @click="showDeleteConfirm = false"
+              class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              @click="handleDelete"
+              :disabled="actionLoading === 'delete'"
+              class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 disabled:opacity-50 transition-colors"
+            >
+              {{ actionLoading === 'delete' ? 'Deleting...' : 'Delete' }}
+            </button>
           </div>
         </div>
       </div>
@@ -167,9 +308,7 @@ const attorneyName = computed(() => {
                   </div>
                   <div>
                     <dt class="text-sm font-medium text-gray-500">Attorney</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">
-                      {{ attorneyName }}
-                    </dd>
+                    <dd class="mt-0.5 text-sm text-gray-900">{{ attorneyName }}</dd>
                   </div>
                   <div>
                     <dt class="text-sm font-medium text-gray-500">Attorney Reviewed</dt>
@@ -229,7 +368,6 @@ const attorneyName = computed(() => {
               <MagnifyingGlassIcon class="mx-auto h-12 w-12 text-gray-400" />
               <h3 class="mt-4 text-lg font-semibold text-gray-900">RFE Analysis</h3>
               <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto">
-                Coming soon -- RFE Analysis will be available after file processing is implemented.
                 Upload the RFE notice to get AI-powered analysis of the issues raised by USCIS.
               </p>
             </div>
@@ -241,7 +379,6 @@ const attorneyName = computed(() => {
               <ClipboardDocumentCheckIcon class="mx-auto h-12 w-12 text-gray-400" />
               <h3 class="mt-4 text-lg font-semibold text-gray-900">Evidence Checklist</h3>
               <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto">
-                Coming soon -- Checklist will be available after file processing is implemented.
                 Track the evidence needed for each RFE issue.
               </p>
             </div>
@@ -253,7 +390,6 @@ const attorneyName = computed(() => {
               <PencilSquareIcon class="mx-auto h-12 w-12 text-gray-400" />
               <h3 class="mt-4 text-lg font-semibold text-gray-900">Draft Responses</h3>
               <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto">
-                Coming soon -- Drafts will be available after file processing is implemented.
                 AI-generated draft responses for each RFE issue.
               </p>
             </div>
@@ -265,7 +401,6 @@ const attorneyName = computed(() => {
               <PhotoIcon class="mx-auto h-12 w-12 text-gray-400" />
               <h3 class="mt-4 text-lg font-semibold text-gray-900">Exhibits</h3>
               <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto">
-                Coming soon -- Exhibits will be available after file processing is implemented.
                 Manage supporting exhibits and documents.
               </p>
             </div>
@@ -277,7 +412,6 @@ const attorneyName = computed(() => {
               <ArrowDownTrayIcon class="mx-auto h-12 w-12 text-gray-400" />
               <h3 class="mt-4 text-lg font-semibold text-gray-900">Export</h3>
               <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto">
-                Coming soon -- Export will be available after file processing is implemented.
                 Export the complete RFE response package as DOCX or PDF.
               </p>
             </div>

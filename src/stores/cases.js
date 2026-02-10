@@ -66,6 +66,21 @@ export const useCasesStore = defineStore('cases', () => {
     currentCase.value = response.data.data
   }
 
+  async function markResponded(id) {
+    const response = await apiClient.patch(`/cases/${id}/mark_responded`)
+    currentCase.value = response.data.data
+  }
+
+  async function archiveCase(id) {
+    const response = await apiClient.post(`/cases/${id}/archive`)
+    currentCase.value = response.data.data
+  }
+
+  async function reopenCase(id) {
+    const response = await apiClient.post(`/cases/${id}/reopen`)
+    currentCase.value = response.data.data
+  }
+
   async function exportCase(id, format = 'docx') {
     const response = await apiClient.post(`/cases/${id}/export`, { format })
     return response.data
@@ -126,6 +141,9 @@ export const useCasesStore = defineStore('cases', () => {
     startAnalysis,
     assignAttorney,
     markReviewed,
+    markResponded,
+    archiveCase,
+    reopenCase,
     exportCase,
     fetchRfeSections,
     fetchChecklists,
