@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useCasesStore } from '../stores/cases'
 import { useAuthStore } from '../stores/auth'
@@ -7,6 +7,7 @@ import { useNotificationStore } from '../stores/notification'
 import {
   ArrowLeftIcon,
   DocumentTextIcon,
+  DocumentArrowUpIcon,
   MagnifyingGlassIcon,
   ClipboardDocumentCheckIcon,
   PencilSquareIcon,
@@ -18,6 +19,7 @@ import {
   ArchiveBoxIcon,
   ArrowPathIcon,
   TrashIcon,
+  CloudArrowUpIcon,
 } from '@heroicons/vue/24/outline'
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
@@ -42,12 +44,79 @@ const showDeleteConfirm = ref(false)
 
 const tabs = [
   { key: 'overview', label: 'Overview', icon: DocumentTextIcon },
+  { key: 'documents', label: 'Documents', icon: DocumentArrowUpIcon },
   { key: 'analysis', label: 'RFE Analysis', icon: MagnifyingGlassIcon },
   { key: 'checklist', label: 'Checklist', icon: ClipboardDocumentCheckIcon },
   { key: 'drafts', label: 'Drafts', icon: PencilSquareIcon },
   { key: 'exhibits', label: 'Exhibits', icon: PhotoIcon },
   { key: 'export', label: 'Export', icon: ArrowDownTrayIcon },
 ]
+
+// Load documents when switching to documents tab
+watch(activeTab, (tab) => {
+  if (tab === 'documents') loadDocuments()
+})
+
+// Documents
+const uploading = ref(false)
+const dragOver = ref(false)
+const selectedDocType = ref('supporting_evidence')
+const fileInput = ref(null)
+
+const docTypeLabels = {
+  rfe_notice: 'RFE Notice',
+  supporting_evidence: 'Supporting Evidence',
+  exhibit: 'Exhibit',
+}
+
+async function loadDocuments() {
+  try {
+    await casesStore.fetchDocuments(props.id)
+  } catch (err) {
+    notify.error('Failed to load documents.')
+  }
+}
+
+async function handleFileUpload(files) {
+  if (!files?.length) return
+  uploading.value = true
+  try {
+    for (const file of files) {
+      await casesStore.uploadDocument(props.id, file, selectedDocType.value)
+    }
+    notify.success(`${files.length} document${files.length > 1 ? 's' : ''} uploaded.`)
+  } catch (err) {
+    notify.error(err.response?.data?.error || 'Failed to upload document.')
+  } finally {
+    uploading.value = false
+    if (fileInput.value) fileInput.value.value = ''
+  }
+}
+
+function onFileSelect(event) {
+  handleFileUpload(event.target.files)
+}
+
+function onDrop(event) {
+  dragOver.value = false
+  handleFileUpload(event.dataTransfer.files)
+}
+
+async function handleDeleteDoc(docId) {
+  try {
+    await casesStore.deleteDocument(props.id, docId)
+    notify.success('Document deleted.')
+  } catch (err) {
+    notify.error('Failed to delete document.')
+  }
+}
+
+function formatFileSize(bytes) {
+  if (!bytes) return '--'
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
+}
 
 onMounted(async () => {
   try {
@@ -358,6 +427,117 @@ async function handleDelete() {
                 <p class="text-sm text-gray-700 whitespace-pre-wrap">
                   {{ caseData.notes || 'No notes added.' }}
                 </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Documents tab -->
+          <div v-else-if="activeTab === 'documents'">
+            <!-- Upload area -->
+            <div class="mb-6">
+              <div class="flex items-center gap-4 mb-3">
+                <h3 class="text-lg font-semibold text-gray-900">Upload Documents</h3>
+                <select
+                  v-model="selectedDocType"
+                  class="rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                >
+                  <option value="rfe_notice">RFE Notice</option>
+                  <option value="supporting_evidence">Supporting Evidence</option>
+                  <option value="exhibit">Exhibit</option>
+                </select>
+              </div>
+
+              <div
+                @dragover.prevent="dragOver = true"
+                @dragleave="dragOver = false"
+                @drop.prevent="onDrop"
+                :class="[
+                  'relative rounded-lg border-2 border-dashed p-8 text-center transition-colors',
+                  dragOver
+                    ? 'border-indigo-500 bg-indigo-50'
+                    : 'border-gray-300 hover:border-gray-400',
+                ]"
+              >
+                <CloudArrowUpIcon class="mx-auto h-10 w-10 text-gray-400" />
+                <p class="mt-2 text-sm text-gray-600">
+                  <button
+                    type="button"
+                    @click="fileInput?.click()"
+                    class="font-semibold text-indigo-600 hover:text-indigo-500"
+                  >
+                    Choose files
+                  </button>
+                  or drag and drop
+                </p>
+                <p class="mt-1 text-xs text-gray-500">PDF, DOCX, images up to 25MB</p>
+                <input
+                  ref="fileInput"
+                  type="file"
+                  multiple
+                  accept=".pdf,.doc,.docx,.png,.jpg,.jpeg,.tiff"
+                  class="hidden"
+                  @change="onFileSelect"
+                />
+                <div v-if="uploading" class="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
+                  <div class="flex items-center gap-2 text-sm text-indigo-600 font-medium">
+                    <svg class="animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Uploading...
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Documents list -->
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900 mb-3">
+                Documents ({{ casesStore.documents.length }})
+              </h3>
+
+              <div v-if="casesStore.documents.length === 0" class="text-center py-8 text-sm text-gray-500">
+                No documents uploaded yet.
+              </div>
+
+              <div v-else class="space-y-2">
+                <div
+                  v-for="doc in casesStore.documents"
+                  :key="doc.id"
+                  class="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class="shrink-0 h-10 w-10 rounded-lg bg-gray-100 flex items-center justify-center">
+                      <DocumentTextIcon class="h-5 w-5 text-gray-500" />
+                    </div>
+                    <div class="min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate">{{ doc.filename }}</p>
+                      <div class="flex items-center gap-2 text-xs text-gray-500">
+                        <span class="inline-flex items-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
+                          {{ docTypeLabels[doc.document_type] || doc.document_type }}
+                        </span>
+                        <span>{{ formatFileSize(doc.file_size) }}</span>
+                        <span v-if="doc.uploaded_by_name">by {{ doc.uploaded_by_name }}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0 ml-4">
+                    <a
+                      v-if="doc.file_url"
+                      :href="doc.file_url"
+                      target="_blank"
+                      class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                    >
+                      Download
+                    </a>
+                    <button
+                      @click="handleDeleteDoc(doc.id)"
+                      class="text-sm font-medium text-red-600 hover:text-red-500"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

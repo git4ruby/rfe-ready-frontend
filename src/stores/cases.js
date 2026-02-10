@@ -86,6 +86,30 @@ export const useCasesStore = defineStore('cases', () => {
     return response.data
   }
 
+  // Documents
+  const documents = ref([])
+
+  async function fetchDocuments(caseId) {
+    const response = await apiClient.get(`/cases/${caseId}/rfe_documents`)
+    documents.value = response.data.data
+  }
+
+  async function uploadDocument(caseId, file, documentType = 'supporting_evidence') {
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('document_type', documentType)
+    const response = await apiClient.post(`/cases/${caseId}/rfe_documents`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    documents.value.unshift(response.data.data)
+    return response.data.data
+  }
+
+  async function deleteDocument(caseId, documentId) {
+    await apiClient.delete(`/cases/${caseId}/rfe_documents/${documentId}`)
+    documents.value = documents.value.filter((d) => d.id !== documentId)
+  }
+
   // Nested resources
   async function fetchRfeSections(caseId) {
     const response = await apiClient.get(`/cases/${caseId}/rfe_sections`)
@@ -127,6 +151,7 @@ export const useCasesStore = defineStore('cases', () => {
   return {
     cases,
     currentCase,
+    documents,
     rfeSections,
     checklists,
     drafts,
@@ -145,6 +170,9 @@ export const useCasesStore = defineStore('cases', () => {
     archiveCase,
     reopenCase,
     exportCase,
+    fetchDocuments,
+    uploadDocument,
+    deleteDocument,
     fetchRfeSections,
     fetchChecklists,
     toggleChecklist,
