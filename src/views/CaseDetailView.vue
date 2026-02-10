@@ -46,11 +46,12 @@ onMounted(async () => {
   }
 })
 
-const caseData = computed(() => {
-  const c = casesStore.currentCase
-  if (!c) return null
-  // Handle both flat and JSON:API serialized responses
-  return c.attributes || c
+const caseData = computed(() => casesStore.currentCase)
+
+const attorneyName = computed(() => {
+  const attorney = caseData.value?.assigned_attorney
+  if (!attorney) return 'Not assigned'
+  return `${attorney.first_name} ${attorney.last_name}`
 })
 </script>
 
@@ -167,7 +168,7 @@ const caseData = computed(() => {
                   <div>
                     <dt class="text-sm font-medium text-gray-500">Attorney</dt>
                     <dd class="mt-0.5 text-sm text-gray-900">
-                      {{ caseData.attorney_name || 'Not assigned' }}
+                      {{ attorneyName }}
                     </dd>
                   </div>
                   <div>

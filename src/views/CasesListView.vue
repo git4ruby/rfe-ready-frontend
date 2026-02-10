@@ -43,9 +43,9 @@ watch(
     const q = query.toLowerCase()
     filteredCases.value = cases.filter(
       (c) =>
-        (c.attributes?.case_number || '').toLowerCase().includes(q) ||
-        (c.attributes?.petitioner_name || '').toLowerCase().includes(q) ||
-        (c.attributes?.beneficiary_name || '').toLowerCase().includes(q)
+        (c.case_number || '').toLowerCase().includes(q) ||
+        (c.petitioner_name || '').toLowerCase().includes(q) ||
+        (c.beneficiary_name || '').toLowerCase().includes(q)
     )
   },
   { immediate: true }
@@ -140,24 +140,24 @@ watch(
               class="hover:bg-gray-50 transition-colors"
             >
               <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
-                {{ rfeCase.attributes?.case_number || rfeCase.case_number }}
+                {{ rfeCase.case_number }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ rfeCase.attributes?.petitioner_name || rfeCase.petitioner_name }}
+                {{ rfeCase.petitioner_name }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ rfeCase.attributes?.beneficiary_name || rfeCase.beneficiary_name }}
+                {{ rfeCase.beneficiary_name }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ rfeCase.attributes?.visa_type || rfeCase.visa_type }}
+                {{ rfeCase.visa_type }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
-                <CaseStatusBadge :status="rfeCase.attributes?.status || rfeCase.status" />
+                <CaseStatusBadge :status="rfeCase.status" />
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <DeadlineIndicator
-                  v-if="rfeCase.attributes?.rfe_deadline || rfeCase.rfe_deadline"
-                  :deadline="rfeCase.attributes?.rfe_deadline || rfeCase.rfe_deadline"
+                  v-if="rfeCase.rfe_deadline"
+                  :deadline="rfeCase.rfe_deadline"
                 />
                 <span v-else class="text-sm text-gray-400">--</span>
               </td>
