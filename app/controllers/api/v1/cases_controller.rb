@@ -7,7 +7,7 @@ class Api::V1::CasesController < Api::V1::BaseController
   def index
     @pagy, cases = pagy(policy_scope(RfeCase).order(created_at: :desc))
     render json: {
-      data: RfeCaseSerializer.render_as_hash(cases),
+      data: CaseSerializer.render_as_hash(cases),
       meta: pagy_metadata(@pagy)
     }
   end
@@ -15,7 +15,7 @@ class Api::V1::CasesController < Api::V1::BaseController
   # GET /api/v1/cases/:id
   def show
     authorize @case
-    render json: { data: RfeCaseSerializer.render_as_hash(@case, view: :detail) }
+    render json: { data: CaseSerializer.render_as_hash(@case, view: :detail) }
   end
 
   # POST /api/v1/cases
@@ -25,7 +25,7 @@ class Api::V1::CasesController < Api::V1::BaseController
     authorize @case
 
     @case.save!
-    render json: { data: RfeCaseSerializer.render_as_hash(@case) }, status: :created
+    render json: { data: CaseSerializer.render_as_hash(@case) }, status: :created
   end
 
   # PATCH/PUT /api/v1/cases/:id
@@ -33,7 +33,7 @@ class Api::V1::CasesController < Api::V1::BaseController
     authorize @case
 
     @case.update!(case_params)
-    render json: { data: RfeCaseSerializer.render_as_hash(@case) }
+    render json: { data: CaseSerializer.render_as_hash(@case) }
   end
 
   # DELETE /api/v1/cases/:id
@@ -49,7 +49,7 @@ class Api::V1::CasesController < Api::V1::BaseController
     authorize @case, :start_analysis?
 
     @case.start_analysis!
-    render json: { data: RfeCaseSerializer.render_as_hash(@case) }
+    render json: { data: CaseSerializer.render_as_hash(@case) }
   end
 
   # PATCH /api/v1/cases/:id/assign_attorney
@@ -58,7 +58,7 @@ class Api::V1::CasesController < Api::V1::BaseController
 
     attorney = User.find(params[:attorney_id])
     @case.update!(assigned_attorney: attorney)
-    render json: { data: RfeCaseSerializer.render_as_hash(@case) }
+    render json: { data: CaseSerializer.render_as_hash(@case) }
   end
 
   # PATCH /api/v1/cases/:id/mark_reviewed
@@ -66,7 +66,7 @@ class Api::V1::CasesController < Api::V1::BaseController
     authorize @case, :mark_reviewed?
 
     @case.complete_analysis!
-    render json: { data: RfeCaseSerializer.render_as_hash(@case) }
+    render json: { data: CaseSerializer.render_as_hash(@case) }
   end
 
   # POST /api/v1/cases/:id/export
@@ -90,7 +90,7 @@ class Api::V1::CasesController < Api::V1::BaseController
   end
 
   def case_params
-    params.require(:case).permit(
+    params.require(:rfe_case).permit(
       :case_number,
       :uscis_receipt_number,
       :visa_type,

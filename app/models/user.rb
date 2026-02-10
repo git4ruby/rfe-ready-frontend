@@ -5,7 +5,10 @@ class User < ApplicationRecord
          :validatable, :trackable, :confirmable, :lockable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
-  acts_as_tenant :tenant
+  # Don't use acts_as_tenant on User — Devise needs to find users
+  # by email without tenant context during authentication.
+  # Tenant scoping is handled in BaseController after auth.
+  belongs_to :tenant
 
   has_many :created_cases, class_name: "RfeCase", foreign_key: :created_by_id, dependent: :nullify
   has_many :assigned_cases, class_name: "RfeCase", foreign_key: :assigned_attorney_id, dependent: :nullify
@@ -28,6 +31,6 @@ class User < ApplicationRecord
   end
 
   def jwt_payload
-    { "tenant_id" => tenant_id, "role" => role }
+    { "jti" => jti, "tenant_id" => tenant_id, "role" => role }
   end
 end

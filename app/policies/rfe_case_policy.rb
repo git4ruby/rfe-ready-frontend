@@ -1,4 +1,4 @@
-class CasePolicy < ApplicationPolicy
+class RfeCasePolicy < ApplicationPolicy
   def show?
     true
   end

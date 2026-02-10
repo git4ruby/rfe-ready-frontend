@@ -29,8 +29,8 @@ gem "pagy", "~> 6.0"
 # State Machine
 gem "aasm", "~> 5.5"
 
-# Audit Trail
-gem "paper_trail", "~> 15.0"
+# Audit Trail - using custom AuditLog model (paper_trail incompatible with Rails 8)
+# gem "paper_trail", "~> 15.0"
 
 # Friendly URLs
 gem "friendly_id", "~> 5.5"

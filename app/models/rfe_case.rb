@@ -4,7 +4,6 @@ class RfeCase < ApplicationRecord
   self.table_name = "cases"
 
   acts_as_tenant :tenant
-  has_paper_trail
 
   belongs_to :tenant
   belongs_to :created_by, class_name: "User"
@@ -17,7 +16,7 @@ class RfeCase < ApplicationRecord
   has_many :exhibits, foreign_key: :case_id, dependent: :destroy
 
   # Lockbox encryption for PII
-  has_encrypted :beneficiary_name, migrating: true
+  has_encrypted :beneficiary_name
   blind_index :beneficiary_name
 
   validates :case_number, presence: true, uniqueness: { scope: :tenant_id }

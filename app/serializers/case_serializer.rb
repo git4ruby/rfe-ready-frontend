@@ -7,6 +7,12 @@ class CaseSerializer < Blueprinter::Base
   association :created_by, blueprint: UserSerializer
   association :assigned_attorney, blueprint: UserSerializer
 
+  view :detail do
+    include_view :extended
+    association :rfe_documents, blueprint: RfeDocumentSerializer
+    association :rfe_sections, blueprint: RfeSectionSerializer
+  end
+
   view :extended do
     field :metadata
     field :attorney_reviewed_at

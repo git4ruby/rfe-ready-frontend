@@ -39,6 +39,10 @@ module RfeReadyApi
     # Only loads a smaller set of middleware suitable for API only apps.
     config.api_only = true
 
+    # Devise/Warden requires session middleware even in API mode
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
+
     # Use UUID as default primary key type
     config.generators do |g|
       g.orm :active_record, primary_key_type: :uuid

@@ -2,16 +2,17 @@ Rails.application.routes.draw do
   # Health check
   get "up" => "rails/health#show", as: :rails_health_check
 
+  # Devise routes — outside namespace to keep scope as :user
+  devise_for :users,
+    path: "api/v1/users",
+    controllers: {
+      sessions: "api/v1/sessions",
+      registrations: "api/v1/registrations"
+    },
+    defaults: { format: :json }
+
   namespace :api do
     namespace :v1 do
-      # Authentication (Devise + JWT)
-      devise_for :users,
-        controllers: {
-          sessions: "api/v1/sessions",
-          registrations: "api/v1/registrations"
-        },
-        defaults: { format: :json }
-
       # Dashboard
       get "dashboard", to: "dashboard#index"
 

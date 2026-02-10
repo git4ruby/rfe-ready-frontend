@@ -11,7 +11,7 @@ class Api::V1::DashboardController < Api::V1::BaseController
         total_cases: cases.count,
         cases_by_status: cases.group(:status).count,
         approaching_deadlines: cases.approaching_deadline.count,
-        recent_cases: RfeCaseSerializer.render_as_hash(
+        recent_cases: CaseSerializer.render_as_hash(
           cases.order(created_at: :desc).limit(5)
         )
       }
