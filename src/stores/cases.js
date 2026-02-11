@@ -110,6 +110,42 @@ export const useCasesStore = defineStore('cases', () => {
     documents.value = documents.value.filter((d) => d.id !== documentId)
   }
 
+  // Analysis polling
+  const analysisStatus = ref(null)
+  let pollTimer = null
+
+  async function fetchAnalysisStatus(caseId) {
+    const response = await apiClient.get(`/cases/${caseId}/analysis_status`)
+    analysisStatus.value = response.data.data
+    return response.data.data
+  }
+
+  function startPolling(caseId) {
+    stopPolling()
+    pollTimer = setInterval(async () => {
+      try {
+        const status = await fetchAnalysisStatus(caseId)
+        if (status.status !== 'analyzing') {
+          stopPolling()
+          // Refresh case data and sections
+          await fetchCase(caseId)
+          if (status.status === 'review' || status.sections_count > 0) {
+            await fetchRfeSections(caseId)
+          }
+        }
+      } catch {
+        stopPolling()
+      }
+    }, 3000)
+  }
+
+  function stopPolling() {
+    if (pollTimer) {
+      clearInterval(pollTimer)
+      pollTimer = null
+    }
+  }
+
   // Nested resources
   async function fetchRfeSections(caseId) {
     const response = await apiClient.get(`/cases/${caseId}/rfe_sections`)
@@ -134,6 +170,11 @@ export const useCasesStore = defineStore('cases', () => {
     drafts.value = response.data.data
   }
 
+  async function generateAllDrafts(caseId) {
+    const response = await apiClient.post(`/cases/${caseId}/draft_responses/generate_all`)
+    return response.data.data
+  }
+
   async function updateDraft(caseId, draftId, content) {
     const response = await apiClient.patch(
       `/cases/${caseId}/draft_responses/${draftId}`,
@@ -143,8 +184,46 @@ export const useCasesStore = defineStore('cases', () => {
     if (idx !== -1) drafts.value[idx] = response.data.data
   }
 
+  async function approveDraft(caseId, draftId, feedback) {
+    const response = await apiClient.patch(
+      `/cases/${caseId}/draft_responses/${draftId}/approve`,
+      { attorney_feedback: feedback }
+    )
+    const idx = drafts.value.findIndex((d) => d.id === draftId)
+    if (idx !== -1) drafts.value[idx] = response.data.data
+  }
+
+  async function regenerateDraft(caseId, draftId) {
+    const response = await apiClient.post(
+      `/cases/${caseId}/draft_responses/${draftId}/regenerate`
+    )
+    return response.data.data
+  }
+
   async function fetchExhibits(caseId) {
     const response = await apiClient.get(`/cases/${caseId}/exhibits`)
+    exhibits.value = response.data.data
+  }
+
+  async function createExhibit(caseId, exhibitData) {
+    const response = await apiClient.post(`/cases/${caseId}/exhibits`, { exhibit: exhibitData })
+    exhibits.value.push(response.data.data)
+    return response.data.data
+  }
+
+  async function updateExhibit(caseId, exhibitId, exhibitData) {
+    const response = await apiClient.patch(`/cases/${caseId}/exhibits/${exhibitId}`, { exhibit: exhibitData })
+    const idx = exhibits.value.findIndex((e) => e.id === exhibitId)
+    if (idx !== -1) exhibits.value[idx] = response.data.data
+  }
+
+  async function deleteExhibit(caseId, exhibitId) {
+    await apiClient.delete(`/cases/${caseId}/exhibits/${exhibitId}`)
+    exhibits.value = exhibits.value.filter((e) => e.id !== exhibitId)
+  }
+
+  async function reorderExhibits(caseId, ids) {
+    const response = await apiClient.patch(`/cases/${caseId}/exhibits/reorder`, { ids })
     exhibits.value = response.data.data
   }
 
@@ -158,6 +237,7 @@ export const useCasesStore = defineStore('cases', () => {
     exhibits,
     loading,
     pagination,
+    analysisStatus,
     fetchCases,
     fetchCase,
     createCase,
@@ -173,11 +253,21 @@ export const useCasesStore = defineStore('cases', () => {
     fetchDocuments,
     uploadDocument,
     deleteDocument,
+    fetchAnalysisStatus,
+    startPolling,
+    stopPolling,
     fetchRfeSections,
     fetchChecklists,
     toggleChecklist,
     fetchDrafts,
+    generateAllDrafts,
     updateDraft,
+    approveDraft,
+    regenerateDraft,
     fetchExhibits,
+    createExhibit,
+    updateExhibit,
+    deleteExhibit,
+    reorderExhibits,
   }
 })
