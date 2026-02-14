@@ -81,9 +81,41 @@ export const useCasesStore = defineStore('cases', () => {
     currentCase.value = response.data.data
   }
 
-  async function exportCase(id, format = 'docx') {
-    const response = await apiClient.post(`/cases/${id}/export`, { format })
-    return response.data
+  const exporting = ref(false)
+
+  async function exportCase(id, format = 'pdf') {
+    exporting.value = true
+    try {
+      const response = await apiClient.post(
+        `/cases/${id}/export`,
+        { format_type: format },
+        { responseType: 'blob' }
+      )
+
+      // Extract filename from Content-Disposition header or generate one
+      const disposition = response.headers['content-disposition']
+      let filename = `RFE_Response.${format}`
+      if (disposition) {
+        const match = disposition.match(/filename="?([^";\n]+)"?/)
+        if (match) filename = match[1]
+      }
+
+      // Create blob download
+      const blob = new Blob([response.data])
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+
+      // Refresh case to get updated exported_at
+      await fetchCase(id)
+    } finally {
+      exporting.value = false
+    }
   }
 
   // Documents
@@ -236,6 +268,7 @@ export const useCasesStore = defineStore('cases', () => {
     drafts,
     exhibits,
     loading,
+    exporting,
     pagination,
     analysisStatus,
     fetchCases,

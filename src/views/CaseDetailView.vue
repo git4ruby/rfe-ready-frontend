@@ -64,6 +64,7 @@ watch(activeTab, (tab) => {
   if (tab === 'checklist') loadChecklist()
   if (tab === 'drafts') loadDrafts()
   if (tab === 'exhibits') loadExhibits()
+  if (tab === 'export') loadExportData()
 })
 
 // Analysis
@@ -269,6 +270,34 @@ async function moveExhibit(index, direction) {
     await casesStore.reorderExhibits(props.id, ids)
   } catch (err) {
     notify.error('Failed to reorder exhibits.')
+  }
+}
+
+// Export
+const exportFormat = ref('pdf')
+
+const approvedDraftsCount = computed(() => {
+  return casesStore.drafts.filter((d) => d.status === 'approved').length
+})
+
+async function loadExportData() {
+  try {
+    await Promise.all([
+      casesStore.fetchRfeSections(props.id),
+      casesStore.fetchDrafts(props.id),
+      casesStore.fetchExhibits(props.id),
+    ])
+  } catch (err) {
+    notify.error('Failed to load export data.')
+  }
+}
+
+async function handleExport() {
+  try {
+    await casesStore.exportCase(props.id, exportFormat.value)
+    notify.success(`${exportFormat.value.toUpperCase()} exported successfully.`)
+  } catch (err) {
+    notify.error(err.response?.data?.error || 'Export failed. Please try again.')
   }
 }
 
@@ -1370,12 +1399,126 @@ async function handleDelete() {
 
           <!-- Export tab -->
           <div v-else-if="activeTab === 'export'">
-            <div class="text-center py-12">
-              <ArrowDownTrayIcon class="mx-auto h-12 w-12 text-gray-400" />
-              <h3 class="mt-4 text-lg font-semibold text-gray-900">Export</h3>
-              <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto">
-                Export the complete RFE response package as DOCX or PDF.
-              </p>
+            <div class="space-y-6">
+              <!-- Readiness Summary -->
+              <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Export Readiness</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <p class="text-2xl font-bold text-indigo-600">{{ casesStore.rfeSections.length }}</p>
+                    <p class="text-sm text-gray-500">Response Sections</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <p class="text-2xl font-bold" :class="approvedDraftsCount > 0 ? 'text-green-600' : 'text-amber-600'">
+                      {{ approvedDraftsCount }} / {{ casesStore.drafts.length }}
+                    </p>
+                    <p class="text-sm text-gray-500">Drafts Approved</p>
+                  </div>
+                  <div class="bg-gray-50 rounded-lg p-4 text-center">
+                    <p class="text-2xl font-bold text-indigo-600">{{ casesStore.exhibits.length }}</p>
+                    <p class="text-sm text-gray-500">Exhibits</p>
+                  </div>
+                </div>
+
+                <!-- Warning if no approved drafts -->
+                <div v-if="casesStore.drafts.length > 0 && approvedDraftsCount === 0" class="mt-4 bg-amber-50 border border-amber-200 rounded-lg p-3 flex items-start gap-2">
+                  <ExclamationTriangleIcon class="h-5 w-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                  <p class="text-sm text-amber-700">
+                    No drafts have been approved yet. The export will use AI-generated or edited content. Consider approving drafts before exporting.
+                  </p>
+                </div>
+
+                <!-- Warning if no sections -->
+                <div v-if="casesStore.rfeSections.length === 0" class="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+                  <ExclamationTriangleIcon class="h-5 w-5 text-red-500 mt-0.5 flex-shrink-0" />
+                  <p class="text-sm text-red-700">
+                    No RFE sections have been analyzed yet. Run the analysis first before exporting.
+                  </p>
+                </div>
+              </div>
+
+              <!-- Format Selection & Download -->
+              <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Download Response Package</h3>
+                <p class="text-sm text-gray-500 mb-6">
+                  Generate and download the complete RFE response including cover page, all response sections, and exhibit list.
+                </p>
+
+                <!-- Format options -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                  <label
+                    class="relative flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all"
+                    :class="exportFormat === 'pdf' ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' : 'border-gray-200 hover:border-gray-300'"
+                  >
+                    <input type="radio" v-model="exportFormat" value="pdf" class="mt-1" />
+                    <div>
+                      <p class="font-medium text-gray-900">PDF Document</p>
+                      <p class="text-sm text-gray-500">Response letter only. Best for final submission.</p>
+                    </div>
+                  </label>
+                  <label
+                    class="relative flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all"
+                    :class="exportFormat === 'docx' ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' : 'border-gray-200 hover:border-gray-300'"
+                  >
+                    <input type="radio" v-model="exportFormat" value="docx" class="mt-1" />
+                    <div>
+                      <p class="font-medium text-gray-900">Word Document</p>
+                      <p class="text-sm text-gray-500">Editable response letter. Best for attorney review.</p>
+                    </div>
+                  </label>
+                  <label
+                    class="relative flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all"
+                    :class="exportFormat === 'zip' ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' : 'border-gray-200 hover:border-gray-300'"
+                  >
+                    <input type="radio" v-model="exportFormat" value="zip" class="mt-1" />
+                    <div>
+                      <p class="font-medium text-gray-900">Full Package (ZIP)</p>
+                      <p class="text-sm text-gray-500">Response PDF + all exhibit documents in one download.</p>
+                    </div>
+                  </label>
+                </div>
+
+                <!-- Download button -->
+                <button
+                  @click="handleExport"
+                  :disabled="casesStore.exporting || casesStore.rfeSections.length === 0"
+                  class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <ArrowDownTrayIcon v-if="!casesStore.exporting" class="h-5 w-5" />
+                  <ArrowPathIcon v-else class="h-5 w-5 animate-spin" />
+                  {{ casesStore.exporting ? 'Generating...' : `Download ${exportFormat.toUpperCase()}` }}
+                </button>
+              </div>
+
+              <!-- Export contents preview -->
+              <div class="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Package Contents</h3>
+                <ul class="space-y-3 text-sm text-gray-700">
+                  <li class="flex items-center gap-2">
+                    <CheckIcon class="h-4 w-4 text-green-500" />
+                    Cover page with case details and firm information
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <CheckIcon class="h-4 w-4 text-green-500" />
+                    Table of contents
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <component :is="casesStore.rfeSections.length > 0 ? CheckIcon : ExclamationTriangleIcon"
+                      :class="casesStore.rfeSections.length > 0 ? 'h-4 w-4 text-green-500' : 'h-4 w-4 text-amber-500'" />
+                    {{ casesStore.rfeSections.length }} response section{{ casesStore.rfeSections.length !== 1 ? 's' : '' }} with legal arguments
+                  </li>
+                  <li class="flex items-center gap-2">
+                    <component :is="casesStore.exhibits.length > 0 ? CheckIcon : ExclamationTriangleIcon"
+                      :class="casesStore.exhibits.length > 0 ? 'h-4 w-4 text-green-500' : 'h-4 w-4 text-amber-500'" />
+                    Exhibit list ({{ casesStore.exhibits.length }} exhibit{{ casesStore.exhibits.length !== 1 ? 's' : '' }})
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Last exported -->
+              <div v-if="currentCase?.exported_at" class="text-sm text-gray-500">
+                Last exported: {{ new Date(currentCase.exported_at).toLocaleString() }}
+              </div>
             </div>
           </div>
         </div>
