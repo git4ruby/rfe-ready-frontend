@@ -389,6 +389,9 @@ function formatDate(dateStr) {
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Status
               </th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                AI
+              </th>
               <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
@@ -440,6 +443,22 @@ function formatDate(dateStr) {
                     {{ doc.is_active ? 'Active' : 'Inactive' }}
                   </span>
                 </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    v-if="doc.embedding_status === 'embedded'"
+                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800"
+                    title="Embedded for AI retrieval"
+                  >
+                    Embedded
+                  </span>
+                  <span
+                    v-else
+                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500"
+                    title="Pending embedding generation"
+                  >
+                    Pending
+                  </span>
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-right" @click.stop>
                   <div class="flex items-center justify-end gap-2">
                     <button
@@ -461,7 +480,7 @@ function formatDate(dateStr) {
               </tr>
               <!-- Expanded detail row -->
               <tr v-if="expandedDocId === doc.id">
-                <td colspan="8" class="px-6 py-4 bg-gray-50">
+                <td colspan="9" class="px-6 py-4 bg-gray-50">
                   <div v-if="loadingDetail" class="text-sm text-gray-500">Loading...</div>
                   <div v-else-if="expandedDoc">
                     <div v-if="expandedDoc.content" class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">{{ expandedDoc.content }}</div>
