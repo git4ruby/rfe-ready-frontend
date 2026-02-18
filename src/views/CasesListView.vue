@@ -2,7 +2,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useCasesStore } from '../stores/cases'
 import { useNotificationStore } from '../stores/notification'
-import { PlusIcon, MagnifyingGlassIcon, EyeIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, MagnifyingGlassIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
@@ -128,7 +128,7 @@ watch(
               <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Deadline
               </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Actions
               </th>
             </tr>
@@ -139,8 +139,13 @@ watch(
               :key="rfeCase.id"
               class="hover:bg-gray-50 transition-colors"
             >
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-indigo-600">
-                {{ rfeCase.case_number }}
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <router-link
+                  :to="`/cases/${rfeCase.id}`"
+                  class="text-indigo-600 hover:text-indigo-500 hover:underline transition-colors"
+                >
+                  {{ rfeCase.case_number }}
+                </router-link>
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {{ rfeCase.petitioner_name }}
@@ -161,14 +166,23 @@ watch(
                 />
                 <span v-else class="text-sm text-gray-400">--</span>
               </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right">
-                <router-link
-                  :to="`/cases/${rfeCase.id}`"
-                  class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
-                >
-                  <EyeIcon class="h-4 w-4" />
-                  View
-                </router-link>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center justify-center gap-3">
+                  <router-link
+                    :to="`/cases/${rfeCase.id}`"
+                    class="inline-flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-500 transition-colors"
+                  >
+                    <EyeIcon class="h-4 w-4" />
+                    View
+                  </router-link>
+                  <router-link
+                    :to="{ path: `/cases/${rfeCase.id}`, query: { edit: 'true' } }"
+                    class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+                  >
+                    <PencilSquareIcon class="h-4 w-4" />
+                    Edit
+                  </router-link>
+                </div>
               </td>
             </tr>
           </tbody>

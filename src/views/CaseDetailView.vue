@@ -47,6 +47,53 @@ const activeTab = ref('overview')
 const actionLoading = ref(null)
 const showDeleteConfirm = ref(false)
 
+// Edit mode
+const isEditing = ref(false)
+const editSaving = ref(false)
+const editForm = ref({})
+
+function startEditMode() {
+  editForm.value = {
+    case_number: caseData.value?.case_number || '',
+    uscis_receipt_number: caseData.value?.uscis_receipt_number || '',
+    visa_type: caseData.value?.visa_type || 'H-1B',
+    petitioner_name: caseData.value?.petitioner_name || '',
+    beneficiary_name: caseData.value?.beneficiary_name || '',
+    rfe_received_date: caseData.value?.rfe_received_date || '',
+    rfe_deadline: caseData.value?.rfe_deadline || '',
+    notes: caseData.value?.notes || '',
+  }
+  isEditing.value = true
+}
+
+function cancelEditMode() {
+  isEditing.value = false
+  // Clear the query param
+  if (route.query.edit) {
+    router.replace({ path: route.path })
+  }
+}
+
+async function saveEdit() {
+  editSaving.value = true
+  try {
+    await casesStore.updateCase(props.id, editForm.value)
+    isEditing.value = false
+    notify.success('Case updated successfully.')
+    if (route.query.edit) {
+      router.replace({ path: route.path })
+    }
+  } catch (err) {
+    const msg =
+      err.response?.data?.details?.join(', ') ||
+      err.response?.data?.error ||
+      'Failed to update case.'
+    notify.error(msg)
+  } finally {
+    editSaving.value = false
+  }
+}
+
 const tabs = [
   { key: 'overview', label: 'Overview', icon: DocumentTextIcon },
   { key: 'documents', label: 'Documents', icon: DocumentArrowUpIcon },
@@ -419,6 +466,10 @@ onMounted(async () => {
     if (casesStore.currentCase?.status === 'analyzing') {
       casesStore.startPolling(props.id)
     }
+    // Enter edit mode if ?edit=true
+    if (route.query.edit === 'true') {
+      startEditMode()
+    }
   } catch (err) {
     notify.error('Failed to load case details.')
   }
@@ -638,102 +689,222 @@ async function handleDelete() {
         <div class="p-6">
           <!-- Overview tab -->
           <div v-if="activeTab === 'overview'">
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <!-- Case Information -->
-              <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                  Case Information
-                </h3>
-                <dl class="space-y-3">
+            <!-- Edit mode -->
+            <div v-if="isEditing">
+              <div class="space-y-6">
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                   <div>
-                    <dt class="text-sm font-medium text-gray-500">Case Number</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.case_number }}</dd>
+                    <label class="block text-sm font-medium text-gray-700">Case Number <span class="text-red-500">*</span></label>
+                    <input
+                      v-model="editForm.case_number"
+                      type="text"
+                      class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
                   </div>
                   <div>
-                    <dt class="text-sm font-medium text-gray-500">USCIS Receipt Number</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">
-                      {{ caseData.uscis_receipt_number || '--' }}
-                    </dd>
+                    <label class="block text-sm font-medium text-gray-700">USCIS Receipt Number</label>
+                    <input
+                      v-model="editForm.uscis_receipt_number"
+                      type="text"
+                      class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Visa Type <span class="text-red-500">*</span></label>
+                  <select
+                    v-model="editForm.visa_type"
+                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  >
+                    <option value="H-1B">H-1B</option>
+                  </select>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">Petitioner Name <span class="text-red-500">*</span></label>
+                    <input
+                      v-model="editForm.petitioner_name"
+                      type="text"
+                      class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
                   </div>
                   <div>
-                    <dt class="text-sm font-medium text-gray-500">Visa Type</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.visa_type }}</dd>
+                    <label class="block text-sm font-medium text-gray-700">Beneficiary Name <span class="text-red-500">*</span></label>
+                    <input
+                      v-model="editForm.beneficiary_name"
+                      type="text"
+                      class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                  <div>
+                    <label class="block text-sm font-medium text-gray-700">RFE Received Date</label>
+                    <input
+                      v-model="editForm.rfe_received_date"
+                      type="date"
+                      class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
                   </div>
                   <div>
-                    <dt class="text-sm font-medium text-gray-500">Status</dt>
-                    <dd class="mt-1">
-                      <CaseStatusBadge :status="caseData.status" />
-                    </dd>
+                    <label class="block text-sm font-medium text-gray-700">RFE Deadline</label>
+                    <input
+                      v-model="editForm.rfe_deadline"
+                      type="date"
+                      class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                    />
                   </div>
-                </dl>
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium text-gray-700">Notes</label>
+                  <textarea
+                    v-model="editForm.notes"
+                    rows="4"
+                    class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  />
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    @click="cancelEditMode"
+                    class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    @click="saveEdit"
+                    :disabled="editSaving"
+                    class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <svg
+                      v-if="editSaving"
+                      class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                      <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    {{ editSaving ? 'Saving...' : 'Save Changes' }}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Read-only mode -->
+            <div v-else>
+              <div class="flex items-center justify-end mb-4">
+                <button
+                  @click="startEditMode"
+                  class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                >
+                  <PencilSquareIcon class="h-4 w-4" />
+                  Edit
+                </button>
               </div>
 
-              <!-- People -->
-              <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                  People
-                </h3>
-                <dl class="space-y-3">
-                  <div>
-                    <dt class="text-sm font-medium text-gray-500">Petitioner</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.petitioner_name }}</dd>
-                  </div>
-                  <div>
-                    <dt class="text-sm font-medium text-gray-500">Beneficiary</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.beneficiary_name }}</dd>
-                  </div>
-                  <div>
-                    <dt class="text-sm font-medium text-gray-500">Attorney</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">{{ attorneyName }}</dd>
-                  </div>
-                  <div>
-                    <dt class="text-sm font-medium text-gray-500">Attorney Reviewed</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">
-                      {{ caseData.attorney_reviewed ? 'Yes' : 'No' }}
-                    </dd>
-                  </div>
-                </dl>
-              </div>
+              <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <!-- Case Information -->
+                <div class="space-y-4">
+                  <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Case Information
+                  </h3>
+                  <dl class="space-y-3">
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">Case Number</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.case_number }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">USCIS Receipt Number</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">
+                        {{ caseData.uscis_receipt_number || '--' }}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">Visa Type</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.visa_type }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">Status</dt>
+                      <dd class="mt-1">
+                        <CaseStatusBadge :status="caseData.status" />
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
 
-              <!-- Dates -->
-              <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                  Important Dates
-                </h3>
-                <dl class="space-y-3">
-                  <div>
-                    <dt class="text-sm font-medium text-gray-500">RFE Received Date</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">
-                      {{ caseData.rfe_received_date || '--' }}
-                    </dd>
-                  </div>
-                  <div>
-                    <dt class="text-sm font-medium text-gray-500">RFE Deadline</dt>
-                    <dd class="mt-1 flex items-center gap-2">
-                      <span class="text-sm text-gray-900">{{ caseData.rfe_deadline || '--' }}</span>
-                      <DeadlineIndicator
-                        v-if="caseData.rfe_deadline"
-                        :deadline="caseData.rfe_deadline"
-                      />
-                    </dd>
-                  </div>
-                  <div>
-                    <dt class="text-sm font-medium text-gray-500">Created At</dt>
-                    <dd class="mt-0.5 text-sm text-gray-900">
-                      {{ caseData.created_at ? new Date(caseData.created_at).toLocaleDateString() : '--' }}
-                    </dd>
-                  </div>
-                </dl>
-              </div>
+                <!-- People -->
+                <div class="space-y-4">
+                  <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    People
+                  </h3>
+                  <dl class="space-y-3">
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">Petitioner</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.petitioner_name }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">Beneficiary</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.beneficiary_name }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">Attorney</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">{{ attorneyName }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">Attorney Reviewed</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">
+                        {{ caseData.attorney_reviewed ? 'Yes' : 'No' }}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
 
-              <!-- Notes -->
-              <div class="space-y-4">
-                <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
-                  Notes
-                </h3>
-                <p class="text-sm text-gray-700 whitespace-pre-wrap">
-                  {{ caseData.notes || 'No notes added.' }}
-                </p>
+                <!-- Dates -->
+                <div class="space-y-4">
+                  <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Important Dates
+                  </h3>
+                  <dl class="space-y-3">
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">RFE Received Date</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">
+                        {{ caseData.rfe_received_date || '--' }}
+                      </dd>
+                    </div>
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">RFE Deadline</dt>
+                      <dd class="mt-1 flex items-center gap-2">
+                        <span class="text-sm text-gray-900">{{ caseData.rfe_deadline || '--' }}</span>
+                        <DeadlineIndicator
+                          v-if="caseData.rfe_deadline"
+                          :deadline="caseData.rfe_deadline"
+                        />
+                      </dd>
+                    </div>
+                    <div>
+                      <dt class="text-sm font-medium text-gray-500">Created At</dt>
+                      <dd class="mt-0.5 text-sm text-gray-900">
+                        {{ caseData.created_at ? new Date(caseData.created_at).toLocaleDateString() : '--' }}
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <!-- Notes -->
+                <div class="space-y-4">
+                  <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
+                    Notes
+                  </h3>
+                  <p class="text-sm text-gray-700 whitespace-pre-wrap">
+                    {{ caseData.notes || 'No notes added.' }}
+                  </p>
+                </div>
               </div>
             </div>
           </div>

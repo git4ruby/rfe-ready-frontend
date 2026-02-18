@@ -8,6 +8,7 @@ import {
   BookOpenIcon,
   CogIcon,
   UsersIcon,
+  ClipboardDocumentListIcon,
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
@@ -28,6 +29,7 @@ const navigation = [
 const adminNavigation = [
   { name: 'Settings', href: '/settings', icon: CogIcon, routeName: 'Settings' },
   { name: 'Users', href: '/users', icon: UsersIcon, routeName: 'Users' },
+  { name: 'Audit Log', href: '/audit-log', icon: ClipboardDocumentListIcon, routeName: 'AuditLog' },
 ]
 
 function isActive(item) {
