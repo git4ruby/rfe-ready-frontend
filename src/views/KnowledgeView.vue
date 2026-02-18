@@ -11,6 +11,9 @@ import {
   XMarkIcon,
   DocumentTextIcon,
   PaperClipIcon,
+  ArrowUpTrayIcon,
+  CloudArrowUpIcon,
+  CpuChipIcon,
 } from '@heroicons/vue/24/outline'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 import EmptyState from '../components/EmptyState.vue'
@@ -79,17 +82,14 @@ const expandedDocId = ref(null)
 const expandedDoc = ref(null)
 const loadingDetail = ref(false)
 
-// Filtered docs (client-side search on top of server-filtered results)
-const filteredDocs = computed(() => {
-  if (!searchQuery.value.trim()) return store.docs
-  const q = searchQuery.value.toLowerCase()
-  return store.docs.filter(
-    (d) =>
-      (d.title || '').toLowerCase().includes(q) ||
-      (d.visa_type || '').toLowerCase().includes(q) ||
-      (d.rfe_category || '').toLowerCase().includes(q)
-  )
-})
+// Bulk upload
+const showBulkModal = ref(false)
+const bulkFiles = ref([])
+const bulkDocType = ref('firm_knowledge')
+const bulkVisaType = ref('')
+const bulkUploading = ref(false)
+const bulkFileInput = ref(null)
+const bulkDragOver = ref(false)
 
 // Load docs
 async function loadDocs(page = 1) {
@@ -97,6 +97,7 @@ async function loadDocs(page = 1) {
   try {
     await store.fetchDocs(
       {
+        q: searchQuery.value.trim() || undefined,
         doc_type: filterDocType.value || undefined,
         visa_type: filterVisaType.value || undefined,
       },
@@ -109,10 +110,62 @@ async function loadDocs(page = 1) {
 
 onMounted(() => loadDocs())
 
+// Debounced server-side search
+let searchTimer = null
+watch(searchQuery, () => {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => loadDocs(1), 300)
+})
+
 // Re-fetch when filters change
 watch([filterDocType, filterVisaType], () => {
   loadDocs(1)
 })
+
+// Bulk upload functions
+function openBulkUpload() {
+  bulkFiles.value = []
+  bulkDocType.value = 'firm_knowledge'
+  bulkVisaType.value = ''
+  showBulkModal.value = true
+}
+
+function onBulkFileSelect(event) {
+  const files = Array.from(event.target.files || [])
+  bulkFiles.value.push(...files)
+  if (bulkFileInput.value) bulkFileInput.value.value = ''
+}
+
+function onBulkDrop(event) {
+  bulkDragOver.value = false
+  const files = Array.from(event.dataTransfer.files || [])
+  bulkFiles.value.push(...files)
+}
+
+function removeBulkFile(index) {
+  bulkFiles.value.splice(index, 1)
+}
+
+async function handleBulkUpload() {
+  if (bulkFiles.value.length === 0) return
+  bulkUploading.value = true
+  try {
+    const formData = new FormData()
+    bulkFiles.value.forEach((file) => formData.append('files[]', file))
+    formData.append('doc_type', bulkDocType.value)
+    if (bulkVisaType.value) formData.append('visa_type', bulkVisaType.value)
+
+    const result = await store.bulkCreate(formData)
+    notify.success(`${result.meta.count} document(s) uploaded successfully.`)
+    showBulkModal.value = false
+    loadDocs(1)
+  } catch (err) {
+    const msg = err.response?.data?.error || 'Failed to upload documents.'
+    notify.error(msg)
+  } finally {
+    bulkUploading.value = false
+  }
+}
 
 // Open modal for create
 function openCreate() {
@@ -289,6 +342,28 @@ function formatDate(dateStr) {
     year: 'numeric',
   })
 }
+
+// Stats helpers
+const knowledgeStats = computed(() => {
+  if (!store.stats) return []
+  return [
+    { name: 'Total Documents', value: store.stats.total_docs || 0, icon: BookOpenIcon, color: 'bg-indigo-500' },
+    { name: 'Embedded (AI Ready)', value: store.stats.embedded_count || 0, icon: CpuChipIcon, color: 'bg-emerald-500' },
+    { name: 'Pending Embedding', value: store.stats.pending_count || 0, icon: DocumentTextIcon, color: 'bg-gray-400' },
+  ]
+})
+
+const docTypeBreakdown = computed(() => store.stats?.by_doc_type || {})
+
+function statDocTypeLabel(key) {
+  const labels = { template: 'Templates', sample_response: 'Sample Responses', regulation: 'Regulations', firm_knowledge: 'Firm Knowledge' }
+  return labels[key] || key
+}
+
+function statDocTypeColor(key) {
+  const colors = { template: 'bg-blue-500', sample_response: 'bg-green-500', regulation: 'bg-amber-500', firm_knowledge: 'bg-purple-500' }
+  return colors[key] || 'bg-gray-500'
+}
 </script>
 
 <template>
@@ -301,13 +376,54 @@ function formatDate(dateStr) {
           Upload and manage firm-specific templates, sample responses, and regulatory documents.
         </p>
       </div>
-      <button
-        @click="openCreate"
-        class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+      <div class="flex items-center gap-3">
+        <button
+          @click="openBulkUpload"
+          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+        >
+          <ArrowUpTrayIcon class="h-5 w-5" />
+          Bulk Upload
+        </button>
+        <button
+          @click="openCreate"
+          class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+        >
+          <PlusIcon class="h-5 w-5" />
+          Add Document
+        </button>
+      </div>
+    </div>
+
+    <!-- Knowledge Stats -->
+    <div v-if="store.stats" class="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-6 mb-6">
+      <div
+        v-for="stat in knowledgeStats"
+        :key="stat.name"
+        class="bg-white rounded-lg shadow p-4 flex items-center gap-3"
       >
-        <PlusIcon class="h-5 w-5" />
-        Add Document
-      </button>
+        <div :class="['rounded-lg p-2 shrink-0', stat.color]">
+          <component :is="stat.icon" class="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <p class="text-xl font-bold text-gray-900">{{ stat.value }}</p>
+          <p class="text-xs text-gray-500">{{ stat.name }}</p>
+        </div>
+      </div>
+
+      <!-- By Type breakdown inline -->
+      <div
+        v-for="(count, type) in docTypeBreakdown"
+        :key="type"
+        class="bg-white rounded-lg shadow p-4 flex items-center gap-3"
+      >
+        <div :class="['rounded-lg p-2 shrink-0', statDocTypeColor(type)]">
+          <DocumentTextIcon class="h-5 w-5 text-white" />
+        </div>
+        <div>
+          <p class="text-xl font-bold text-gray-900">{{ count }}</p>
+          <p class="text-xs text-gray-500">{{ statDocTypeLabel(type) }}</p>
+        </div>
+      </div>
     </div>
 
     <!-- Filters bar -->
@@ -398,7 +514,7 @@ function formatDate(dateStr) {
             </tr>
           </thead>
           <tbody class="bg-white divide-y divide-gray-200">
-            <template v-for="doc in filteredDocs" :key="doc.id">
+            <template v-for="doc in store.docs" :key="doc.id">
               <tr
                 class="hover:bg-gray-50 transition-colors cursor-pointer"
                 @click="toggleExpand(doc)"
@@ -749,6 +865,129 @@ function formatDate(dateStr) {
             >
               {{ deleting ? 'Deleting...' : 'Delete' }}
             </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bulk Upload Modal -->
+    <div v-if="showBulkModal" class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex min-h-full items-center justify-center p-4">
+        <div class="fixed inset-0 bg-gray-500/75 transition-opacity" @click="showBulkModal = false" />
+
+        <div class="relative w-full max-w-lg transform rounded-xl bg-white shadow-2xl transition-all">
+          <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+            <h3 class="text-lg font-semibold text-gray-900">Bulk Upload Documents</h3>
+            <button @click="showBulkModal = false" class="text-gray-400 hover:text-gray-500 transition-colors">
+              <XMarkIcon class="h-5 w-5" />
+            </button>
+          </div>
+
+          <div class="p-6 space-y-5">
+            <!-- Drop zone -->
+            <div
+              @dragover.prevent="bulkDragOver = true"
+              @dragleave="bulkDragOver = false"
+              @drop.prevent="onBulkDrop"
+              :class="[
+                'relative rounded-lg border-2 border-dashed p-6 text-center transition-colors',
+                bulkDragOver ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300 hover:border-gray-400',
+              ]"
+            >
+              <CloudArrowUpIcon class="mx-auto h-10 w-10 text-gray-400" />
+              <p class="mt-2 text-sm text-gray-600">
+                <button type="button" @click="bulkFileInput?.click()" class="font-semibold text-indigo-600 hover:text-indigo-500">
+                  Choose files
+                </button>
+                or drag and drop
+              </p>
+              <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX, TXT, RTF</p>
+              <input
+                ref="bulkFileInput"
+                type="file"
+                multiple
+                accept=".pdf,.doc,.docx,.txt,.rtf"
+                class="hidden"
+                @change="onBulkFileSelect"
+              />
+            </div>
+
+            <!-- File list -->
+            <div v-if="bulkFiles.length > 0" class="space-y-2">
+              <div class="text-sm font-medium text-gray-700">{{ bulkFiles.length }} file(s) selected</div>
+              <div
+                v-for="(file, index) in bulkFiles"
+                :key="index"
+                class="flex items-center justify-between rounded-lg border border-gray-200 px-3 py-2"
+              >
+                <div class="flex items-center gap-2 min-w-0">
+                  <PaperClipIcon class="h-4 w-4 text-gray-400 shrink-0" />
+                  <span class="text-sm text-gray-700 truncate">{{ file.name }}</span>
+                  <span class="text-xs text-gray-400 shrink-0">{{ (file.size / 1024).toFixed(0) }} KB</span>
+                </div>
+                <button @click="removeBulkFile(index)" class="text-red-500 hover:text-red-700 shrink-0 ml-2">
+                  <XMarkIcon class="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+
+            <!-- Shared metadata -->
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Document Type</label>
+                <select
+                  v-model="bulkDocType"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="template">Template</option>
+                  <option value="sample_response">Sample Response</option>
+                  <option value="regulation">Regulation</option>
+                  <option value="firm_knowledge">Firm Knowledge</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Visa Type</label>
+                <select
+                  v-model="bulkVisaType"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                >
+                  <option value="">None</option>
+                  <option value="H-1B">H-1B</option>
+                  <option value="L-1">L-1</option>
+                  <option value="O-1">O-1</option>
+                  <option value="EB-1">EB-1</option>
+                  <option value="EB-2">EB-2</option>
+                  <option value="EB-3">EB-3</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+              <button
+                @click="showBulkModal = false"
+                class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                @click="handleBulkUpload"
+                :disabled="bulkUploading || bulkFiles.length === 0"
+                class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                <svg
+                  v-if="bulkUploading"
+                  class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                {{ bulkUploading ? 'Uploading...' : `Upload ${bulkFiles.length} File(s)` }}
+              </button>
+            </div>
           </div>
         </div>
       </div>

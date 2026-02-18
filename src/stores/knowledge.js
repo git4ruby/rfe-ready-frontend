@@ -7,11 +7,13 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
   const currentDoc = ref(null)
   const loading = ref(false)
   const pagination = ref({})
+  const stats = ref(null)
 
   async function fetchDocs(filters = {}, page = 1) {
     loading.value = true
     try {
       const params = { page }
+      if (filters.q) params.q = filters.q
       if (filters.doc_type) params.doc_type = filters.doc_type
       if (filters.visa_type) params.visa_type = filters.visa_type
       if (filters.rfe_category) params.rfe_category = filters.rfe_category
@@ -20,6 +22,7 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
       const response = await apiClient.get('/knowledge_docs', { params })
       docs.value = response.data.data
       pagination.value = response.data.meta
+      if (response.data.meta?.stats) stats.value = response.data.meta.stats
     } finally {
       loading.value = false
     }
@@ -53,6 +56,13 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
     return response.data.data
   }
 
+  async function bulkCreate(formData) {
+    const response = await apiClient.post('/knowledge_docs/bulk_create', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    return response.data
+  }
+
   async function deleteDoc(id) {
     await apiClient.delete(`/knowledge_docs/${id}`)
     docs.value = docs.value.filter((d) => d.id !== id)
@@ -63,10 +73,12 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
     currentDoc,
     loading,
     pagination,
+    stats,
     fetchDocs,
     fetchDoc,
     createDoc,
     updateDoc,
+    bulkCreate,
     deleteDoc,
   }
 })
