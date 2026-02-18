@@ -8,6 +8,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   const isAuthenticated = computed(() => !!token.value)
   const isAdmin = computed(() => user.value?.role === 'admin')
+  const isSuperAdmin = computed(() => !!user.value?.is_super_admin)
   const isAttorney = computed(() => ['admin', 'attorney'].includes(user.value?.role))
   const canEdit = computed(() => ['admin', 'attorney', 'paralegal'].includes(user.value?.role))
   const fullName = computed(() => {
@@ -56,6 +57,7 @@ export const useAuthStore = defineStore('auth', () => {
     token,
     isAuthenticated,
     isAdmin,
+    isSuperAdmin,
     isAttorney,
     canEdit,
     fullName,

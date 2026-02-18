@@ -20,7 +20,7 @@ async function handleSubmit() {
   try {
     await authStore.login(email.value, password.value)
     notify.success('Welcome back!')
-    router.push('/')
+    router.push(authStore.isSuperAdmin ? '/platform' : '/')
   } catch (err) {
     const msg =
       err.response?.data?.error ||

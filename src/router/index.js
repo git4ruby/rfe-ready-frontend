@@ -9,6 +9,31 @@ const routes = [
     meta: { guest: true },
   },
   {
+    path: '/platform',
+    component: () => import('../layouts/AdminLayout.vue'),
+    meta: { requiresAuth: true, requiresSuperAdmin: true },
+    children: [
+      {
+        path: '',
+        name: 'AdminDashboard',
+        component: () => import('../views/admin/AdminDashboardView.vue'),
+        meta: { title: 'Platform Dashboard' },
+      },
+      {
+        path: 'tenants',
+        name: 'AdminTenants',
+        component: () => import('../views/admin/AdminTenantsView.vue'),
+        meta: { title: 'Tenant Management' },
+      },
+      {
+        path: 'tenants/:id',
+        name: 'AdminTenantDetail',
+        component: () => import('../views/admin/AdminTenantDetailView.vue'),
+        meta: { title: 'Tenant Detail' },
+      },
+    ],
+  },
+  {
     path: '/',
     component: () => import('../layouts/AppLayout.vue'),
     meta: { requiresAuth: true },
@@ -72,6 +97,8 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
   } else if (to.meta.guest && authStore.isAuthenticated) {
+    next(authStore.isSuperAdmin ? '/platform' : '/')
+  } else if (to.meta.requiresSuperAdmin && !authStore.isSuperAdmin) {
     next('/')
   } else if (to.meta.requiresAdmin && !authStore.isAdmin) {
     next('/')
