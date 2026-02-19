@@ -170,7 +170,8 @@ function formatDate(dateStr) {
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search by name..."
+          data-shortcut="search"
+          placeholder="Search by name... (press /)"
           class="block w-full rounded-lg border-gray-300 pl-10 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
         />
       </div>

@@ -56,6 +56,7 @@ watch(
       </div>
       <router-link
         to="/cases/new"
+        data-shortcut="new-case"
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
       >
         <PlusIcon class="h-5 w-5" />
@@ -72,7 +73,8 @@ watch(
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search cases..."
+          data-shortcut="search"
+          placeholder="Search cases... (press /)"
           class="block w-full rounded-lg border-gray-300 pl-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         />
       </div>

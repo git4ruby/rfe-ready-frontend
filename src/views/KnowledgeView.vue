@@ -432,7 +432,8 @@ function statDocTypeColor(key) {
         <input
           v-model="searchQuery"
           type="text"
-          placeholder="Search by title..."
+          data-shortcut="search"
+          placeholder="Search by title... (press /)"
           class="block w-full rounded-lg border-gray-300 pl-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         />
       </div>

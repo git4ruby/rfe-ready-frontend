@@ -3,12 +3,14 @@ import { watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import { useIdleTimer } from './composables/useIdleTimer'
+import { useKeyboardShortcuts } from './composables/useKeyboardShortcuts'
 import NotificationToast from './components/NotificationToast.vue'
 import SessionWarningModal from './components/SessionWarningModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 const { showWarning, secondsLeft, dismissWarning, start, stop } = useIdleTimer()
+useKeyboardShortcuts()
 
 // Start/stop idle timer based on auth state
 watch(
