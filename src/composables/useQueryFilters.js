@@ -42,6 +42,7 @@ export function useQueryFilters(defaults = {}, { onLoad } = {}) {
     const currentQuery = { ...route.query }
     const changed = JSON.stringify(query) !== JSON.stringify(currentQuery)
     if (changed) {
+      internalUpdate = true
       router.replace({ query })
     }
   }
@@ -58,6 +59,24 @@ export function useQueryFilters(defaults = {}, { onLoad } = {}) {
     writeToQuery()
     if (onLoad) onLoad(page)
   }
+
+  let internalUpdate = false
+
+  // Watch for external route changes (browser back/forward, sidebar clicks)
+  watch(
+    () => route.query,
+    () => {
+      if (internalUpdate) {
+        internalUpdate = false
+        return
+      }
+      // Reset to defaults, then read from new query
+      filters.value = { ...defaults }
+      currentPage.value = 1
+      readFromQuery()
+      if (onLoad) onLoad(currentPage.value)
+    }
+  )
 
   // Initialize from URL on mount
   onMounted(() => {
