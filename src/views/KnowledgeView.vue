@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useKnowledgeStore } from '../stores/knowledge'
 import { useNotificationStore } from '../stores/notification'
+import { useQueryFilters } from '../composables/useQueryFilters'
 import ConfirmDialog from '../components/ConfirmDialog.vue'
 import {
   BookOpenIcon,
@@ -23,11 +24,8 @@ import EmptyState from '../components/EmptyState.vue'
 const store = useKnowledgeStore()
 const notify = useNotificationStore()
 
-// Filters
-const filterDocType = ref('')
-const filterVisaType = ref('')
+// Filters via URL query params
 const searchQuery = ref('')
-const currentPage = ref(1)
 
 const docTypeOptions = [
   { value: '', label: 'All Types' },
@@ -95,13 +93,12 @@ const bulkDragOver = ref(false)
 
 // Load docs
 async function loadDocs(page = 1) {
-  currentPage.value = page
   try {
     await store.fetchDocs(
       {
         q: searchQuery.value.trim() || undefined,
-        doc_type: filterDocType.value || undefined,
-        visa_type: filterVisaType.value || undefined,
+        doc_type: filters.value.doc_type || undefined,
+        visa_type: filters.value.visa_type || undefined,
       },
       page
     )
@@ -110,18 +107,21 @@ async function loadDocs(page = 1) {
   }
 }
 
-onMounted(() => loadDocs())
+const { filters, currentPage, goToPage } = useQueryFilters(
+  { doc_type: '', visa_type: '' },
+  { onLoad: loadDocs }
+)
 
 // Debounced server-side search
 let searchTimer = null
 watch(searchQuery, () => {
   clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => loadDocs(1), 300)
+  searchTimer = setTimeout(() => goToPage(1), 300)
 })
 
 // Re-fetch when filters change
-watch([filterDocType, filterVisaType], () => {
-  loadDocs(1)
+watch([() => filters.value.doc_type, () => filters.value.visa_type], () => {
+  goToPage(1)
 })
 
 // Bulk upload functions
@@ -310,11 +310,6 @@ async function toggleExpand(doc) {
   }
 }
 
-// Pagination
-async function goToPage(page) {
-  await loadDocs(page)
-}
-
 // Badge helpers
 function docTypeBadgeClass(docType) {
   const classes = {
@@ -442,7 +437,7 @@ function statDocTypeColor(key) {
         />
       </div>
       <select
-        v-model="filterDocType"
+        v-model="filters.doc_type"
         class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
       >
         <option v-for="opt in docTypeOptions" :key="opt.value" :value="opt.value">
@@ -450,7 +445,7 @@ function statDocTypeColor(key) {
         </option>
       </select>
       <select
-        v-model="filterVisaType"
+        v-model="filters.visa_type"
         class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
       >
         <option v-for="opt in visaTypeOptions" :key="opt.value" :value="opt.value">

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useCasesStore } from '../stores/cases'
 import { useNotificationStore } from '../stores/notification'
 import { PlusIcon, MagnifyingGlassIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'
@@ -8,29 +8,22 @@ import DeadlineIndicator from '../components/DeadlineIndicator.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import EmptyState from '../components/EmptyState.vue'
 import PaginationBar from '../components/PaginationBar.vue'
+import { useQueryFilters } from '../composables/useQueryFilters'
 
 const casesStore = useCasesStore()
 const notify = useNotificationStore()
 
 const searchQuery = ref('')
-const currentPage = ref(1)
 
-onMounted(async () => {
-  try {
-    await casesStore.fetchCases(currentPage.value)
-  } catch (err) {
-    notify.error('Failed to load cases. Please try again.')
-  }
-})
-
-async function goToPage(page) {
-  currentPage.value = page
+async function loadCases(page) {
   try {
     await casesStore.fetchCases(page)
-  } catch (err) {
+  } catch {
     notify.error('Failed to load cases.')
   }
 }
+
+const { currentPage, goToPage } = useQueryFilters({}, { onLoad: loadCases })
 
 const filteredCases = ref([])
 

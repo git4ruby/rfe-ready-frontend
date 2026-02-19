@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, watch } from 'vue'
 import { useAuditStore } from '../stores/audit'
 import { useNotificationStore } from '../stores/notification'
+import { useQueryFilters } from '../composables/useQueryFilters'
 import {
   ClipboardDocumentListIcon,
   ChevronDownIcon,
@@ -15,9 +16,6 @@ import EmptyState from '../components/EmptyState.vue'
 const store = useAuditStore()
 const notify = useNotificationStore()
 
-const currentPage = ref(1)
-const filterAction = ref('')
-const filterType = ref('')
 const expandedRow = ref(null)
 
 const actionOptions = [
@@ -36,30 +34,28 @@ const typeOptions = [
 ]
 
 async function loadLogs(page = 1) {
-  currentPage.value = page
   try {
     await store.fetchLogs({
       page,
-      action_type: filterAction.value || null,
-      auditable_type: filterType.value || null,
+      action_type: filters.value.action_type || null,
+      auditable_type: filters.value.auditable_type || null,
     })
   } catch {
     notify.error('Failed to load audit logs.')
   }
 }
 
-onMounted(() => loadLogs())
+const { filters, currentPage, updateFilters, goToPage } = useQueryFilters(
+  { action_type: '', auditable_type: '' },
+  { onLoad: loadLogs }
+)
 
-watch([filterAction, filterType], () => {
-  loadLogs(1)
+watch([() => filters.value.action_type, () => filters.value.auditable_type], () => {
+  goToPage(1)
 })
 
 function toggleExpand(id) {
   expandedRow.value = expandedRow.value === id ? null : id
-}
-
-function goToPage(page) {
-  loadLogs(page)
 }
 
 function formatDateTime(dateStr) {
@@ -115,7 +111,7 @@ function formatFieldName(field) {
       <div class="flex items-center gap-4 flex-wrap">
         <FunnelIcon class="h-5 w-5 text-gray-400 shrink-0" />
         <select
-          v-model="filterAction"
+          v-model="filters.action_type"
           class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
         >
           <option v-for="opt in actionOptions" :key="opt.value" :value="opt.value">
@@ -123,7 +119,7 @@ function formatFieldName(field) {
           </option>
         </select>
         <select
-          v-model="filterType"
+          v-model="filters.auditable_type"
           class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
         >
           <option v-for="opt in typeOptions" :key="opt.value" :value="opt.value">
