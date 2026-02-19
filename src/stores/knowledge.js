@@ -8,6 +8,11 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
   const loading = ref(false)
   const pagination = ref({})
   const stats = ref(null)
+  const uploadProgress = ref(0)
+
+  function onUploadProgress(e) {
+    uploadProgress.value = Math.round((e.loaded * 100) / (e.total || 1))
+  }
 
   async function fetchDocs(filters = {}, page = 1) {
     loading.value = true
@@ -40,8 +45,10 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
   }
 
   async function createDoc(formData) {
+    uploadProgress.value = 0
     const response = await apiClient.post('/knowledge_docs', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress,
     })
     docs.value.unshift(response.data.data)
     return response.data.data
@@ -57,8 +64,10 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
   }
 
   async function bulkCreate(formData) {
+    uploadProgress.value = 0
     const response = await apiClient.post('/knowledge_docs/bulk_create', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
+      onUploadProgress,
     })
     return response.data
   }
@@ -74,6 +83,7 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
     loading,
     pagination,
     stats,
+    uploadProgress,
     fetchDocs,
     fetchDoc,
     createDoc,
