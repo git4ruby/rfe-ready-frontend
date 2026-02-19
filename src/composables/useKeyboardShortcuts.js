@@ -1,4 +1,4 @@
-import { onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 
 /**
@@ -7,6 +7,7 @@ import { useRouter } from 'vue-router'
  */
 export function useKeyboardShortcuts() {
   const router = useRouter()
+  const showHelp = ref(false)
 
   function handler(e) {
     const tag = e.target.tagName
@@ -14,6 +15,10 @@ export function useKeyboardShortcuts() {
 
     // Escape always works — close modals, blur inputs
     if (e.key === 'Escape') {
+      if (showHelp.value) {
+        showHelp.value = false
+        return
+      }
       if (isInput) {
         e.target.blur()
         return
@@ -45,6 +50,10 @@ export function useKeyboardShortcuts() {
       case 'g': {
         // Wait for second key press for "go to" navigation
         waitForSecondKey()
+        break
+      }
+      case '?': {
+        showHelp.value = !showHelp.value
         break
       }
     }
@@ -81,4 +90,6 @@ export function useKeyboardShortcuts() {
     document.removeEventListener('keydown', handler)
     clearTimeout(goTimer)
   })
+
+  return { showHelp }
 }
