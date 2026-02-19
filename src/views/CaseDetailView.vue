@@ -4,6 +4,9 @@ import { useRoute, useRouter } from 'vue-router'
 import { useCasesStore } from '../stores/cases'
 import { useAuthStore } from '../stores/auth'
 import { useNotificationStore } from '../stores/notification'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
+import Breadcrumb from '../components/Breadcrumb.vue'
+import CopyButton from '../components/CopyButton.vue'
 import {
   ArrowLeftIcon,
   DocumentTextIcon,
@@ -29,6 +32,7 @@ import {
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
+import SkeletonLoader from '../components/SkeletonLoader.vue'
 
 const props = defineProps({
   id: {
@@ -540,27 +544,23 @@ async function handleDelete() {
 <template>
   <div>
     <!-- Loading -->
-    <LoadingSpinner v-if="casesStore.loading && !caseData" />
+    <SkeletonLoader v-if="casesStore.loading && !caseData" variant="detail" />
 
     <template v-else-if="caseData">
-      <!-- Back link -->
-      <div class="mb-4">
-        <router-link
-          to="/cases"
-          class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 transition-colors"
-        >
-          <ArrowLeftIcon class="h-4 w-4" />
-          Back to Cases
-        </router-link>
-      </div>
+      <!-- Breadcrumb -->
+      <Breadcrumb :items="[
+        { label: 'Cases', to: '/cases' },
+        { label: caseData.case_number },
+      ]" />
 
       <!-- Case header -->
       <div class="bg-white shadow rounded-lg p-6 mb-6">
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <div class="flex items-center gap-3">
-              <h1 class="text-2xl font-bold text-gray-900">
+              <h1 class="text-2xl font-bold text-gray-900 flex items-center gap-2">
                 {{ caseData.case_number }}
+                <CopyButton :text="caseData.case_number" label="Copy case number" />
               </h1>
               <CaseStatusBadge :status="caseData.status" />
             </div>
@@ -639,30 +639,16 @@ async function handleDelete() {
         </div>
       </div>
 
-      <!-- Delete confirmation modal -->
-      <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div class="bg-white rounded-lg shadow-xl p-6 max-w-sm mx-4">
-          <h3 class="text-lg font-semibold text-gray-900">Delete Case</h3>
-          <p class="mt-2 text-sm text-gray-500">
-            Are you sure you want to delete <strong>{{ caseData.case_number }}</strong>? This action cannot be undone.
-          </p>
-          <div class="mt-4 flex justify-end gap-3">
-            <button
-              @click="showDeleteConfirm = false"
-              class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              @click="handleDelete"
-              :disabled="actionLoading === 'delete'"
-              class="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-500 disabled:opacity-50 transition-colors"
-            >
-              {{ actionLoading === 'delete' ? 'Deleting...' : 'Delete' }}
-            </button>
-          </div>
-        </div>
-      </div>
+      <!-- Delete confirmation -->
+      <ConfirmDialog
+        :show="showDeleteConfirm"
+        title="Delete Case"
+        :message="`Are you sure you want to delete ${caseData?.case_number}? This action cannot be undone.`"
+        confirm-label="Delete"
+        :loading="actionLoading === 'delete'"
+        @confirm="handleDelete"
+        @cancel="showDeleteConfirm = false"
+      />
 
       <!-- Tabs navigation -->
       <div class="bg-white shadow rounded-lg mb-6">
@@ -821,8 +807,9 @@ async function handleDelete() {
                     </div>
                     <div>
                       <dt class="text-sm font-medium text-gray-500">USCIS Receipt Number</dt>
-                      <dd class="mt-0.5 text-sm text-gray-900">
+                      <dd class="mt-0.5 text-sm text-gray-900 flex items-center gap-1">
                         {{ caseData.uscis_receipt_number || '--' }}
+                        <CopyButton v-if="caseData.uscis_receipt_number" :text="caseData.uscis_receipt_number" label="Copy receipt number" />
                       </dd>
                     </div>
                     <div>

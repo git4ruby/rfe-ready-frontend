@@ -9,7 +9,7 @@ import {
 import apiClient from '../api/client'
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
-import LoadingSpinner from '../components/LoadingSpinner.vue'
+import SkeletonLoader from '../components/SkeletonLoader.vue'
 
 const loading = ref(true)
 const dashboard = ref(null)
@@ -76,7 +76,20 @@ function timeAgo(dateStr) {
       <p class="mt-1 text-sm text-gray-500">Overview of your RFE cases and activity.</p>
     </div>
 
-    <LoadingSpinner v-if="loading" />
+    <!-- Loading skeleton -->
+    <div v-if="loading" class="space-y-6">
+      <!-- Stats skeleton -->
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div v-for="i in 4" :key="i" class="bg-white rounded-lg shadow p-6 flex items-center gap-4">
+          <div class="h-12 w-12 bg-gray-200 rounded-lg animate-pulse" />
+          <div class="space-y-2 flex-1">
+            <div class="h-3 bg-gray-100 rounded animate-pulse w-1/2" />
+            <div class="h-6 bg-gray-200 rounded animate-pulse w-1/3" />
+          </div>
+        </div>
+      </div>
+      <SkeletonLoader variant="table" :rows="5" :columns="4" />
+    </div>
 
     <template v-else>
       <!-- Case Stats -->

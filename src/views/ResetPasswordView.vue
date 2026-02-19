@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useNotificationStore } from '../stores/notification'
 import apiClient from '../api/client'
+import PasswordStrength from '../components/PasswordStrength.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -91,6 +92,7 @@ async function handleSubmit() {
                 class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 placeholder="At least 6 characters"
               />
+              <PasswordStrength :password="password" />
             </div>
           </div>
 

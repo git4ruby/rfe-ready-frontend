@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 import { useAdminStore } from '../../stores/admin'
 import { useNotificationStore } from '../../stores/notification'
 import {
@@ -341,26 +342,14 @@ function formatDate(dateStr) {
     </div>
 
     <!-- Delete Confirmation -->
-    <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 overflow-y-auto">
-      <div class="flex min-h-full items-center justify-center p-4">
-        <div class="fixed inset-0 bg-gray-500/75 transition-opacity" @click="showDeleteConfirm = false" />
-        <div class="relative w-full max-w-md transform rounded-xl bg-white p-6 shadow-2xl transition-all">
-          <h3 class="text-lg font-semibold text-gray-900">Delete Tenant</h3>
-          <p class="mt-2 text-sm text-gray-500">
-            Are you sure you want to delete "{{ deletingTenant?.name }}"? This will permanently remove all their data including cases, users, and documents. This action cannot be undone.
-          </p>
-          <div class="mt-5 flex items-center justify-end gap-3">
-            <button @click="showDeleteConfirm = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">Cancel</button>
-            <button
-              @click="handleDelete"
-              :disabled="deleting"
-              class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {{ deleting ? 'Deleting...' : 'Delete Tenant' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ConfirmDialog
+      :show="showDeleteConfirm"
+      title="Delete Tenant"
+      :message="`Are you sure you want to delete &quot;${deletingTenant?.name}&quot;? This will permanently remove all their data including cases, users, and documents. This action cannot be undone.`"
+      confirm-label="Delete Tenant"
+      :loading="deleting"
+      @confirm="handleDelete"
+      @cancel="showDeleteConfirm = false"
+    />
   </div>
 </template>

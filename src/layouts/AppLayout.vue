@@ -146,19 +146,15 @@ async function handleLogout() {
     <!-- Main content area -->
     <div class="flex-1 flex flex-col min-w-0">
       <!-- Top bar -->
-      <header class="sticky top-0 z-30 bg-white border-b border-gray-200 h-16 flex items-center px-4 lg:px-6">
+      <!-- Mobile top bar (hamburger only, hidden on desktop) -->
+      <header class="sticky top-0 z-30 bg-white border-b border-gray-200 h-14 flex items-center px-4 lg:hidden">
         <button
-          class="lg:hidden mr-4 text-gray-500 hover:text-gray-700"
+          class="text-gray-500 hover:text-gray-700"
           @click="sidebarOpen = true"
         >
           <Bars3Icon class="h-6 w-6" />
         </button>
-        <div class="flex-1">
-          <!-- Breadcrumb area -->
-          <nav class="text-sm text-gray-500">
-            <span class="text-gray-900 font-medium">{{ route.meta?.title || route.name }}</span>
-          </nav>
-        </div>
+        <span class="ml-3 text-sm font-medium text-gray-900">{{ route.meta?.title || route.name }}</span>
       </header>
 
       <!-- Page content -->

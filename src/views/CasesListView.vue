@@ -5,7 +5,7 @@ import { useNotificationStore } from '../stores/notification'
 import { PlusIcon, MagnifyingGlassIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
-import LoadingSpinner from '../components/LoadingSpinner.vue'
+import SkeletonLoader from '../components/SkeletonLoader.vue'
 import EmptyState from '../components/EmptyState.vue'
 
 const casesStore = useCasesStore()
@@ -84,8 +84,8 @@ watch(
       </div>
     </div>
 
-    <!-- Loading -->
-    <LoadingSpinner v-if="casesStore.loading" />
+    <!-- Loading skeleton -->
+    <SkeletonLoader v-if="casesStore.loading" variant="table" :rows="6" :columns="5" />
 
     <!-- Empty state -->
     <EmptyState

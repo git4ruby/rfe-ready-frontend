@@ -10,6 +10,8 @@ import {
   PencilIcon,
 } from '@heroicons/vue/24/outline'
 import LoadingSpinner from '../../components/LoadingSpinner.vue'
+import Breadcrumb from '../../components/Breadcrumb.vue'
+import PasswordStrength from '../../components/PasswordStrength.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -132,11 +134,11 @@ function formatDate(dateStr) {
 
 <template>
   <div>
-    <!-- Back link -->
-    <button @click="router.push('/platform/tenants')" class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-4">
-      <ArrowLeftIcon class="h-4 w-4" />
-      Back to Tenants
-    </button>
+    <!-- Breadcrumb -->
+    <Breadcrumb :items="[
+      { label: 'Tenants', to: '/platform/tenants' },
+      { label: store.currentTenant?.name || 'Tenant Detail' },
+    ]" />
 
     <LoadingSpinner v-if="loading" />
 
@@ -356,6 +358,7 @@ function formatDate(dateStr) {
                 type="password"
                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
               />
+              <PasswordStrength :password="userForm.password" />
               <p v-if="userErrors.password" class="mt-1 text-sm text-red-600">{{ userErrors.password }}</p>
             </div>
             <div>

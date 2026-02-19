@@ -1,5 +1,6 @@
 import axios from 'axios'
 import router from '../router'
+import { useNotificationStore } from '../stores/notification'
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api/v1',
@@ -26,6 +27,8 @@ apiClient.interceptors.response.use(
     if (status === 401) {
       localStorage.removeItem('auth_token')
       localStorage.removeItem('auth_user')
+      const notificationStore = useNotificationStore()
+      notificationStore.show('Your session has expired. Please sign in again.', 'info', 8000)
       router.push('/login')
     } else if (status === 403) {
       router.push('/forbidden')

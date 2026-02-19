@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import { useUsersStore } from '../stores/users'
 import { useNotificationStore } from '../stores/notification'
 import { useAuthStore } from '../stores/auth'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 import {
   UsersIcon,
   PlusIcon,
@@ -11,8 +12,9 @@ import {
   EnvelopeIcon,
   NoSymbolIcon,
 } from '@heroicons/vue/24/outline'
-import LoadingSpinner from '../components/LoadingSpinner.vue'
+import SkeletonLoader from '../components/SkeletonLoader.vue'
 import EmptyState from '../components/EmptyState.vue'
+import PasswordStrength from '../components/PasswordStrength.vue'
 
 const store = useUsersStore()
 const notify = useNotificationStore()
@@ -143,9 +145,22 @@ function validateEdit() {
   return Object.keys(errs).length === 0
 }
 
+// Confirm status change to inactive via edit form
+const showEditDeactivateConfirm = ref(false)
+
 async function handleEdit() {
   if (!validateEdit()) return
 
+  // If changing status to inactive, ask for confirmation first
+  if (editForm.value.status === 'inactive' && editingUser.value?.status !== 'inactive') {
+    showEditDeactivateConfirm.value = true
+    return
+  }
+
+  await saveEdit()
+}
+
+async function saveEdit() {
   saving.value = true
   try {
     const data = { ...editForm.value }
@@ -153,6 +168,7 @@ async function handleEdit() {
     await store.updateUser(editingUser.value.id, data)
     notify.success('User updated successfully.')
     showEditModal.value = false
+    showEditDeactivateConfirm.value = false
   } catch (err) {
     const msg =
       err.response?.data?.errors?.join(', ') ||
@@ -256,7 +272,7 @@ function formatDate(dateStr) {
     </div>
 
     <!-- Loading -->
-    <LoadingSpinner v-if="store.loading" />
+    <SkeletonLoader v-if="store.loading" variant="table" :rows="6" :columns="4" />
 
     <!-- Empty state -->
     <EmptyState
@@ -507,6 +523,7 @@ function formatDate(dateStr) {
                   type="password"
                   class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
+                <PasswordStrength :password="inviteForm.password" />
                 <p v-if="inviteErrors.password" class="mt-1 text-sm text-red-600">{{ inviteErrors.password }}</p>
               </div>
               <div>
@@ -676,32 +693,26 @@ function formatDate(dateStr) {
       </div>
     </div>
 
-    <!-- Deactivate Confirmation Modal -->
-    <div v-if="showDeactivateConfirm" class="fixed inset-0 z-50 overflow-y-auto">
-      <div class="flex min-h-full items-center justify-center p-4">
-        <div class="fixed inset-0 bg-gray-500/75 transition-opacity" @click="showDeactivateConfirm = false" />
-        <div class="relative w-full max-w-md transform rounded-xl bg-white p-6 shadow-2xl transition-all">
-          <h3 class="text-lg font-semibold text-gray-900">Deactivate User</h3>
-          <p class="mt-2 text-sm text-gray-500">
-            Are you sure you want to deactivate <strong>{{ deactivatingUser?.first_name }} {{ deactivatingUser?.last_name }}</strong>? They will no longer be able to log in.
-          </p>
-          <div class="mt-5 flex items-center justify-end gap-3">
-            <button
-              @click="showDeactivateConfirm = false"
-              class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              @click="handleDeactivate"
-              :disabled="deactivating"
-              class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {{ deactivating ? 'Deactivating...' : 'Deactivate' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Deactivate Confirmation (from action button) -->
+    <ConfirmDialog
+      :show="showDeactivateConfirm"
+      title="Deactivate User"
+      :message="`Are you sure you want to deactivate ${deactivatingUser?.first_name} ${deactivatingUser?.last_name}? They will no longer be able to log in.`"
+      confirm-label="Deactivate"
+      :loading="deactivating"
+      @confirm="handleDeactivate"
+      @cancel="showDeactivateConfirm = false"
+    />
+
+    <!-- Deactivate Confirmation (from edit form status change) -->
+    <ConfirmDialog
+      :show="showEditDeactivateConfirm"
+      title="Deactivate User"
+      :message="`Are you sure you want to deactivate ${editingUser?.first_name} ${editingUser?.last_name}? They will no longer be able to log in.`"
+      confirm-label="Deactivate"
+      :loading="saving"
+      @confirm="saveEdit"
+      @cancel="showEditDeactivateConfirm = false"
+    />
   </div>
 </template>

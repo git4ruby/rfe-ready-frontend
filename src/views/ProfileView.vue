@@ -3,7 +3,8 @@ import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useNotificationStore } from '../stores/notification'
 import profileApi from '../api/profile'
-import LoadingSpinner from '../components/LoadingSpinner.vue'
+import SkeletonLoader from '../components/SkeletonLoader.vue'
+import PasswordStrength from '../components/PasswordStrength.vue'
 
 const authStore = useAuthStore()
 const notify = useNotificationStore()
@@ -94,7 +95,7 @@ async function handleChangePassword() {
       <p class="mt-1 text-sm text-gray-500">Manage your personal information and password.</p>
     </div>
 
-    <LoadingSpinner v-if="loading" />
+    <SkeletonLoader v-if="loading" variant="detail" />
 
     <template v-else-if="profile">
       <div class="space-y-6 max-w-2xl">
@@ -184,6 +185,7 @@ async function handleChangePassword() {
                   autocomplete="new-password"
                   class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
                 />
+                <PasswordStrength :password="passwordForm.password" />
                 <p v-if="passwordErrors.password" class="mt-1 text-sm text-red-600">{{ passwordErrors.password }}</p>
               </div>
               <div>

@@ -2,6 +2,7 @@
 import { ref, onMounted, watch, computed } from 'vue'
 import { useKnowledgeStore } from '../stores/knowledge'
 import { useNotificationStore } from '../stores/notification'
+import ConfirmDialog from '../components/ConfirmDialog.vue'
 import {
   BookOpenIcon,
   PlusIcon,
@@ -15,7 +16,7 @@ import {
   CloudArrowUpIcon,
   CpuChipIcon,
 } from '@heroicons/vue/24/outline'
-import LoadingSpinner from '../components/LoadingSpinner.vue'
+import SkeletonLoader from '../components/SkeletonLoader.vue'
 import EmptyState from '../components/EmptyState.vue'
 
 const store = useKnowledgeStore()
@@ -458,7 +459,7 @@ function statDocTypeColor(key) {
     </div>
 
     <!-- Loading -->
-    <LoadingSpinner v-if="store.loading && !showModal" />
+    <SkeletonLoader v-if="store.loading && !showModal" variant="card" :rows="6" />
 
     <!-- Empty state -->
     <EmptyState
@@ -842,33 +843,16 @@ function statDocTypeColor(key) {
       </div>
     </div>
 
-    <!-- Delete Confirmation Modal -->
-    <div v-if="showDeleteConfirm" class="fixed inset-0 z-50 overflow-y-auto">
-      <div class="flex min-h-full items-center justify-center p-4">
-        <div class="fixed inset-0 bg-gray-500/75 transition-opacity" @click="showDeleteConfirm = false" />
-        <div class="relative w-full max-w-md transform rounded-xl bg-white p-6 shadow-2xl transition-all">
-          <h3 class="text-lg font-semibold text-gray-900">Delete Document</h3>
-          <p class="mt-2 text-sm text-gray-500">
-            Are you sure you want to delete "{{ deletingDoc?.title }}"? This action cannot be undone.
-          </p>
-          <div class="mt-5 flex items-center justify-end gap-3">
-            <button
-              @click="showDeleteConfirm = false"
-              class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              @click="handleDelete"
-              :disabled="deleting"
-              class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              {{ deleting ? 'Deleting...' : 'Delete' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- Delete Confirmation -->
+    <ConfirmDialog
+      :show="showDeleteConfirm"
+      title="Delete Document"
+      :message="`Are you sure you want to delete &quot;${deletingDoc?.title}&quot;? This action cannot be undone.`"
+      confirm-label="Delete"
+      :loading="deleting"
+      @confirm="handleDelete"
+      @cancel="showDeleteConfirm = false"
+    />
 
     <!-- Bulk Upload Modal -->
     <div v-if="showBulkModal" class="fixed inset-0 z-50 overflow-y-auto">

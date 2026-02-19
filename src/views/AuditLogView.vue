@@ -8,7 +8,7 @@ import {
   ChevronUpIcon,
   FunnelIcon,
 } from '@heroicons/vue/24/outline'
-import LoadingSpinner from '../components/LoadingSpinner.vue'
+import SkeletonLoader from '../components/SkeletonLoader.vue'
 import EmptyState from '../components/EmptyState.vue'
 
 const store = useAuditStore()
@@ -132,8 +132,8 @@ function formatFieldName(field) {
       </div>
     </div>
 
-    <!-- Loading -->
-    <LoadingSpinner v-if="store.loading" />
+    <!-- Loading skeleton -->
+    <SkeletonLoader v-if="store.loading" variant="table" :rows="8" :columns="5" />
 
     <!-- Empty state -->
     <EmptyState
