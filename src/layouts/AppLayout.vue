@@ -57,7 +57,7 @@ async function handleLogout() {
     <!-- Sidebar -->
     <aside
       :class="[
-        'fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto',
+        'fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white flex flex-col transition-transform duration-200 ease-in-out lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen lg:z-auto',
         sidebarOpen ? 'translate-x-0' : '-translate-x-full',
       ]"
     >
@@ -78,7 +78,7 @@ async function handleLogout() {
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto min-h-0">
         <router-link
           v-for="item in navigation"
           :key="item.name"
@@ -128,10 +128,10 @@ async function handleLogout() {
               {{ authStore.user?.first_name?.[0] || 'U' }}{{ authStore.user?.last_name?.[0] || '' }}
             </span>
           </div>
-          <div class="flex-1 min-w-0">
+          <router-link to="/profile" class="flex-1 min-w-0 hover:opacity-80 transition-opacity">
             <p class="text-sm font-medium text-white truncate">{{ authStore.fullName }}</p>
             <p class="text-xs text-gray-400 truncate">{{ authStore.user?.role }}</p>
-          </div>
+          </router-link>
           <button
             @click="handleLogout"
             class="shrink-0 text-gray-400 hover:text-white transition-colors"

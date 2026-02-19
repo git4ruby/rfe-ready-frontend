@@ -18,14 +18,17 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
-// Response interceptor — handle 401
+// Response interceptor — handle auth and server errors
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    const status = error.response?.status
+    if (status === 401) {
       localStorage.removeItem('auth_token')
       localStorage.removeItem('auth_user')
       router.push('/login')
+    } else if (status === 403) {
+      router.push('/forbidden')
     }
     return Promise.reject(error)
   }

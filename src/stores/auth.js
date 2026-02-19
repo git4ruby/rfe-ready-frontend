@@ -39,6 +39,13 @@ export const useAuthStore = defineStore('auth', () => {
     return response.data
   }
 
+  function updateUser(data) {
+    if (user.value) {
+      user.value = { ...user.value, ...data }
+      localStorage.setItem('auth_user', JSON.stringify(user.value))
+    }
+  }
+
   async function logout() {
     try {
       await apiClient.delete('/users/sign_out')
@@ -63,5 +70,6 @@ export const useAuthStore = defineStore('auth', () => {
     fullName,
     login,
     logout,
+    updateUser,
   }
 })

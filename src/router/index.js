@@ -9,6 +9,23 @@ const routes = [
     meta: { guest: true },
   },
   {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: () => import('../views/ForgotPasswordView.vue'),
+    meta: { guest: true },
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: () => import('../views/ResetPasswordView.vue'),
+    meta: { guest: true },
+  },
+  {
+    path: '/forbidden',
+    name: 'Forbidden',
+    component: () => import('../views/ForbiddenView.vue'),
+  },
+  {
     path: '/platform',
     component: () => import('../layouts/AdminLayout.vue'),
     meta: { requiresAuth: true, requiresSuperAdmin: true },
@@ -30,6 +47,12 @@ const routes = [
         name: 'AdminTenantDetail',
         component: () => import('../views/admin/AdminTenantDetailView.vue'),
         meta: { title: 'Tenant Detail' },
+      },
+      {
+        path: 'profile',
+        name: 'AdminProfile',
+        component: () => import('../views/ProfileView.vue'),
+        meta: { title: 'Profile' },
       },
     ],
   },
@@ -82,7 +105,18 @@ const routes = [
         component: () => import('../views/AuditLogView.vue'),
         meta: { requiresAdmin: true },
       },
+      {
+        path: 'profile',
+        name: 'Profile',
+        component: () => import('../views/ProfileView.vue'),
+        meta: { title: 'Profile' },
+      },
     ],
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: () => import('../views/NotFoundView.vue'),
   },
 ]
 
