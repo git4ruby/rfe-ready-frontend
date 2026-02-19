@@ -15,6 +15,7 @@ import {
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import EmptyState from '../components/EmptyState.vue'
 import PasswordStrength from '../components/PasswordStrength.vue'
+import PaginationBar from '../components/PaginationBar.vue'
 
 const store = useUsersStore()
 const notify = useNotificationStore()
@@ -395,32 +396,12 @@ function formatDate(dateStr) {
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div
-        v-if="store.pagination?.total_pages > 1"
-        class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200"
-      >
-        <div class="text-sm text-gray-500">
-          Page {{ store.pagination.current_page }} of {{ store.pagination.total_pages }}
-          ({{ store.pagination.total_count }} total)
-        </div>
-        <div class="flex gap-2">
-          <button
-            :disabled="store.pagination.current_page <= 1"
-            @click="goToPage(store.pagination.current_page - 1)"
-            class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Previous
-          </button>
-          <button
-            :disabled="store.pagination.current_page >= store.pagination.total_pages"
-            @click="goToPage(store.pagination.current_page + 1)"
-            class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      <PaginationBar
+        :current-page="store.pagination?.current_page || 1"
+        :total-pages="store.pagination?.total_pages || 1"
+        :total-count="store.pagination?.total_count"
+        @page-change="goToPage"
+      />
     </div>
 
     <!-- Invite User Modal -->

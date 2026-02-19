@@ -7,6 +7,7 @@ import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import EmptyState from '../components/EmptyState.vue'
+import PaginationBar from '../components/PaginationBar.vue'
 
 const casesStore = useCasesStore()
 const notify = useNotificationStore()
@@ -189,32 +190,12 @@ watch(
         </table>
       </div>
 
-      <!-- Pagination -->
-      <div
-        v-if="casesStore.pagination?.total_pages > 1"
-        class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200"
-      >
-        <div class="text-sm text-gray-500">
-          Page {{ casesStore.pagination.current_page }} of {{ casesStore.pagination.total_pages }}
-          ({{ casesStore.pagination.total_count }} total)
-        </div>
-        <div class="flex gap-2">
-          <button
-            :disabled="casesStore.pagination.current_page <= 1"
-            @click="goToPage(casesStore.pagination.current_page - 1)"
-            class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Previous
-          </button>
-          <button
-            :disabled="casesStore.pagination.current_page >= casesStore.pagination.total_pages"
-            @click="goToPage(casesStore.pagination.current_page + 1)"
-            class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-          >
-            Next
-          </button>
-        </div>
-      </div>
+      <PaginationBar
+        :current-page="casesStore.pagination?.current_page || 1"
+        :total-pages="casesStore.pagination?.total_pages || 1"
+        :total-count="casesStore.pagination?.total_count"
+        @page-change="goToPage"
+      />
     </div>
   </div>
 </template>

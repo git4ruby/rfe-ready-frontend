@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
+import PaginationBar from '../../components/PaginationBar.vue'
 import { useAdminStore } from '../../stores/admin'
 import { useNotificationStore } from '../../stores/notification'
 import {
@@ -256,31 +257,13 @@ function formatDate(dateStr) {
           </table>
         </div>
 
-        <!-- Pagination -->
-        <div
-          v-if="store.tenantsPagination?.total_pages > 1"
-          class="bg-white px-6 py-3 flex items-center justify-between border-t border-gray-200"
-        >
-          <div class="text-sm text-gray-500">
-            Page {{ store.tenantsPagination.current_page }} of {{ store.tenantsPagination.total_pages }}
-          </div>
-          <div class="flex gap-2">
-            <button
-              :disabled="store.tenantsPagination.current_page <= 1"
-              @click="loadTenants(store.tenantsPagination.current_page - 1)"
-              class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Previous
-            </button>
-            <button
-              :disabled="store.tenantsPagination.current_page >= store.tenantsPagination.total_pages"
-              @click="loadTenants(store.tenantsPagination.current_page + 1)"
-              class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next
-            </button>
-          </div>
-        </div>
+        <PaginationBar
+          :current-page="store.tenantsPagination?.current_page || 1"
+          :total-pages="store.tenantsPagination?.total_pages || 1"
+          :total-count="store.tenantsPagination?.total_count"
+          active-class="bg-red-600 text-white"
+          @page-change="loadTenants"
+        />
       </div>
     </template>
 
