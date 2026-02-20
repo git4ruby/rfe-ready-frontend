@@ -186,76 +186,110 @@ function formatDate(dateStr) {
     <LoadingSpinner v-if="store.tenantsLoading" />
 
     <template v-else>
-      <!-- Table -->
-      <div class="bg-white shadow rounded-lg overflow-hidden">
-        <div v-if="store.tenants.length === 0" class="p-6 text-center text-sm text-gray-400">
-          No tenants found.
+      <div v-if="store.tenants.length === 0" class="bg-white shadow rounded-lg p-6 text-center text-sm text-gray-400">
+        No tenants found.
+      </div>
+
+      <div v-else>
+        <!-- Mobile card layout -->
+        <div class="md:hidden space-y-3">
+          <div
+            v-for="tenant in store.tenants"
+            :key="'m-' + tenant.id"
+            class="bg-white shadow rounded-lg p-4"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div class="min-w-0">
+                <router-link :to="`/platform/tenants/${tenant.id}`" class="text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+                  {{ tenant.name }}
+                </router-link>
+                <p class="text-xs text-gray-500 font-mono mt-0.5">{{ tenant.slug }}</p>
+              </div>
+              <span :class="['inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize', statusColor(tenant.status)]">
+                {{ tenant.status }}
+              </span>
+            </div>
+            <div class="flex items-center gap-3 mt-3">
+              <span :class="['inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize', planColor(tenant.plan)]">
+                {{ tenant.plan }}
+              </span>
+              <span class="text-xs text-gray-400">{{ formatDate(tenant.created_at) }}</span>
+            </div>
+            <div class="flex items-center justify-end gap-3 mt-3 pt-3 border-t border-gray-100">
+              <router-link :to="`/platform/tenants/${tenant.id}`" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">View</router-link>
+              <button @click="confirmDelete(tenant)" class="text-sm font-medium text-red-600 hover:text-red-500">Delete</button>
+            </div>
+          </div>
         </div>
-        <div v-else class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slug</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plan</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
-                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="tenant in store.tenants" :key="tenant.id" class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <router-link :to="`/platform/tenants/${tenant.id}`" class="text-indigo-600 hover:text-indigo-500 hover:underline">
-                    {{ tenant.name }}
-                  </router-link>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{{ tenant.slug }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <select
-                    :value="tenant.plan"
-                    @change="handleChangePlan(tenant, $event.target.value)"
-                    class="rounded-md border-gray-300 text-xs py-1 focus:border-red-500 focus:ring-red-500"
-                  >
-                    <option value="trial">Trial</option>
-                    <option value="basic">Basic</option>
-                    <option value="professional">Professional</option>
-                    <option value="enterprise">Enterprise</option>
-                  </select>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <select
-                    :value="tenant.status"
-                    @change="handleChangeStatus(tenant, $event.target.value)"
-                    class="rounded-md border-gray-300 text-xs py-1 focus:border-red-500 focus:ring-red-500"
-                  >
-                    <option value="active">Active</option>
-                    <option value="suspended">Suspended</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(tenant.created_at) }}</td>
-                <td class="px-6 py-4 whitespace-nowrap text-center">
-                  <div class="flex items-center justify-center gap-2">
-                    <router-link
-                      :to="`/platform/tenants/${tenant.id}`"
-                      class="text-indigo-600 hover:text-indigo-500 transition-colors"
-                      title="View Details"
-                    >
-                      <EyeIcon class="h-4 w-4" />
+
+        <!-- Desktop table -->
+        <div class="hidden md:block bg-white shadow rounded-lg overflow-hidden">
+          <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
+                  <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Slug</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Plan</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Created</th>
+                  <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white divide-y divide-gray-200">
+                <tr v-for="tenant in store.tenants" :key="tenant.id" class="hover:bg-gray-50">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <router-link :to="`/platform/tenants/${tenant.id}`" class="text-indigo-600 hover:text-indigo-500 hover:underline">
+                      {{ tenant.name }}
                     </router-link>
-                    <button
-                      @click="confirmDelete(tenant)"
-                      class="text-red-600 hover:text-red-500 transition-colors"
-                      title="Delete"
+                  </td>
+                  <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-mono">{{ tenant.slug }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <select
+                      :value="tenant.plan"
+                      @change="handleChangePlan(tenant, $event.target.value)"
+                      class="rounded-md border-gray-300 text-xs py-1 focus:border-red-500 focus:ring-red-500"
                     >
-                      <TrashIcon class="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                      <option value="trial">Trial</option>
+                      <option value="basic">Basic</option>
+                      <option value="professional">Professional</option>
+                      <option value="enterprise">Enterprise</option>
+                    </select>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <select
+                      :value="tenant.status"
+                      @change="handleChangeStatus(tenant, $event.target.value)"
+                      class="rounded-md border-gray-300 text-xs py-1 focus:border-red-500 focus:ring-red-500"
+                    >
+                      <option value="active">Active</option>
+                      <option value="suspended">Suspended</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </td>
+                  <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(tenant.created_at) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex items-center justify-center gap-2">
+                      <router-link
+                        :to="`/platform/tenants/${tenant.id}`"
+                        class="text-indigo-600 hover:text-indigo-500 transition-colors"
+                        title="View Details"
+                      >
+                        <EyeIcon class="h-4 w-4" />
+                      </router-link>
+                      <button
+                        @click="confirmDelete(tenant)"
+                        class="text-red-600 hover:text-red-500 transition-colors"
+                        title="Delete"
+                      >
+                        <TrashIcon class="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
         <PaginationBar
@@ -264,6 +298,7 @@ function formatDate(dateStr) {
           :total-count="store.tenantsPagination?.total_count"
           active-class="bg-red-600 text-white"
           @page-change="loadTenants"
+          class="mt-3 md:mt-0"
         />
       </div>
     </template>

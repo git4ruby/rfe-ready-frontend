@@ -28,6 +28,8 @@ import {
   ExclamationTriangleIcon,
   PlusIcon,
   Bars3Icon,
+  CheckCircleIcon,
+  ClockIcon,
 } from '@heroicons/vue/24/outline'
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
@@ -98,6 +100,36 @@ async function saveEdit() {
   }
 }
 
+// Inline editing
+const inlineField = ref(null)
+const inlineValue = ref('')
+const inlineSaving = ref(false)
+
+function startInlineEdit(field, value) {
+  inlineField.value = field
+  inlineValue.value = value || ''
+}
+
+function cancelInlineEdit() {
+  inlineField.value = null
+  inlineValue.value = ''
+}
+
+async function saveInlineEdit() {
+  if (!inlineField.value) return
+  inlineSaving.value = true
+  try {
+    await casesStore.updateCase(props.id, { [inlineField.value]: inlineValue.value })
+    notify.success('Updated.')
+  } catch (err) {
+    notify.error(err.response?.data?.error || 'Failed to update.')
+  } finally {
+    inlineSaving.value = false
+    inlineField.value = null
+    inlineValue.value = ''
+  }
+}
+
 const tabs = [
   { key: 'overview', label: 'Overview', icon: DocumentTextIcon },
   { key: 'documents', label: 'Documents', icon: DocumentArrowUpIcon },
@@ -106,6 +138,7 @@ const tabs = [
   { key: 'drafts', label: 'Drafts', icon: PencilSquareIcon },
   { key: 'exhibits', label: 'Exhibits', icon: PhotoIcon },
   { key: 'export', label: 'Export', icon: ArrowDownTrayIcon },
+  { key: 'activity', label: 'Activity', icon: ClockIcon },
 ]
 
 // Load data when switching tabs
@@ -116,6 +149,7 @@ watch(activeTab, (tab) => {
   if (tab === 'drafts') loadDrafts()
   if (tab === 'exhibits') loadExhibits()
   if (tab === 'export') loadExportData()
+  if (tab === 'activity') loadActivity()
 })
 
 // Analysis
@@ -155,6 +189,49 @@ const generatingDrafts = ref(false)
 const editingDraftId = ref(null)
 const editContent = ref('')
 const savingDraft = ref(false)
+const draftAutoSaveStatus = ref('idle') // 'idle' | 'saving' | 'saved'
+let draftAutoSaveTimer = null
+let draftAutoSaveStatusTimer = null
+
+function draftStorageKey(draftId) {
+  return `rfe_draft_response_${props.id}_${draftId}`
+}
+
+function saveDraftToLocal(draftId) {
+  draftAutoSaveStatus.value = 'saving'
+  try {
+    localStorage.setItem(draftStorageKey(draftId), JSON.stringify({
+      content: editContent.value,
+      saved_at: new Date().toISOString(),
+    }))
+    draftAutoSaveStatus.value = 'saved'
+    clearTimeout(draftAutoSaveStatusTimer)
+    draftAutoSaveStatusTimer = setTimeout(() => { draftAutoSaveStatus.value = 'idle' }, 2000)
+  } catch {
+    draftAutoSaveStatus.value = 'idle'
+  }
+}
+
+function clearDraftLocal(draftId) {
+  localStorage.removeItem(draftStorageKey(draftId))
+  draftAutoSaveStatus.value = 'idle'
+}
+
+function readDraftLocal(draftId) {
+  try {
+    const raw = localStorage.getItem(draftStorageKey(draftId))
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
+}
+
+watch(editContent, () => {
+  if (!editingDraftId.value) return
+  clearTimeout(draftAutoSaveTimer)
+  draftAutoSaveTimer = setTimeout(() => saveDraftToLocal(editingDraftId.value), 2000)
+})
 
 async function loadDrafts() {
   draftsLoading.value = true
@@ -172,7 +249,6 @@ async function handleGenerateDrafts() {
   try {
     await casesStore.generateAllDrafts(props.id)
     notify.success('Draft generation started. Refreshing in a few seconds...')
-    // Poll for drafts to appear
     setTimeout(async () => {
       await casesStore.fetchDrafts(props.id)
       generatingDrafts.value = false
@@ -183,21 +259,46 @@ async function handleGenerateDrafts() {
   }
 }
 
+const draftHasLocalSave = ref(false)
+
 function startEditing(draft) {
   editingDraftId.value = draft.id
-  editContent.value = draft.edited_content || draft.ai_generated_content || ''
+  const saved = readDraftLocal(draft.id)
+  if (saved?.content) {
+    editContent.value = saved.content
+    draftHasLocalSave.value = true
+  } else {
+    editContent.value = draft.edited_content || draft.ai_generated_content || ''
+    draftHasLocalSave.value = false
+  }
+}
+
+function discardLocalDraft() {
+  if (editingDraftId.value) {
+    clearDraftLocal(editingDraftId.value)
+    const draft = casesStore.drafts.find(d => d.id === editingDraftId.value)
+    if (draft) {
+      editContent.value = draft.edited_content || draft.ai_generated_content || ''
+    }
+    draftHasLocalSave.value = false
+  }
 }
 
 function cancelEditing() {
+  if (editingDraftId.value) clearDraftLocal(editingDraftId.value)
   editingDraftId.value = null
   editContent.value = ''
+  draftHasLocalSave.value = false
+  draftAutoSaveStatus.value = 'idle'
 }
 
 async function saveDraft(draftId) {
   savingDraft.value = true
   try {
     await casesStore.updateDraft(props.id, draftId, editContent.value)
+    clearDraftLocal(draftId)
     editingDraftId.value = null
+    draftHasLocalSave.value = false
     notify.success('Draft saved.')
   } catch (err) {
     notify.error('Failed to save draft.')
@@ -343,13 +444,57 @@ async function loadExportData() {
   }
 }
 
+const exportSuccess = ref(false)
+
 async function handleExport() {
   try {
     await casesStore.exportCase(props.id, exportFormat.value)
+    exportSuccess.value = true
+    setTimeout(() => { exportSuccess.value = false }, 3000)
     notify.success(`${exportFormat.value.toUpperCase()} exported successfully.`)
   } catch (err) {
     notify.error(err.response?.data?.error || 'Export failed. Please try again.')
   }
+}
+
+// Activity
+const activityLoading = ref(false)
+
+async function loadActivity() {
+  activityLoading.value = true
+  try {
+    await casesStore.fetchActivity(props.id)
+  } catch (err) {
+    notify.error('Failed to load activity.')
+  } finally {
+    activityLoading.value = false
+  }
+}
+
+function formatFieldName(field) {
+  return field
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
+function activityIcon(action) {
+  if (action === 'create') return { color: 'bg-green-500', ring: 'ring-green-100' }
+  if (action === 'destroy') return { color: 'bg-red-500', ring: 'ring-red-100' }
+  return { color: 'bg-blue-500', ring: 'ring-blue-100' }
+}
+
+function formatActivityTime(timestamp) {
+  const date = new Date(timestamp)
+  const now = new Date()
+  const diffMs = now - date
+  const diffMins = Math.floor(diffMs / 60000)
+  if (diffMins < 1) return 'Just now'
+  if (diffMins < 60) return `${diffMins}m ago`
+  const diffHrs = Math.floor(diffMins / 60)
+  if (diffHrs < 24) return `${diffHrs}h ago`
+  const diffDays = Math.floor(diffHrs / 24)
+  if (diffDays < 7) return `${diffDays}d ago`
+  return date.toLocaleDateString()
 }
 
 // Checklist
@@ -782,15 +927,16 @@ async function handleDelete() {
               </div>
             </div>
 
-            <!-- Read-only mode -->
+            <!-- Read-only mode with inline editing -->
             <div v-else>
-              <div class="flex items-center justify-end mb-4">
+              <div class="flex items-center justify-between mb-4">
+                <p class="text-xs text-gray-400">Click any field value to edit inline</p>
                 <button
                   @click="startEditMode"
                   class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
                 >
                   <PencilSquareIcon class="h-4 w-4" />
-                  Edit
+                  Edit All
                 </button>
               </div>
 
@@ -803,13 +949,25 @@ async function handleDelete() {
                   <dl class="space-y-3">
                     <div>
                       <dt class="text-sm font-medium text-gray-500">Case Number</dt>
-                      <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.case_number }}</dd>
+                      <dd v-if="inlineField === 'case_number'" class="mt-0.5">
+                        <input v-model="inlineValue" type="text" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
+                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                      </dd>
+                      <dd v-else class="mt-0.5 text-sm text-gray-900 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('case_number', caseData.case_number)">
+                        {{ caseData.case_number }}
+                        <PencilSquareIcon class="inline h-3.5 w-3.5 text-gray-300 group-hover:text-indigo-400 ml-1" />
+                      </dd>
                     </div>
                     <div>
                       <dt class="text-sm font-medium text-gray-500">USCIS Receipt Number</dt>
-                      <dd class="mt-0.5 text-sm text-gray-900 flex items-center gap-1">
+                      <dd v-if="inlineField === 'uscis_receipt_number'" class="mt-0.5">
+                        <input v-model="inlineValue" type="text" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
+                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                      </dd>
+                      <dd v-else class="mt-0.5 text-sm text-gray-900 flex items-center gap-1 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('uscis_receipt_number', caseData.uscis_receipt_number)">
                         {{ caseData.uscis_receipt_number || '--' }}
-                        <CopyButton v-if="caseData.uscis_receipt_number" :text="caseData.uscis_receipt_number" label="Copy receipt number" />
+                        <CopyButton v-if="caseData.uscis_receipt_number" :text="caseData.uscis_receipt_number" label="Copy receipt number" @click.stop />
+                        <PencilSquareIcon class="inline h-3.5 w-3.5 text-gray-300 group-hover:text-indigo-400 ml-1" />
                       </dd>
                     </div>
                     <div>
@@ -833,11 +991,25 @@ async function handleDelete() {
                   <dl class="space-y-3">
                     <div>
                       <dt class="text-sm font-medium text-gray-500">Petitioner</dt>
-                      <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.petitioner_name }}</dd>
+                      <dd v-if="inlineField === 'petitioner_name'" class="mt-0.5">
+                        <input v-model="inlineValue" type="text" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
+                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                      </dd>
+                      <dd v-else class="mt-0.5 text-sm text-gray-900 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('petitioner_name', caseData.petitioner_name)">
+                        {{ caseData.petitioner_name }}
+                        <PencilSquareIcon class="inline h-3.5 w-3.5 text-gray-300 group-hover:text-indigo-400 ml-1" />
+                      </dd>
                     </div>
                     <div>
                       <dt class="text-sm font-medium text-gray-500">Beneficiary</dt>
-                      <dd class="mt-0.5 text-sm text-gray-900">{{ caseData.beneficiary_name }}</dd>
+                      <dd v-if="inlineField === 'beneficiary_name'" class="mt-0.5">
+                        <input v-model="inlineValue" type="text" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
+                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                      </dd>
+                      <dd v-else class="mt-0.5 text-sm text-gray-900 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('beneficiary_name', caseData.beneficiary_name)">
+                        {{ caseData.beneficiary_name }}
+                        <PencilSquareIcon class="inline h-3.5 w-3.5 text-gray-300 group-hover:text-indigo-400 ml-1" />
+                      </dd>
                     </div>
                     <div>
                       <dt class="text-sm font-medium text-gray-500">Attorney</dt>
@@ -860,18 +1032,28 @@ async function handleDelete() {
                   <dl class="space-y-3">
                     <div>
                       <dt class="text-sm font-medium text-gray-500">RFE Received Date</dt>
-                      <dd class="mt-0.5 text-sm text-gray-900">
+                      <dd v-if="inlineField === 'rfe_received_date'" class="mt-0.5">
+                        <input v-model="inlineValue" type="date" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
+                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                      </dd>
+                      <dd v-else class="mt-0.5 text-sm text-gray-900 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('rfe_received_date', caseData.rfe_received_date)">
                         {{ caseData.rfe_received_date || '--' }}
+                        <PencilSquareIcon class="inline h-3.5 w-3.5 text-gray-300 group-hover:text-indigo-400 ml-1" />
                       </dd>
                     </div>
                     <div>
                       <dt class="text-sm font-medium text-gray-500">RFE Deadline</dt>
-                      <dd class="mt-1 flex items-center gap-2">
-                        <span class="text-sm text-gray-900">{{ caseData.rfe_deadline || '--' }}</span>
+                      <dd v-if="inlineField === 'rfe_deadline'" class="mt-0.5">
+                        <input v-model="inlineValue" type="date" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
+                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                      </dd>
+                      <dd v-else class="mt-1 flex items-center gap-2 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('rfe_deadline', caseData.rfe_deadline)">
+                        <span class="text-sm text-gray-900 group-hover:text-indigo-600">{{ caseData.rfe_deadline || '--' }}</span>
                         <DeadlineIndicator
                           v-if="caseData.rfe_deadline"
                           :deadline="caseData.rfe_deadline"
                         />
+                        <PencilSquareIcon class="inline h-3.5 w-3.5 text-gray-300 group-hover:text-indigo-400" />
                       </dd>
                     </div>
                     <div>
@@ -884,12 +1066,17 @@ async function handleDelete() {
                 </div>
 
                 <!-- Notes -->
-                <div class="space-y-4">
+                <div class="space-y-4 sm:col-span-2">
                   <h3 class="text-lg font-semibold text-gray-900 border-b border-gray-200 pb-2">
                     Notes
                   </h3>
-                  <p class="text-sm text-gray-700 whitespace-pre-wrap">
-                    {{ caseData.notes || 'No notes added.' }}
+                  <div v-if="inlineField === 'notes'">
+                    <textarea v-model="inlineValue" rows="4" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
+                    <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                  </div>
+                  <p v-else class="text-sm text-gray-700 whitespace-pre-wrap cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('notes', caseData.notes)">
+                    {{ caseData.notes || 'No notes added. Click to add.' }}
+                    <PencilSquareIcon class="inline h-3.5 w-3.5 text-gray-300 group-hover:text-indigo-400 ml-1" />
                   </p>
                 </div>
               </div>
@@ -1305,25 +1492,36 @@ async function handleDelete() {
                   <div class="p-4">
                     <!-- Editing mode -->
                     <div v-if="editingDraftId === draft.id">
+                      <!-- Restored from local draft banner -->
+                      <div v-if="draftHasLocalSave" class="mb-3 rounded-lg bg-amber-50 border border-amber-200 p-3 flex items-center justify-between">
+                        <p class="text-sm text-amber-800">Restored from unsaved draft.</p>
+                        <button @click="discardLocalDraft" class="text-sm font-medium text-amber-700 hover:text-amber-900">Discard &amp; reset</button>
+                      </div>
                       <textarea
                         v-model="editContent"
                         rows="16"
                         class="w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 font-mono"
                       />
-                      <div class="mt-3 flex justify-end gap-2">
-                        <button
-                          @click="cancelEditing"
-                          class="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          @click="saveDraft(draft.id)"
-                          :disabled="savingDraft"
-                          class="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
-                        >
-                          {{ savingDraft ? 'Saving...' : 'Save' }}
-                        </button>
+                      <div class="mt-3 flex items-center justify-between">
+                        <div class="text-xs text-gray-400">
+                          <span v-if="draftAutoSaveStatus === 'saving'">Saving draft...</span>
+                          <span v-else-if="draftAutoSaveStatus === 'saved'" class="text-green-600">Draft auto-saved</span>
+                        </div>
+                        <div class="flex gap-2">
+                          <button
+                            @click="cancelEditing"
+                            class="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            @click="saveDraft(draft.id)"
+                            :disabled="savingDraft"
+                            class="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
+                          >
+                            {{ savingDraft ? 'Saving...' : 'Save' }}
+                          </button>
+                        </div>
                       </div>
                     </div>
 
@@ -1637,15 +1835,25 @@ async function handleDelete() {
                 </div>
 
                 <!-- Download button -->
-                <button
-                  @click="handleExport"
-                  :disabled="casesStore.exporting || casesStore.rfeSections.length === 0"
-                  class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
-                  <ArrowDownTrayIcon v-if="!casesStore.exporting" class="h-5 w-5" />
-                  <ArrowPathIcon v-else class="h-5 w-5 animate-spin" />
-                  {{ casesStore.exporting ? 'Generating...' : `Download ${exportFormat.toUpperCase()}` }}
-                </button>
+                <div class="space-y-2">
+                  <button
+                    v-if="!exportSuccess"
+                    @click="handleExport"
+                    :disabled="casesStore.exporting || casesStore.rfeSections.length === 0"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <ArrowDownTrayIcon v-if="!casesStore.exporting" class="h-5 w-5" />
+                    <ArrowPathIcon v-else class="h-5 w-5 animate-spin" />
+                    {{ casesStore.exportProgress === 'preparing' ? 'Preparing...' : casesStore.exportProgress === 'generating' ? 'Generating document...' : casesStore.exportProgress === 'downloading' ? 'Downloading...' : `Download ${exportFormat.toUpperCase()}` }}
+                  </button>
+                  <div v-else class="inline-flex items-center gap-2 px-6 py-3 bg-green-50 text-green-700 font-medium rounded-lg border border-green-200">
+                    <CheckCircleIcon class="h-5 w-5 text-green-500" />
+                    Downloaded successfully!
+                  </div>
+                  <div v-if="casesStore.exporting" class="w-64 bg-gray-200 rounded-full h-1.5 overflow-hidden">
+                    <div class="bg-indigo-600 h-1.5 rounded-full animate-pulse" style="width: 100%" />
+                  </div>
+                </div>
               </div>
 
               <!-- Export contents preview -->
@@ -1677,6 +1885,92 @@ async function handleDelete() {
               <div v-if="currentCase?.exported_at" class="text-sm text-gray-500">
                 Last exported: {{ new Date(currentCase.exported_at).toLocaleString() }}
               </div>
+            </div>
+          </div>
+
+          <!-- Activity tab -->
+          <div v-else-if="activeTab === 'activity'">
+            <LoadingSpinner v-if="activityLoading && casesStore.activityLogs.length === 0" />
+
+            <div v-else-if="casesStore.activityLogs.length > 0">
+              <h3 class="text-lg font-semibold text-gray-900 mb-6">Activity Timeline</h3>
+
+              <div class="relative">
+                <!-- Connecting line -->
+                <div class="absolute left-4 top-2 bottom-2 w-0.5 bg-gray-200" />
+
+                <div class="space-y-6">
+                  <div
+                    v-for="log in casesStore.activityLogs"
+                    :key="log.id"
+                    class="relative flex gap-4"
+                  >
+                    <!-- Circle -->
+                    <div class="relative z-10 flex items-center justify-center shrink-0">
+                      <div
+                        :class="[
+                          'h-8 w-8 rounded-full ring-4 ring-white flex items-center justify-center',
+                          activityIcon(log.action).color,
+                        ]"
+                      >
+                        <PlusIcon v-if="log.action === 'create'" class="h-4 w-4 text-white" />
+                        <PencilSquareIcon v-else-if="log.action === 'update'" class="h-4 w-4 text-white" />
+                        <TrashIcon v-else-if="log.action === 'destroy'" class="h-4 w-4 text-white" />
+                        <ClockIcon v-else class="h-4 w-4 text-white" />
+                      </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1 min-w-0 pb-2">
+                      <div class="flex items-center justify-between gap-2">
+                        <p class="text-sm text-gray-900">
+                          <span class="font-medium">{{ log.user_name || 'System' }}</span>
+                          <span class="text-gray-500">
+                            {{ log.action === 'create' ? 'created' : log.action === 'update' ? 'updated' : log.action === 'destroy' ? 'deleted' : log.action }}
+                          </span>
+                          <span class="font-medium">{{ log.auditable_type?.replace(/([A-Z])/g, ' $1').trim() }}</span>
+                        </p>
+                        <span class="text-xs text-gray-400 whitespace-nowrap" :title="new Date(log.created_at).toLocaleString()">
+                          {{ formatActivityTime(log.created_at) }}
+                        </span>
+                      </div>
+
+                      <!-- Changes diff -->
+                      <div
+                        v-if="log.changes_data && Object.keys(log.changes_data).length > 0"
+                        class="mt-2 rounded-lg border border-gray-200 bg-gray-50 overflow-hidden"
+                      >
+                        <div
+                          v-for="(values, field) in log.changes_data"
+                          :key="field"
+                          class="flex items-start gap-2 px-3 py-2 text-xs border-b border-gray-100 last:border-b-0"
+                        >
+                          <span class="font-medium text-gray-600 shrink-0 w-32">{{ formatFieldName(field) }}</span>
+                          <div class="flex-1 min-w-0">
+                            <template v-if="Array.isArray(values) && values.length === 2">
+                              <span class="text-red-600 line-through">{{ values[0] ?? '(empty)' }}</span>
+                              <span class="mx-1 text-gray-400">&rarr;</span>
+                              <span class="text-green-700">{{ values[1] ?? '(empty)' }}</span>
+                            </template>
+                            <template v-else>
+                              <span class="text-gray-700">{{ values }}</span>
+                            </template>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty state -->
+            <div v-else class="text-center py-12">
+              <ClockIcon class="mx-auto h-12 w-12 text-gray-400" />
+              <h3 class="mt-4 text-lg font-semibold text-gray-900">No Activity Yet</h3>
+              <p class="mt-2 text-sm text-gray-500 max-w-md mx-auto">
+                Changes to this case will appear here as a timeline.
+              </p>
             </div>
           </div>
         </div>

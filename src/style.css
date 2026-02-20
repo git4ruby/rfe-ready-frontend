@@ -1,3 +1,48 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/forms";
 @plugin "@tailwindcss/typography";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ===== Dark Mode Theme ===== */
+/* Override gray scale inside main content area so sidebar stays dark */
+.dark .theme-main {
+  --color-gray-50: oklch(0.145 0.014 265);
+  --color-gray-100: oklch(0.178 0.020 265);
+  --color-gray-200: oklch(0.278 0.033 256.848);
+  --color-gray-300: oklch(0.373 0.034 259.733);
+  --color-gray-400: oklch(0.551 0.027 264.364);
+  --color-gray-500: oklch(0.640 0.024 262);
+  --color-gray-600: oklch(0.707 0.022 261.325);
+  --color-gray-700: oklch(0.820 0.012 260);
+  --color-gray-800: oklch(0.900 0.008 262);
+  --color-gray-900: oklch(0.960 0.004 264);
+  --color-gray-950: oklch(0.985 0.002 247.839);
+  color-scheme: dark;
+}
+
+/* Card & surface backgrounds (bg-white) */
+.dark .theme-main :where(.bg-white) {
+  background-color: oklch(0.205 0.024 265);
+}
+
+/* Ensure bg-white/75 (modal overlay backdrops) work */
+.dark .theme-main :where(.bg-gray-500\/75) {
+  background-color: oklch(0 0 0 / 0.75);
+}
+
+/* Form elements */
+.dark .theme-main :where(
+  input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+  select,
+  textarea
+) {
+  background-color: oklch(0.178 0.020 265);
+  border-color: oklch(0.373 0.034 259.733);
+  color: oklch(0.928 0.006 264.531);
+}
+
+/* Shadows soften in dark mode */
+.dark .theme-main :where(.shadow, .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl) {
+  --tw-shadow-color: oklch(0 0 0 / 0.4);
+}

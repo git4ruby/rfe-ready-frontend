@@ -2,6 +2,7 @@
 import { watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
+import { useThemeStore } from './stores/theme'
 import { useIdleTimer } from './composables/useIdleTimer'
 import { useKeyboardShortcuts } from './composables/useKeyboardShortcuts'
 import KeyboardShortcutsModal from './components/KeyboardShortcutsModal.vue'
@@ -10,6 +11,7 @@ import SessionWarningModal from './components/SessionWarningModal.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+useThemeStore() // Initialize theme (applies dark class from localStorage)
 const { showWarning, secondsLeft, dismissWarning, start, stop } = useIdleTimer()
 const { showHelp } = useKeyboardShortcuts()
 

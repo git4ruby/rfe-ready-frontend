@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCasesStore } from '../stores/cases'
 import { useNotificationStore } from '../stores/notification'
-import { ArrowLeftIcon } from '@heroicons/vue/24/outline'
+import { useAutoSaveDraft } from '../composables/useAutoSaveDraft'
+import { ArrowLeftIcon, CheckIcon } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
 const casesStore = useCasesStore()
@@ -23,6 +24,8 @@ const form = ref({
   notes: '',
 })
 
+const { hasDraft, draftStatus, draftSavedAt, restoreDraft, clearDraft } = useAutoSaveDraft('case_new', form)
+
 function validate() {
   const errs = {}
   if (!form.value.case_number.trim()) errs.case_number = 'Case number is required'
@@ -40,6 +43,7 @@ async function handleSubmit() {
   loading.value = true
   try {
     const newCase = await casesStore.createCase(form.value)
+    clearDraft()
     notify.success('Case created successfully!')
     router.push(`/cases/${newCase.id}`)
   } catch (err) {
@@ -71,6 +75,35 @@ async function handleSubmit() {
     <div class="mb-8">
       <h1 class="text-2xl font-bold text-gray-900">Create New Case</h1>
       <p class="mt-1 text-sm text-gray-500">Fill in the details for the new RFE case.</p>
+    </div>
+
+    <!-- Draft restore banner -->
+    <div
+      v-if="hasDraft"
+      class="mb-4 rounded-lg bg-amber-50 border border-amber-200 p-4 flex items-center justify-between"
+    >
+      <div>
+        <p class="text-sm font-medium text-amber-800">You have an unsaved draft</p>
+        <p v-if="draftSavedAt" class="text-xs text-amber-600 mt-0.5">
+          Saved {{ draftSavedAt.toLocaleString() }}
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <button
+          type="button"
+          @click="hasDraft = false"
+          class="text-sm text-amber-700 hover:text-amber-900 font-medium"
+        >
+          Dismiss
+        </button>
+        <button
+          type="button"
+          @click="restoreDraft"
+          class="rounded-lg bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-500 transition-colors"
+        >
+          Restore Draft
+        </button>
+      </div>
     </div>
 
     <!-- Form -->
@@ -206,7 +239,14 @@ async function handleSubmit() {
       </div>
 
       <!-- Form footer -->
-      <div class="bg-gray-50 px-6 py-4 flex items-center justify-end gap-3 rounded-b-lg border-t border-gray-200">
+      <div class="bg-gray-50 px-6 py-4 flex items-center justify-between rounded-b-lg border-t border-gray-200">
+        <div class="text-xs text-gray-400">
+          <span v-if="draftStatus === 'saving'">Saving draft...</span>
+          <span v-else-if="draftStatus === 'saved'" class="inline-flex items-center gap-1 text-green-600">
+            <CheckIcon class="h-3.5 w-3.5" /> Draft saved
+          </span>
+        </div>
+        <div class="flex items-center gap-3">
         <router-link
           to="/cases"
           class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
@@ -230,6 +270,7 @@ async function handleSubmit() {
           </svg>
           {{ loading ? 'Creating...' : 'Create Case' }}
         </button>
+        </div>
       </div>
     </form>
   </div>

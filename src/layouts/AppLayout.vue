@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { useThemeStore } from '../stores/theme'
 import {
   HomeIcon,
   FolderIcon,
@@ -12,11 +13,14 @@ import {
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
+  SunIcon,
+  MoonIcon,
 } from '@heroicons/vue/24/outline'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const themeStore = useThemeStore()
 
 const sidebarOpen = ref(false)
 
@@ -121,7 +125,7 @@ async function handleLogout() {
       </nav>
 
       <!-- User info -->
-      <div class="border-t border-gray-800 p-4">
+      <div class="border-t border-gray-800 p-4 space-y-3">
         <div class="flex items-center gap-3">
           <div class="h-9 w-9 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
             <span class="text-sm font-medium text-white">
@@ -132,6 +136,14 @@ async function handleLogout() {
             <p class="text-sm font-medium text-white truncate">{{ authStore.fullName }}</p>
             <p class="text-xs text-gray-400 truncate">{{ authStore.user?.role }}</p>
           </router-link>
+          <button
+            @click="themeStore.toggle()"
+            class="shrink-0 text-gray-400 hover:text-white transition-colors"
+            :title="themeStore.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+          >
+            <SunIcon v-if="themeStore.isDark" class="h-5 w-5" />
+            <MoonIcon v-else class="h-5 w-5" />
+          </button>
           <button
             @click="handleLogout"
             class="shrink-0 text-gray-400 hover:text-white transition-colors"
@@ -144,17 +156,17 @@ async function handleLogout() {
     </aside>
 
     <!-- Main content area -->
-    <div class="flex-1 flex flex-col min-w-0">
+    <div class="flex-1 flex flex-col min-w-0 theme-main">
       <!-- Top bar -->
       <!-- Mobile top bar (hamburger only, hidden on desktop) -->
-      <header class="sticky top-0 z-30 bg-white border-b border-gray-200 h-14 flex items-center px-4 lg:hidden">
+      <header class="sticky top-0 z-30 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 h-14 flex items-center px-4 lg:hidden">
         <button
           class="text-gray-500 hover:text-gray-700"
           @click="sidebarOpen = true"
         >
           <Bars3Icon class="h-6 w-6" />
         </button>
-        <span class="ml-3 text-sm font-medium text-gray-900">{{ route.meta?.title || route.name }}</span>
+        <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-100">{{ route.meta?.title || route.name }}</span>
       </header>
 
       <!-- Page content -->

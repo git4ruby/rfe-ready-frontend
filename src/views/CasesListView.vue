@@ -1,8 +1,8 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useCasesStore } from '../stores/cases'
 import { useNotificationStore } from '../stores/notification'
-import { PlusIcon, MagnifyingGlassIcon, EyeIcon, PencilSquareIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, MagnifyingGlassIcon, EyeIcon, PencilSquareIcon, ArchiveBoxIcon, ArrowPathIcon, XMarkIcon } from '@heroicons/vue/24/outline'
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
@@ -44,6 +44,57 @@ watch(
   },
   { immediate: true }
 )
+
+// Bulk selection
+const selectedIds = ref(new Set())
+const bulkLoading = ref(false)
+
+const allSelected = computed(() =>
+  filteredCases.value.length > 0 && filteredCases.value.every((c) => selectedIds.value.has(c.id))
+)
+
+function toggleSelect(id) {
+  const newSet = new Set(selectedIds.value)
+  if (newSet.has(id)) {
+    newSet.delete(id)
+  } else {
+    newSet.add(id)
+  }
+  selectedIds.value = newSet
+}
+
+function toggleSelectAll() {
+  if (allSelected.value) {
+    selectedIds.value = new Set()
+  } else {
+    selectedIds.value = new Set(filteredCases.value.map((c) => c.id))
+  }
+}
+
+function clearSelection() {
+  selectedIds.value = new Set()
+}
+
+async function handleBulkAction(actionName) {
+  const ids = Array.from(selectedIds.value)
+  if (ids.length === 0) return
+
+  bulkLoading.value = true
+  try {
+    const result = await casesStore.bulkUpdateStatus(ids, actionName)
+    const label = actionName === 'archive' ? 'archived' : 'reopened'
+    notify.success(`${result.success} case(s) ${label} successfully.${result.failed > 0 ? ` ${result.failed} failed.` : ''}`)
+    clearSelection()
+    await casesStore.fetchCases(currentPage.value)
+  } catch (err) {
+    notify.error(err.response?.data?.error || `Failed to ${actionName} cases.`)
+  } finally {
+    bulkLoading.value = false
+  }
+}
+
+// Clear selection on page change
+watch(currentPage, () => clearSelection())
 </script>
 
 <template>
@@ -100,89 +151,180 @@ watch(
       </template>
     </EmptyState>
 
-    <!-- Cases table -->
-    <div v-else class="bg-white shadow rounded-lg overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Case #
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Petitioner
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Beneficiary
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Visa Type
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Deadline
-              </th>
-              <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="rfeCase in filteredCases"
-              :key="rfeCase.id"
-              class="hover:bg-gray-50 transition-colors"
-            >
-              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+    <!-- Cases list -->
+    <div v-else>
+      <!-- Bulk action bar -->
+      <div
+        v-if="selectedIds.size > 0"
+        class="flex items-center gap-3 px-4 py-3 mb-3 bg-indigo-50 border border-indigo-100 rounded-lg"
+      >
+        <span class="text-sm font-medium text-indigo-700">{{ selectedIds.size }} case{{ selectedIds.size > 1 ? 's' : '' }} selected</span>
+        <div class="flex items-center gap-2 ml-auto">
+          <button
+            @click="handleBulkAction('archive')"
+            :disabled="bulkLoading"
+            class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          >
+            <ArchiveBoxIcon class="h-4 w-4" />
+            Archive
+          </button>
+          <button
+            @click="handleBulkAction('reopen')"
+            :disabled="bulkLoading"
+            class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+          >
+            <ArrowPathIcon class="h-4 w-4" />
+            Reopen
+          </button>
+          <button
+            @click="clearSelection"
+            class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 ml-2"
+          >
+            <XMarkIcon class="h-4 w-4" />
+            Clear
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile card layout -->
+      <div class="md:hidden space-y-3">
+        <div
+          v-for="rfeCase in filteredCases"
+          :key="'m-' + rfeCase.id"
+          class="bg-white shadow rounded-lg p-4"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3 min-w-0">
+              <input
+                type="checkbox"
+                :checked="selectedIds.has(rfeCase.id)"
+                @change="toggleSelect(rfeCase.id)"
+                class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+              />
+              <div class="min-w-0">
                 <router-link
                   :to="`/cases/${rfeCase.id}`"
-                  class="text-indigo-600 hover:text-indigo-500 hover:underline transition-colors"
+                  class="text-sm font-semibold text-indigo-600 hover:text-indigo-500"
                 >
                   {{ rfeCase.case_number }}
                 </router-link>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ rfeCase.petitioner_name }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ rfeCase.beneficiary_name }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ rfeCase.visa_type }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <CaseStatusBadge :status="rfeCase.status" />
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <DeadlineIndicator
-                  v-if="rfeCase.rfe_deadline"
-                  :deadline="rfeCase.rfe_deadline"
-                />
-                <span v-else class="text-sm text-gray-400">--</span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center justify-center gap-3">
+                <p class="text-sm text-gray-900 mt-0.5">{{ rfeCase.petitioner_name }}</p>
+                <p class="text-xs text-gray-500">{{ rfeCase.beneficiary_name }}</p>
+              </div>
+            </div>
+            <CaseStatusBadge :status="rfeCase.status" />
+          </div>
+          <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+            <DeadlineIndicator v-if="rfeCase.rfe_deadline" :deadline="rfeCase.rfe_deadline" />
+            <span v-else class="text-xs text-gray-400">No deadline</span>
+            <div class="flex items-center gap-3">
+              <router-link :to="`/cases/${rfeCase.id}`" class="text-sm font-medium text-gray-600 hover:text-gray-500">View</router-link>
+              <router-link :to="{ path: `/cases/${rfeCase.id}`, query: { edit: 'true' } }" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Edit</router-link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop table -->
+      <div class="hidden md:block bg-white shadow rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    :checked="allSelected"
+                    @change="toggleSelectAll"
+                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Case #
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Petitioner
+                </th>
+                <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Beneficiary
+                </th>
+                <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Visa Type
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Deadline
+                </th>
+                <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr
+                v-for="rfeCase in filteredCases"
+                :key="rfeCase.id"
+                class="hover:bg-gray-50 transition-colors"
+              >
+                <td class="w-10 px-4 py-4" @click.stop>
+                  <input
+                    type="checkbox"
+                    :checked="selectedIds.has(rfeCase.id)"
+                    @change="toggleSelect(rfeCase.id)"
+                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <router-link
                     :to="`/cases/${rfeCase.id}`"
-                    class="inline-flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-500 transition-colors"
+                    class="text-indigo-600 hover:text-indigo-500 hover:underline transition-colors"
                   >
-                    <EyeIcon class="h-4 w-4" />
-                    View
+                    {{ rfeCase.case_number }}
                   </router-link>
-                  <router-link
-                    :to="{ path: `/cases/${rfeCase.id}`, query: { edit: 'true' } }"
-                    class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
-                  >
-                    <PencilSquareIcon class="h-4 w-4" />
-                    Edit
-                  </router-link>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {{ rfeCase.petitioner_name }}
+                </td>
+                <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ rfeCase.beneficiary_name }}
+                </td>
+                <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ rfeCase.visa_type }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <CaseStatusBadge :status="rfeCase.status" />
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <DeadlineIndicator
+                    v-if="rfeCase.rfe_deadline"
+                    :deadline="rfeCase.rfe_deadline"
+                  />
+                  <span v-else class="text-sm text-gray-400">--</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center justify-center gap-3">
+                    <router-link
+                      :to="`/cases/${rfeCase.id}`"
+                      class="inline-flex items-center gap-1 text-sm font-medium text-gray-600 hover:text-gray-500 transition-colors"
+                    >
+                      <EyeIcon class="h-4 w-4" />
+                      View
+                    </router-link>
+                    <router-link
+                      :to="{ path: `/cases/${rfeCase.id}`, query: { edit: 'true' } }"
+                      class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+                    >
+                      <PencilSquareIcon class="h-4 w-4" />
+                      Edit
+                    </router-link>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <PaginationBar
@@ -190,6 +332,7 @@ watch(
         :total-pages="casesStore.pagination?.total_pages || 1"
         :total-count="casesStore.pagination?.total_count"
         @page-change="goToPage"
+        class="mt-3 md:mt-0"
       />
     </div>
   </div>

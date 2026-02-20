@@ -140,104 +140,148 @@ function formatFieldName(field) {
       :icon="ClipboardDocumentListIcon"
     />
 
-    <!-- Audit log table -->
-    <div v-else class="bg-white shadow rounded-lg overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="w-10 px-4 py-3"></th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date / Time
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Action
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Resource
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                IP Address
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <template v-for="log in store.logs" :key="log.id">
-              <tr
-                class="hover:bg-gray-50 transition-colors"
-                :class="{ 'cursor-pointer': hasChanges(log) }"
-                @click="hasChanges(log) && toggleExpand(log.id)"
-              >
-                <td class="px-4 py-4 text-center">
-                  <button
-                    v-if="hasChanges(log)"
-                    class="text-gray-400 hover:text-gray-600 transition-colors"
-                  >
-                    <ChevronDownIcon
-                      v-if="expandedRow !== log.id"
-                      class="h-4 w-4"
-                    />
-                    <ChevronUpIcon v-else class="h-4 w-4" />
-                  </button>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatDateTime(log.created_at) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm font-medium text-gray-900">
-                    {{ log.user_name || 'System' }}
-                  </div>
-                  <div v-if="log.user_email" class="text-xs text-gray-500">
-                    {{ log.user_email }}
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
-                    :class="actionClasses(log.action)"
-                  >
-                    {{ log.action }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-900">
-                    {{ typeLabel(log.auditable_type) }}
-                  </div>
-                  <div class="text-xs text-gray-500">
-                    {{ log.auditable_name }}
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ log.ip_address || '--' }}
-                </td>
-              </tr>
+    <!-- Audit log -->
+    <div v-else>
+      <!-- Mobile card layout -->
+      <div class="md:hidden space-y-3">
+        <div
+          v-for="log in store.logs"
+          :key="'m-' + log.id"
+          class="bg-white shadow rounded-lg p-4"
+          :class="{ 'cursor-pointer': hasChanges(log) }"
+          @click="hasChanges(log) && toggleExpand(log.id)"
+        >
+          <div class="flex items-start justify-between gap-2">
+            <div class="min-w-0">
+              <p class="text-sm font-medium text-gray-900">{{ log.user_name || 'System' }}</p>
+              <p class="text-xs text-gray-500 mt-0.5">{{ formatDateTime(log.created_at) }}</p>
+            </div>
+            <span
+              class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize shrink-0"
+              :class="actionClasses(log.action)"
+            >
+              {{ log.action }}
+            </span>
+          </div>
+          <div class="mt-2 flex items-center gap-2">
+            <span class="text-sm text-gray-700">{{ typeLabel(log.auditable_type) }}</span>
+            <span class="text-xs text-gray-500">&mdash; {{ log.auditable_name }}</span>
+          </div>
+          <!-- Expanded changes -->
+          <div v-if="expandedRow === log.id && hasChanges(log)" class="mt-3 pt-3 border-t border-gray-100 space-y-1.5">
+            <div
+              v-for="(values, field) in log.changes_data"
+              :key="field"
+              class="text-xs"
+            >
+              <span class="font-medium text-gray-600">{{ formatFieldName(field) }}:</span>
+              <span class="text-red-600 line-through ml-1">{{ values[0] ?? '(empty)' }}</span>
+              <span class="text-gray-400 mx-1">&rarr;</span>
+              <span class="text-green-700">{{ values[1] ?? '(empty)' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
 
-              <!-- Expanded changes row -->
-              <tr v-if="expandedRow === log.id && hasChanges(log)">
-                <td colspan="6" class="px-6 py-4 bg-gray-50">
-                  <div class="text-xs font-medium text-gray-500 uppercase mb-2">Changes</div>
-                  <div class="space-y-2">
-                    <div
-                      v-for="(values, field) in log.changes_data"
-                      :key="field"
-                      class="flex items-start gap-3 text-sm"
-                    >
-                      <span class="font-medium text-gray-700 min-w-[140px]">
-                        {{ formatFieldName(field) }}
-                      </span>
-                      <span class="text-red-600 line-through">{{ values[0] ?? '(empty)' }}</span>
-                      <span class="text-gray-400">&rarr;</span>
-                      <span class="text-green-700">{{ values[1] ?? '(empty)' }}</span>
-                    </div>
-                  </div>
-                </td>
+      <!-- Desktop table -->
+      <div class="hidden md:block bg-white shadow rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="w-10 px-4 py-3"></th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date / Time
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  User
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Action
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Resource
+                </th>
+                <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  IP Address
+                </th>
               </tr>
-            </template>
-          </tbody>
-        </table>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <template v-for="log in store.logs" :key="log.id">
+                <tr
+                  class="hover:bg-gray-50 transition-colors"
+                  :class="{ 'cursor-pointer': hasChanges(log) }"
+                  @click="hasChanges(log) && toggleExpand(log.id)"
+                >
+                  <td class="px-4 py-4 text-center">
+                    <button
+                      v-if="hasChanges(log)"
+                      class="text-gray-400 hover:text-gray-600 transition-colors"
+                    >
+                      <ChevronDownIcon
+                        v-if="expandedRow !== log.id"
+                        class="h-4 w-4"
+                      />
+                      <ChevronUpIcon v-else class="h-4 w-4" />
+                    </button>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatDateTime(log.created_at) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm font-medium text-gray-900">
+                      {{ log.user_name || 'System' }}
+                    </div>
+                    <div v-if="log.user_email" class="text-xs text-gray-500">
+                      {{ log.user_email }}
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
+                      :class="actionClasses(log.action)"
+                    >
+                      {{ log.action }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="text-sm text-gray-900">
+                      {{ typeLabel(log.auditable_type) }}
+                    </div>
+                    <div class="text-xs text-gray-500">
+                      {{ log.auditable_name }}
+                    </div>
+                  </td>
+                  <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ log.ip_address || '--' }}
+                  </td>
+                </tr>
+
+                <!-- Expanded changes row -->
+                <tr v-if="expandedRow === log.id && hasChanges(log)">
+                  <td colspan="6" class="px-6 py-4 bg-gray-50">
+                    <div class="text-xs font-medium text-gray-500 uppercase mb-2">Changes</div>
+                    <div class="space-y-2">
+                      <div
+                        v-for="(values, field) in log.changes_data"
+                        :key="field"
+                        class="flex items-start gap-3 text-sm"
+                      >
+                        <span class="font-medium text-gray-700 min-w-[140px]">
+                          {{ formatFieldName(field) }}
+                        </span>
+                        <span class="text-red-600 line-through">{{ values[0] ?? '(empty)' }}</span>
+                        <span class="text-gray-400">&rarr;</span>
+                        <span class="text-green-700">{{ values[1] ?? '(empty)' }}</span>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <PaginationBar
@@ -245,6 +289,7 @@ function formatFieldName(field) {
         :total-pages="store.pagination?.total_pages || 1"
         :total-count="store.pagination?.total_count"
         @page-change="goToPage"
+        class="mt-3 md:mt-0"
       />
     </div>
   </div>

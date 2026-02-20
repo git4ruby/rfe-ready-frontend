@@ -476,145 +476,214 @@ function statDocTypeColor(key) {
       </template>
     </EmptyState>
 
-    <!-- Documents table -->
-    <div v-else class="bg-white shadow rounded-lg overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Title
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Type
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Visa
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Category
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Uploaded By
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Date
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                AI
-              </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <template v-for="doc in store.docs" :key="doc.id">
-              <tr
-                class="hover:bg-gray-50 transition-colors cursor-pointer"
-                @click="toggleExpand(doc)"
-              >
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="flex items-center gap-2">
-                    <DocumentTextIcon class="h-5 w-5 text-gray-400 flex-shrink-0" />
-                    <div>
-                      <div class="text-sm font-medium text-gray-900">{{ doc.title }}</div>
-                      <div v-if="doc.file_name" class="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
-                        <PaperClipIcon class="h-3 w-3" />
-                        {{ doc.file_name }}
+    <!-- Documents list -->
+    <div v-else>
+      <!-- Mobile card layout -->
+      <div class="md:hidden space-y-3">
+        <div
+          v-for="doc in store.docs"
+          :key="'m-' + doc.id"
+          class="bg-white shadow rounded-lg p-4 cursor-pointer"
+          @click="toggleExpand(doc)"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <p class="text-sm font-semibold text-gray-900">{{ doc.title }}</p>
+              <div v-if="doc.file_name" class="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+                <PaperClipIcon class="h-3 w-3" />
+                {{ doc.file_name }}
+              </div>
+            </div>
+            <span
+              class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium shrink-0"
+              :class="docTypeBadgeClass(doc.doc_type)"
+            >
+              {{ docTypeLabel(doc.doc_type) }}
+            </span>
+          </div>
+          <div class="flex items-center gap-2 mt-2 flex-wrap">
+            <span
+              v-if="doc.embedding_status === 'embedded'"
+              class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800"
+            >
+              Embedded
+            </span>
+            <span v-else class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500">
+              Pending
+            </span>
+            <span
+              class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+              :class="doc.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
+            >
+              {{ doc.is_active ? 'Active' : 'Inactive' }}
+            </span>
+          </div>
+          <!-- Expanded content -->
+          <div v-if="expandedDocId === doc.id" class="mt-3 pt-3 border-t border-gray-100">
+            <div v-if="loadingDetail" class="text-sm text-gray-500">Loading...</div>
+            <div v-else-if="expandedDoc">
+              <div v-if="expandedDoc.content" class="text-sm text-gray-700 whitespace-pre-wrap line-clamp-6">{{ expandedDoc.content }}</div>
+              <p v-else class="text-sm text-gray-400 italic">No text content.</p>
+              <div v-if="doc.file_name" class="mt-3 flex items-center gap-2">
+                <PaperClipIcon class="h-4 w-4 text-gray-400" />
+                <a
+                  :href="doc.file_url"
+                  target="_blank"
+                  class="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+                  @click.stop
+                >
+                  Download {{ doc.file_name }}
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center justify-end gap-3 mt-3 pt-3 border-t border-gray-100" @click.stop>
+            <button @click="openEdit(doc)" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Edit</button>
+            <button @click="confirmDelete(doc)" class="text-sm font-medium text-red-600 hover:text-red-500">Delete</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop table -->
+      <div class="hidden md:block bg-white shadow rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Title
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Type
+                </th>
+                <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Visa
+                </th>
+                <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Category
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Uploaded By
+                </th>
+                <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  AI
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <template v-for="doc in store.docs" :key="doc.id">
+                <tr
+                  class="hover:bg-gray-50 transition-colors cursor-pointer"
+                  @click="toggleExpand(doc)"
+                >
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center gap-2">
+                      <DocumentTextIcon class="h-5 w-5 text-gray-400 flex-shrink-0" />
+                      <div>
+                        <div class="text-sm font-medium text-gray-900">{{ doc.title }}</div>
+                        <div v-if="doc.file_name" class="flex items-center gap-1 text-xs text-gray-500 mt-0.5">
+                          <PaperClipIcon class="h-3 w-3" />
+                          {{ doc.file_name }}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                    :class="docTypeBadgeClass(doc.doc_type)"
-                  >
-                    {{ docTypeLabel(doc.doc_type) }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ doc.visa_type || '--' }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ doc.rfe_category || '--' }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ doc.uploaded_by_name || '--' }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {{ formatDate(doc.created_at) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
-                    :class="doc.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
-                  >
-                    {{ doc.is_active ? 'Active' : 'Inactive' }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    v-if="doc.embedding_status === 'embedded'"
-                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800"
-                    title="Embedded for AI retrieval"
-                  >
-                    Embedded
-                  </span>
-                  <span
-                    v-else
-                    class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500"
-                    title="Pending embedding generation"
-                  >
-                    Pending
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-right" @click.stop>
-                  <div class="flex items-center justify-end gap-2">
-                    <button
-                      @click="openEdit(doc)"
-                      class="text-indigo-600 hover:text-indigo-500 transition-colors"
-                      title="Edit"
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                      :class="docTypeBadgeClass(doc.doc_type)"
                     >
-                      <PencilSquareIcon class="h-4 w-4" />
-                    </button>
-                    <button
-                      @click="confirmDelete(doc)"
-                      class="text-red-600 hover:text-red-500 transition-colors"
-                      title="Delete"
+                      {{ docTypeLabel(doc.doc_type) }}
+                    </span>
+                  </td>
+                  <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ doc.visa_type || '--' }}
+                  </td>
+                  <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ doc.rfe_category || '--' }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ doc.uploaded_by_name || '--' }}
+                  </td>
+                  <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {{ formatDate(doc.created_at) }}
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                      :class="doc.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'"
                     >
-                      <TrashIcon class="h-4 w-4" />
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <!-- Expanded detail row -->
-              <tr v-if="expandedDocId === doc.id">
-                <td colspan="9" class="px-6 py-4 bg-gray-50">
-                  <div v-if="loadingDetail" class="text-sm text-gray-500">Loading...</div>
-                  <div v-else-if="expandedDoc">
-                    <div v-if="expandedDoc.content" class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">{{ expandedDoc.content }}</div>
-                    <p v-else class="text-sm text-gray-400 italic">No text content.</p>
-                    <div v-if="doc.file_name" class="mt-3 flex items-center gap-2">
-                      <PaperClipIcon class="h-4 w-4 text-gray-400" />
-                      <a
-                        :href="doc.file_url"
-                        target="_blank"
-                        class="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+                      {{ doc.is_active ? 'Active' : 'Inactive' }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span
+                      v-if="doc.embedding_status === 'embedded'"
+                      class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-indigo-100 text-indigo-800"
+                      title="Embedded for AI retrieval"
+                    >
+                      Embedded
+                    </span>
+                    <span
+                      v-else
+                      class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-500"
+                      title="Pending embedding generation"
+                    >
+                      Pending
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right" @click.stop>
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        @click="openEdit(doc)"
+                        class="text-indigo-600 hover:text-indigo-500 transition-colors"
+                        title="Edit"
                       >
-                        {{ doc.file_name }}
-                      </a>
+                        <PencilSquareIcon class="h-4 w-4" />
+                      </button>
+                      <button
+                        @click="confirmDelete(doc)"
+                        class="text-red-600 hover:text-red-500 transition-colors"
+                        title="Delete"
+                      >
+                        <TrashIcon class="h-4 w-4" />
+                      </button>
                     </div>
-                  </div>
-                </td>
-              </tr>
-            </template>
-          </tbody>
-        </table>
+                  </td>
+                </tr>
+                <!-- Expanded detail row -->
+                <tr v-if="expandedDocId === doc.id">
+                  <td colspan="9" class="px-6 py-4 bg-gray-50">
+                    <div v-if="loadingDetail" class="text-sm text-gray-500">Loading...</div>
+                    <div v-else-if="expandedDoc">
+                      <div v-if="expandedDoc.content" class="prose prose-sm max-w-none text-gray-700 whitespace-pre-wrap">{{ expandedDoc.content }}</div>
+                      <p v-else class="text-sm text-gray-400 italic">No text content.</p>
+                      <div v-if="doc.file_name" class="mt-3 flex items-center gap-2">
+                        <PaperClipIcon class="h-4 w-4 text-gray-400" />
+                        <a
+                          :href="doc.file_url"
+                          target="_blank"
+                          class="text-sm font-medium text-indigo-600 hover:text-indigo-500 transition-colors"
+                        >
+                          {{ doc.file_name }}
+                        </a>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <PaginationBar
@@ -622,6 +691,7 @@ function statDocTypeColor(key) {
         :total-pages="store.pagination?.total_pages || 1"
         :total-count="store.pagination?.total_count"
         @page-change="goToPage"
+        class="mt-3 md:mt-0"
       />
     </div>
 

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useUsersStore } from '../stores/users'
 import { useNotificationStore } from '../stores/notification'
 import { useAuthStore } from '../stores/auth'
@@ -216,6 +216,57 @@ async function handleDeactivate() {
   }
 }
 
+// Bulk selection
+const selectedIds = ref(new Set())
+const bulkProcessing = ref(false)
+
+const selectableUsers = computed(() =>
+  store.users.filter((u) => u.id !== auth.user?.id)
+)
+
+const allSelected = computed(
+  () => selectableUsers.value.length > 0 && selectableUsers.value.every((u) => selectedIds.value.has(u.id))
+)
+
+function toggleSelect(id) {
+  const next = new Set(selectedIds.value)
+  if (next.has(id)) next.delete(id)
+  else next.add(id)
+  selectedIds.value = next
+}
+
+function toggleSelectAll() {
+  if (allSelected.value) {
+    selectedIds.value = new Set()
+  } else {
+    selectedIds.value = new Set(selectableUsers.value.map((u) => u.id))
+  }
+}
+
+function clearSelection() {
+  selectedIds.value = new Set()
+}
+
+async function handleBulkAction(status) {
+  const ids = [...selectedIds.value]
+  if (ids.length === 0) return
+  bulkProcessing.value = true
+  try {
+    const result = await store.bulkUpdateStatus(ids, status)
+    const label = status === 'inactive' ? 'deactivated' : 'activated'
+    notify.success(`${result.success} user(s) ${label}.${result.failed ? ` ${result.failed} failed.` : ''}`)
+    clearSelection()
+    await loadUsers(currentPage.value)
+  } catch {
+    notify.error('Bulk action failed.')
+  } finally {
+    bulkProcessing.value = false
+  }
+}
+
+// Clear selection on page change
+watch(currentPage, () => clearSelection())
+
 // Pagination
 async function goToPage(page) {
   await loadUsers(page)
@@ -293,107 +344,203 @@ function formatDate(dateStr) {
       </template>
     </EmptyState>
 
-    <!-- Users table -->
-    <div v-else class="bg-white shadow rounded-lg overflow-hidden">
-      <div class="overflow-x-auto">
-        <table class="min-w-full divide-y divide-gray-200">
-          <thead class="bg-gray-50">
-            <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                User
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Email
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Role
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Status
-              </th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Joined
-              </th>
-              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr
-              v-for="user in store.users"
-              :key="user.id"
-              class="hover:bg-gray-50 transition-colors"
+    <!-- Users list -->
+    <div v-else>
+      <!-- Bulk action bar -->
+      <div
+        v-if="selectedIds.size > 0"
+        class="mb-3 flex flex-wrap items-center gap-3 rounded-lg bg-indigo-50 border border-indigo-200 px-4 py-2.5"
+      >
+        <span class="text-sm font-medium text-indigo-800">{{ selectedIds.size }} user(s) selected</span>
+        <button
+          @click="handleBulkAction('inactive')"
+          :disabled="bulkProcessing"
+          class="inline-flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500 disabled:opacity-50"
+        >
+          <NoSymbolIcon class="h-3.5 w-3.5" />
+          Deactivate
+        </button>
+        <button
+          @click="handleBulkAction('active')"
+          :disabled="bulkProcessing"
+          class="inline-flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-500 disabled:opacity-50"
+        >
+          Activate
+        </button>
+        <button
+          @click="clearSelection"
+          class="text-xs text-gray-500 hover:text-gray-700 ml-auto"
+        >
+          Clear
+        </button>
+      </div>
+
+      <!-- Mobile card layout -->
+      <div class="md:hidden space-y-3">
+        <div
+          v-for="user in store.users"
+          :key="'m-' + user.id"
+          class="bg-white shadow rounded-lg p-4"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <input
+                v-if="user.id !== auth.user?.id"
+                type="checkbox"
+                :checked="selectedIds.has(user.id)"
+                @change="toggleSelect(user.id)"
+                class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 flex-shrink-0"
+              />
+              <div class="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <span class="text-xs font-medium text-indigo-700">{{ initials(user) }}</span>
+              </div>
+              <div class="min-w-0">
+                <p class="text-sm font-semibold text-gray-900">{{ user.first_name }} {{ user.last_name }}</p>
+                <p class="text-xs text-gray-500 truncate">{{ user.email }}</p>
+              </div>
+            </div>
+            <span
+              class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize"
+              :class="statusClasses(user.status)"
             >
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center gap-3">
-                  <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
-                    <span class="text-xs font-medium text-indigo-700">{{ initials(user) }}</span>
-                  </div>
-                  <div>
-                    <div class="text-sm font-medium text-gray-900">
-                      {{ user.first_name }} {{ user.last_name }}
+              {{ user.status }}
+            </span>
+          </div>
+          <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-100">
+            <span
+              class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
+              :class="roleClasses(user.role)"
+            >
+              {{ user.role }}
+            </span>
+            <div class="flex items-center gap-3">
+              <button v-if="user.status === 'invited'" @click="handleResend(user)" class="text-yellow-600 hover:text-yellow-500" title="Resend"><EnvelopeIcon class="h-4 w-4" /></button>
+              <button @click="openEdit(user)" :disabled="user.id === auth.user?.id" :class="{ 'opacity-50': user.id === auth.user?.id }" class="text-indigo-600 hover:text-indigo-500" title="Edit"><PencilSquareIcon class="h-4 w-4" /></button>
+              <button v-if="user.status === 'active' && user.id !== auth.user?.id" @click="confirmDeactivate(user)" class="text-red-600 hover:text-red-500" title="Deactivate"><NoSymbolIcon class="h-4 w-4" /></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Desktop table -->
+      <div class="hidden md:block bg-white shadow rounded-lg overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    :checked="allSelected"
+                    @change="toggleSelectAll"
+                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  User
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Email
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Role
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Joined
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr
+                v-for="user in store.users"
+                :key="user.id"
+                class="hover:bg-gray-50 transition-colors"
+              >
+                <td class="w-10 px-4 py-4">
+                  <input
+                    v-if="user.id !== auth.user?.id"
+                    type="checkbox"
+                    :checked="selectedIds.has(user.id)"
+                    @change="toggleSelect(user.id)"
+                    class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  />
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center gap-3">
+                    <div class="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                      <span class="text-xs font-medium text-indigo-700">{{ initials(user) }}</span>
                     </div>
-                    <div v-if="user.bar_number" class="text-xs text-gray-500">
-                      Bar: {{ user.bar_number }}
+                    <div>
+                      <div class="text-sm font-medium text-gray-900">
+                        {{ user.first_name }} {{ user.last_name }}
+                      </div>
+                      <div v-if="user.bar_number" class="text-xs text-gray-500">
+                        Bar: {{ user.bar_number }}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ user.email }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span
-                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
-                  :class="roleClasses(user.role)"
-                >
-                  {{ user.role }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <span
-                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
-                  :class="statusClasses(user.status)"
-                >
-                  {{ user.status }}
-                </span>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                {{ formatDate(user.created_at) }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-right">
-                <div class="flex items-center justify-end gap-2">
-                  <button
-                    v-if="user.status === 'invited'"
-                    @click="handleResend(user)"
-                    class="text-yellow-600 hover:text-yellow-500 transition-colors"
-                    title="Resend invitation"
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ user.email }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
+                    :class="roleClasses(user.role)"
                   >
-                    <EnvelopeIcon class="h-4 w-4" />
-                  </button>
-                  <button
-                    @click="openEdit(user)"
-                    class="text-indigo-600 hover:text-indigo-500 transition-colors"
-                    :class="{ 'opacity-50 cursor-not-allowed': user.id === auth.user?.id }"
-                    :disabled="user.id === auth.user?.id"
-                    title="Edit user"
+                    {{ user.role }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span
+                    class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize"
+                    :class="statusClasses(user.status)"
                   >
-                    <PencilSquareIcon class="h-4 w-4" />
-                  </button>
-                  <button
-                    v-if="user.status === 'active' && user.id !== auth.user?.id"
-                    @click="confirmDeactivate(user)"
-                    class="text-red-600 hover:text-red-500 transition-colors"
-                    title="Deactivate user"
-                  >
-                    <NoSymbolIcon class="h-4 w-4" />
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                    {{ user.status }}
+                  </span>
+                </td>
+                <td class="hidden lg:table-cell px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {{ formatDate(user.created_at) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right">
+                  <div class="flex items-center justify-end gap-2">
+                    <button
+                      v-if="user.status === 'invited'"
+                      @click="handleResend(user)"
+                      class="text-yellow-600 hover:text-yellow-500 transition-colors"
+                      title="Resend invitation"
+                    >
+                      <EnvelopeIcon class="h-4 w-4" />
+                    </button>
+                    <button
+                      @click="openEdit(user)"
+                      class="text-indigo-600 hover:text-indigo-500 transition-colors"
+                      :class="{ 'opacity-50 cursor-not-allowed': user.id === auth.user?.id }"
+                      :disabled="user.id === auth.user?.id"
+                      title="Edit user"
+                    >
+                      <PencilSquareIcon class="h-4 w-4" />
+                    </button>
+                    <button
+                      v-if="user.status === 'active' && user.id !== auth.user?.id"
+                      @click="confirmDeactivate(user)"
+                      class="text-red-600 hover:text-red-500 transition-colors"
+                      title="Deactivate user"
+                    >
+                      <NoSymbolIcon class="h-4 w-4" />
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <PaginationBar
@@ -401,6 +548,7 @@ function formatDate(dateStr) {
         :total-pages="store.pagination?.total_pages || 1"
         :total-count="store.pagination?.total_count"
         @page-change="goToPage"
+        class="mt-3 md:mt-0"
       />
     </div>
 

@@ -44,6 +44,11 @@ export const useCasesStore = defineStore('cases', () => {
     return response.data.data
   }
 
+  async function bulkUpdateStatus(ids, actionName) {
+    const response = await apiClient.post('/cases/bulk_update_status', { ids, action_name: actionName })
+    return response.data.data
+  }
+
   async function deleteCase(id) {
     await apiClient.delete(`/cases/${id}`)
     cases.value = cases.value.filter((c) => c.id !== id)
@@ -81,16 +86,29 @@ export const useCasesStore = defineStore('cases', () => {
     currentCase.value = response.data.data
   }
 
+  // Activity timeline
+  const activityLogs = ref([])
+
+  async function fetchActivity(caseId) {
+    const response = await apiClient.get(`/cases/${caseId}/activity`)
+    activityLogs.value = response.data.data
+  }
+
   const exporting = ref(false)
+  const exportProgress = ref(null) // null | 'preparing' | 'generating' | 'downloading'
 
   async function exportCase(id, format = 'pdf') {
     exporting.value = true
+    exportProgress.value = 'preparing'
     try {
+      exportProgress.value = 'generating'
       const response = await apiClient.post(
         `/cases/${id}/export`,
         { format_type: format },
         { responseType: 'blob' }
       )
+
+      exportProgress.value = 'downloading'
 
       // Extract filename from Content-Disposition header or generate one
       const disposition = response.headers['content-disposition']
@@ -115,6 +133,7 @@ export const useCasesStore = defineStore('cases', () => {
       await fetchCase(id)
     } finally {
       exporting.value = false
+      exportProgress.value = null
     }
   }
 
@@ -269,12 +288,16 @@ export const useCasesStore = defineStore('cases', () => {
     exhibits,
     loading,
     exporting,
+    exportProgress,
+    activityLogs,
+    fetchActivity,
     pagination,
     analysisStatus,
     fetchCases,
     fetchCase,
     createCase,
     updateCase,
+    bulkUpdateStatus,
     deleteCase,
     startAnalysis,
     assignAttorney,

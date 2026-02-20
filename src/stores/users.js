@@ -41,6 +41,11 @@ export const useUsersStore = defineStore('users', () => {
     return response.data
   }
 
+  async function bulkUpdateStatus(ids, status) {
+    const response = await apiClient.post('/users/bulk_update_status', { ids, status })
+    return response.data.data
+  }
+
   return {
     users,
     loading,
@@ -50,5 +55,6 @@ export const useUsersStore = defineStore('users', () => {
     updateUser,
     deactivateUser,
     resendInvitation,
+    bulkUpdateStatus,
   }
 })
