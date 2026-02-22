@@ -17,6 +17,9 @@ import EmptyState from '../components/EmptyState.vue'
 import PasswordStrength from '../components/PasswordStrength.vue'
 import PaginationBar from '../components/PaginationBar.vue'
 
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const store = useUsersStore()
 const notify = useNotificationStore()
 const auth = useAuthStore()
@@ -311,15 +314,15 @@ function formatDate(dateStr) {
     <!-- Page header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">User Management</h1>
-        <p class="mt-1 text-sm text-gray-500">Manage team members, invite new users, and assign roles.</p>
+        <h1 class="text-2xl font-bold text-gray-900">{{ t('users.title') }}</h1>
+        <p class="mt-1 text-sm text-gray-500">{{ t('users.subtitle', 'Manage team members, invite new users, and assign roles.') }}</p>
       </div>
       <button
         @click="openInvite"
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
       >
         <PlusIcon class="h-5 w-5" />
-        Invite User
+        {{ t('users.inviteUser') }}
       </button>
     </div>
 
@@ -437,16 +440,16 @@ function formatDate(dateStr) {
                   />
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
+                  {{ t('users.name') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
+                  {{ t('auth.email') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
+                  {{ t('users.role') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  {{ t('common.status') }}
                 </th>
                 <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Joined

@@ -19,9 +19,22 @@ apiClient.interceptors.request.use((config) => {
   return config
 })
 
-// Response interceptor — handle auth and server errors
+// Rate limit header data (read by rateLimit store)
+export const rateLimitData = { limit: 0, remaining: 0, resetAt: 0 }
+
+// Response interceptor — handle auth, server errors, and rate limit headers
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const l = response.headers['x-ratelimit-limit']
+    const r = response.headers['x-ratelimit-remaining']
+    const reset = response.headers['x-ratelimit-reset']
+    if (l) {
+      rateLimitData.limit = parseInt(l, 10)
+      rateLimitData.remaining = parseInt(r, 10)
+      rateLimitData.resetAt = parseInt(reset, 10)
+    }
+    return response
+  },
   (error) => {
     const status = error.response?.status
     if (status === 401) {

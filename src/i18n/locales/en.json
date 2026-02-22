@@ -1,0 +1,151 @@
+{
+  "common": {
+    "save": "Save Changes",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "search": "Search",
+    "loading": "Loading...",
+    "noResults": "No results found.",
+    "confirm": "Confirm",
+    "back": "Back",
+    "next": "Next",
+    "close": "Close",
+    "export": "Export",
+    "download": "Download",
+    "upload": "Upload",
+    "actions": "Actions",
+    "status": "Status",
+    "all": "All",
+    "signOut": "Sign Out"
+  },
+  "auth": {
+    "signIn": "Sign In",
+    "signingIn": "Signing in...",
+    "email": "Email address",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "welcomeBack": "Welcome back!",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "twoFactorTitle": "Two-Factor Authentication",
+    "twoFactorDescription": "Enter the 6-digit code from your authenticator app, or a backup code.",
+    "verificationCode": "Verification Code",
+    "verify": "Verify",
+    "verifying": "Verifying..."
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "cases": "Cases",
+    "knowledgeBase": "Knowledge Base",
+    "help": "Help",
+    "settings": "Settings",
+    "users": "Users",
+    "auditLog": "Audit Log",
+    "administration": "Administration",
+    "backups": "Backups",
+    "profile": "Profile"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Overview of your RFE cases and activity.",
+    "totalCases": "Total Cases",
+    "inReview": "In Review",
+    "approachingDeadline": "Approaching Deadline",
+    "responded": "Responded",
+    "casesByStatus": "Cases by Status",
+    "casesByVisaType": "Cases by Visa Type",
+    "casesOverTime": "Cases Over Time",
+    "recentActivity": "Recent Activity",
+    "recentCases": "Recent Cases",
+    "noCases": "No cases yet.",
+    "noData": "No data for this period.",
+    "noActivity": "No recent activity.",
+    "createFirst": "No cases yet. Create your first case to get started."
+  },
+  "cases": {
+    "title": "Cases",
+    "subtitle": "Manage all RFE cases.",
+    "newCase": "New Case",
+    "caseNumber": "Case #",
+    "petitioner": "Petitioner",
+    "beneficiary": "Beneficiary",
+    "visaType": "Visa Type",
+    "deadline": "Deadline",
+    "assignedTo": "Assigned To",
+    "notes": "Notes",
+    "statuses": {
+      "draft": "Draft",
+      "review": "In Review",
+      "analyzing": "Analyzing",
+      "responded": "Responded",
+      "archived": "Archived"
+    }
+  },
+  "knowledge": {
+    "title": "Knowledge Base",
+    "uploadDocument": "Upload Document",
+    "documentTitle": "Title",
+    "documentType": "Document Type",
+    "content": "Content",
+    "noDocuments": "No documents yet.",
+    "types": {
+      "legal_memo": "Legal Memo",
+      "template": "Template",
+      "regulation": "Regulation",
+      "case_law": "Case Law",
+      "other": "Other"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "subtitle": "Manage your personal information and password.",
+    "account": "Account",
+    "personalInfo": "Personal Information",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "barNumber": "Bar Number",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm New Password",
+    "preferences": "Preferences",
+    "timezone": "Timezone",
+    "dashboardLayout": "Dashboard Layout",
+    "expanded": "Expanded",
+    "compact": "Compact",
+    "emailNotifications": "Email Notifications",
+    "security": "Security",
+    "twoFactor": "Two-Factor Authentication"
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Manage team members, invite new users, and assign roles.",
+    "inviteUser": "Invite User",
+    "name": "Name",
+    "role": "Role",
+    "roles": {
+      "admin": "Admin",
+      "attorney": "Attorney",
+      "paralegal": "Paralegal",
+      "viewer": "Viewer"
+    }
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "subtitle": "View all system activity and changes."
+  },
+  "backups": {
+    "title": "Backups",
+    "subtitle": "Create and manage data backups for your organization.",
+    "createBackup": "Create Backup",
+    "creating": "Creating...",
+    "noBackups": "No backups yet. Create your first backup to export your organization's data."
+  },
+  "periods": {
+    "7d": "7 Days",
+    "30d": "30 Days",
+    "90d": "90 Days",
+    "all": "All Time"
+  }
+}

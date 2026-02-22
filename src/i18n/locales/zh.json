@@ -1,0 +1,151 @@
+{
+  "common": {
+    "save": "保存更改",
+    "cancel": "取消",
+    "delete": "删除",
+    "edit": "编辑",
+    "create": "创建",
+    "search": "搜索",
+    "loading": "加载中...",
+    "noResults": "未找到结果。",
+    "confirm": "确认",
+    "back": "返回",
+    "next": "下一步",
+    "close": "关闭",
+    "export": "导出",
+    "download": "下载",
+    "upload": "上传",
+    "actions": "操作",
+    "status": "状态",
+    "all": "全部",
+    "signOut": "退出登录"
+  },
+  "auth": {
+    "signIn": "登录",
+    "signingIn": "登录中...",
+    "email": "电子邮箱",
+    "password": "密码",
+    "forgotPassword": "忘记密码？",
+    "welcomeBack": "欢迎回来！",
+    "invalidCredentials": "邮箱或密码无效，请重试。",
+    "twoFactorTitle": "双因素认证",
+    "twoFactorDescription": "请输入认证器应用中的6位验证码，或使用备用码。",
+    "verificationCode": "验证码",
+    "verify": "验证",
+    "verifying": "验证中..."
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "cases": "案件",
+    "knowledgeBase": "知识库",
+    "help": "帮助",
+    "settings": "设置",
+    "users": "用户",
+    "auditLog": "审计日志",
+    "administration": "管理",
+    "backups": "备份",
+    "profile": "个人资料"
+  },
+  "dashboard": {
+    "title": "仪表盘",
+    "subtitle": "您的RFE案件和活动概览。",
+    "totalCases": "案件总数",
+    "inReview": "审查中",
+    "approachingDeadline": "即将到期",
+    "responded": "已回复",
+    "casesByStatus": "按状态分类",
+    "casesByVisaType": "按签证类型分类",
+    "casesOverTime": "案件趋势",
+    "recentActivity": "近期活动",
+    "recentCases": "近期案件",
+    "noCases": "暂无案件。",
+    "noData": "该时期暂无数据。",
+    "noActivity": "暂无近期活动。",
+    "createFirst": "暂无案件。创建您的第一个案件开始使用。"
+  },
+  "cases": {
+    "title": "案件",
+    "subtitle": "管理所有RFE案件。",
+    "newCase": "新建案件",
+    "caseNumber": "案件编号",
+    "petitioner": "申请人",
+    "beneficiary": "受益人",
+    "visaType": "签证类型",
+    "deadline": "截止日期",
+    "assignedTo": "分配给",
+    "notes": "备注",
+    "statuses": {
+      "draft": "草稿",
+      "review": "审查中",
+      "analyzing": "分析中",
+      "responded": "已回复",
+      "archived": "已归档"
+    }
+  },
+  "knowledge": {
+    "title": "知识库",
+    "uploadDocument": "上传文档",
+    "documentTitle": "标题",
+    "documentType": "文档类型",
+    "content": "内容",
+    "noDocuments": "暂无文档。",
+    "types": {
+      "legal_memo": "法律备忘录",
+      "template": "模板",
+      "regulation": "法规",
+      "case_law": "判例法",
+      "other": "其他"
+    }
+  },
+  "profile": {
+    "title": "个人资料",
+    "subtitle": "管理您的个人信息和密码。",
+    "account": "账户",
+    "personalInfo": "个人信息",
+    "firstName": "名",
+    "lastName": "姓",
+    "barNumber": "律师执照号",
+    "changePassword": "修改密码",
+    "currentPassword": "当前密码",
+    "newPassword": "新密码",
+    "confirmPassword": "确认新密码",
+    "preferences": "偏好设置",
+    "timezone": "时区",
+    "dashboardLayout": "仪表盘布局",
+    "expanded": "展开",
+    "compact": "紧凑",
+    "emailNotifications": "邮件通知",
+    "security": "安全",
+    "twoFactor": "双因素认证"
+  },
+  "users": {
+    "title": "用户",
+    "subtitle": "管理团队成员，邀请新用户并分配角色。",
+    "inviteUser": "邀请用户",
+    "name": "姓名",
+    "role": "角色",
+    "roles": {
+      "admin": "管理员",
+      "attorney": "律师",
+      "paralegal": "律师助理",
+      "viewer": "查看者"
+    }
+  },
+  "auditLog": {
+    "title": "审计日志",
+    "subtitle": "查看所有系统活动和变更。"
+  },
+  "backups": {
+    "title": "备份",
+    "subtitle": "创建和管理组织的数据备份。",
+    "createBackup": "创建备份",
+    "creating": "创建中...",
+    "noBackups": "尚无备份。创建第一个备份以导出组织数据。"
+  },
+  "periods": {
+    "7d": "7天",
+    "30d": "30天",
+    "90d": "90天",
+    "all": "全部时间"
+  }
+}

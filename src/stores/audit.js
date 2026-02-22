@@ -24,10 +24,32 @@ export const useAuditStore = defineStore('audit', () => {
     }
   }
 
+  async function exportLogs({ action_type = null, auditable_type = null } = {}, formatType = 'csv') {
+    const params = { format_type: formatType }
+    if (action_type) params.action_type = action_type
+    if (auditable_type) params.auditable_type = auditable_type
+
+    const response = await apiClient.get('/audit_logs/export', {
+      params,
+      responseType: 'blob',
+    })
+
+    const ext = formatType === 'pdf' ? 'pdf' : 'csv'
+    const contentType = formatType === 'pdf' ? 'application/pdf' : 'text/csv'
+    const blob = new Blob([response.data], { type: contentType })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `audit-log-${new Date().toISOString().slice(0, 10)}.${ext}`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   return {
     logs,
     pagination,
     loading,
     fetchLogs,
+    exportLogs,
   }
 })

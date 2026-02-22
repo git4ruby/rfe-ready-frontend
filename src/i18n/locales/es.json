@@ -1,0 +1,151 @@
+{
+  "common": {
+    "save": "Guardar Cambios",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "create": "Crear",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "noResults": "No se encontraron resultados.",
+    "confirm": "Confirmar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "close": "Cerrar",
+    "export": "Exportar",
+    "download": "Descargar",
+    "upload": "Subir",
+    "actions": "Acciones",
+    "status": "Estado",
+    "all": "Todos",
+    "signOut": "Cerrar Sesión"
+  },
+  "auth": {
+    "signIn": "Iniciar Sesión",
+    "signingIn": "Iniciando sesión...",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "welcomeBack": "¡Bienvenido de nuevo!",
+    "invalidCredentials": "Correo o contraseña inválidos. Inténtalo de nuevo.",
+    "twoFactorTitle": "Autenticación de Dos Factores",
+    "twoFactorDescription": "Ingresa el código de 6 dígitos de tu aplicación de autenticación o un código de respaldo.",
+    "verificationCode": "Código de Verificación",
+    "verify": "Verificar",
+    "verifying": "Verificando..."
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "cases": "Casos",
+    "knowledgeBase": "Base de Conocimiento",
+    "help": "Ayuda",
+    "settings": "Configuración",
+    "users": "Usuarios",
+    "auditLog": "Registro de Auditoría",
+    "administration": "Administración",
+    "backups": "Copias de Seguridad",
+    "profile": "Perfil"
+  },
+  "dashboard": {
+    "title": "Panel",
+    "subtitle": "Resumen de tus casos RFE y actividad.",
+    "totalCases": "Total de Casos",
+    "inReview": "En Revisión",
+    "approachingDeadline": "Fecha Límite Próxima",
+    "responded": "Respondidos",
+    "casesByStatus": "Casos por Estado",
+    "casesByVisaType": "Casos por Tipo de Visa",
+    "casesOverTime": "Casos a lo Largo del Tiempo",
+    "recentActivity": "Actividad Reciente",
+    "recentCases": "Casos Recientes",
+    "noCases": "Aún no hay casos.",
+    "noData": "Sin datos para este período.",
+    "noActivity": "Sin actividad reciente.",
+    "createFirst": "Aún no hay casos. Crea tu primer caso para comenzar."
+  },
+  "cases": {
+    "title": "Casos",
+    "subtitle": "Administrar todos los casos RFE.",
+    "newCase": "Nuevo Caso",
+    "caseNumber": "Caso #",
+    "petitioner": "Peticionario",
+    "beneficiary": "Beneficiario",
+    "visaType": "Tipo de Visa",
+    "deadline": "Fecha Límite",
+    "assignedTo": "Asignado a",
+    "notes": "Notas",
+    "statuses": {
+      "draft": "Borrador",
+      "review": "En Revisión",
+      "analyzing": "Analizando",
+      "responded": "Respondido",
+      "archived": "Archivado"
+    }
+  },
+  "knowledge": {
+    "title": "Base de Conocimiento",
+    "uploadDocument": "Subir Documento",
+    "documentTitle": "Título",
+    "documentType": "Tipo de Documento",
+    "content": "Contenido",
+    "noDocuments": "Aún no hay documentos.",
+    "types": {
+      "legal_memo": "Memo Legal",
+      "template": "Plantilla",
+      "regulation": "Regulación",
+      "case_law": "Jurisprudencia",
+      "other": "Otro"
+    }
+  },
+  "profile": {
+    "title": "Perfil",
+    "subtitle": "Administra tu información personal y contraseña.",
+    "account": "Cuenta",
+    "personalInfo": "Información Personal",
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "barNumber": "Número de Colegiatura",
+    "changePassword": "Cambiar Contraseña",
+    "currentPassword": "Contraseña Actual",
+    "newPassword": "Nueva Contraseña",
+    "confirmPassword": "Confirmar Nueva Contraseña",
+    "preferences": "Preferencias",
+    "timezone": "Zona Horaria",
+    "dashboardLayout": "Diseño del Panel",
+    "expanded": "Expandido",
+    "compact": "Compacto",
+    "emailNotifications": "Notificaciones por Correo",
+    "security": "Seguridad",
+    "twoFactor": "Autenticación de Dos Factores"
+  },
+  "users": {
+    "title": "Usuarios",
+    "subtitle": "Administrar miembros del equipo, invitar nuevos usuarios y asignar roles.",
+    "inviteUser": "Invitar Usuario",
+    "name": "Nombre",
+    "role": "Rol",
+    "roles": {
+      "admin": "Administrador",
+      "attorney": "Abogado",
+      "paralegal": "Paralegal",
+      "viewer": "Observador"
+    }
+  },
+  "auditLog": {
+    "title": "Registro de Auditoría",
+    "subtitle": "Ver toda la actividad del sistema y los cambios."
+  },
+  "backups": {
+    "title": "Copias de Seguridad",
+    "subtitle": "Crear y administrar copias de seguridad de los datos de tu organización.",
+    "createBackup": "Crear Copia de Seguridad",
+    "creating": "Creando...",
+    "noBackups": "Aún no hay copias de seguridad. Crea tu primera copia para exportar los datos de tu organización."
+  },
+  "periods": {
+    "7d": "7 Días",
+    "30d": "30 Días",
+    "90d": "90 Días",
+    "all": "Todo el Tiempo"
+  }
+}

@@ -5,8 +5,9 @@ import apiClient from '../api/client'
 export const useAuthStore = defineStore('auth', () => {
   const user = ref(JSON.parse(localStorage.getItem('auth_user') || 'null'))
   const token = ref(localStorage.getItem('auth_token') || null)
+  const requires2FA = ref(false)
 
-  const isAuthenticated = computed(() => !!token.value)
+  const isAuthenticated = computed(() => !!token.value && !requires2FA.value)
   const isAdmin = computed(() => user.value?.role === 'admin')
   const isSuperAdmin = computed(() => !!user.value?.is_super_admin)
   const isAttorney = computed(() => ['admin', 'attorney'].includes(user.value?.role))
@@ -36,6 +37,11 @@ export const useAuthStore = defineStore('auth', () => {
     user.value = userData
     localStorage.setItem('auth_user', JSON.stringify(userData))
 
+    // Check if 2FA is required
+    if (userData.otp_required_for_login) {
+      requires2FA.value = true
+    }
+
     return response.data
   }
 
@@ -44,6 +50,10 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = { ...user.value, ...data }
       localStorage.setItem('auth_user', JSON.stringify(user.value))
     }
+  }
+
+  function confirm2FA() {
+    requires2FA.value = false
   }
 
   async function logout() {
@@ -62,6 +72,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     token,
+    requires2FA,
     isAuthenticated,
     isAdmin,
     isSuperAdmin,
@@ -69,6 +80,7 @@ export const useAuthStore = defineStore('auth', () => {
     canEdit,
     fullName,
     login,
+    confirm2FA,
     logout,
     updateUser,
   }

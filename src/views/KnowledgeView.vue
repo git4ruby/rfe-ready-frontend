@@ -21,6 +21,9 @@ import SkeletonLoader from '../components/SkeletonLoader.vue'
 import PaginationBar from '../components/PaginationBar.vue'
 import EmptyState from '../components/EmptyState.vue'
 
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const store = useKnowledgeStore()
 const notify = useNotificationStore()
 
@@ -368,7 +371,7 @@ function statDocTypeColor(key) {
     <!-- Page header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Knowledge Base</h1>
+        <h1 class="text-2xl font-bold text-gray-900">{{ t('knowledge.title') }}</h1>
         <p class="mt-1 text-sm text-gray-500">
           Upload and manage firm-specific templates, sample responses, and regulatory documents.
         </p>

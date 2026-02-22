@@ -21,6 +21,12 @@ const routes = [
     meta: { guest: true },
   },
   {
+    path: '/sso/callback',
+    name: 'SSOCallback',
+    component: () => import('../views/SSOCallbackView.vue'),
+    meta: { guest: true },
+  },
+  {
     path: '/forbidden',
     name: 'Forbidden',
     component: () => import('../views/ForbiddenView.vue'),
@@ -106,10 +112,22 @@ const routes = [
         meta: { requiresAdmin: true },
       },
       {
+        path: 'backups',
+        name: 'Backups',
+        component: () => import('../views/BackupsView.vue'),
+        meta: { requiresAdmin: true },
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('../views/ProfileView.vue'),
         meta: { title: 'Profile' },
+      },
+      {
+        path: 'help',
+        name: 'Help',
+        component: () => import('../views/HelpView.vue'),
+        meta: { title: 'Help Center' },
       },
     ],
   },

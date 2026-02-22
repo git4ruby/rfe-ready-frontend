@@ -46,3 +46,46 @@
 .dark .theme-main :where(.shadow, .shadow-sm, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl) {
   --tw-shadow-color: oklch(0 0 0 / 0.4);
 }
+
+/* ===== Onboarding Tour (driver.js) ===== */
+.driver-popover.rfe-tour-popover {
+  border-radius: 12px;
+  padding: 20px;
+}
+.driver-popover.rfe-tour-popover .driver-popover-title {
+  font-size: 16px;
+  font-weight: 700;
+}
+.driver-popover.rfe-tour-popover .driver-popover-description {
+  font-size: 14px;
+  color: #6b7280;
+}
+.driver-popover.rfe-tour-popover .driver-popover-progress-text {
+  font-size: 12px;
+  color: #9ca3af;
+}
+.driver-popover.rfe-tour-popover button.driver-popover-next-btn {
+  background-color: #4f46e5;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-shadow: none;
+}
+.driver-popover.rfe-tour-popover button.driver-popover-next-btn:hover {
+  background-color: #4338ca;
+}
+.driver-popover.rfe-tour-popover button.driver-popover-prev-btn {
+  border-radius: 8px;
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4f46e5;
+  border: 1px solid #e5e7eb;
+  text-shadow: none;
+}
+.driver-popover.rfe-tour-popover button.driver-popover-prev-btn:hover {
+  background-color: #f3f4f6;
+}

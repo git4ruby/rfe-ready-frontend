@@ -8,11 +8,15 @@ import {
   ChevronDownIcon,
   ChevronUpIcon,
   FunnelIcon,
+  ArrowDownTrayIcon,
 } from '@heroicons/vue/24/outline'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import PaginationBar from '../components/PaginationBar.vue'
 import EmptyState from '../components/EmptyState.vue'
 
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 const store = useAuditStore()
 const notify = useNotificationStore()
 
@@ -96,14 +100,63 @@ function hasChanges(log) {
 function formatFieldName(field) {
   return field.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
 }
+
+const showExportMenu = ref(false)
+const exporting = ref(false)
+
+async function handleExport(formatType) {
+  showExportMenu.value = false
+  exporting.value = true
+  try {
+    await store.exportLogs({
+      action_type: filters.value.action_type,
+      auditable_type: filters.value.auditable_type,
+    }, formatType)
+    notify.success(`Audit log exported as ${formatType.toUpperCase()}.`)
+  } catch {
+    notify.error('Failed to export audit log.')
+  } finally {
+    exporting.value = false
+  }
+}
 </script>
 
 <template>
   <div>
     <!-- Page header -->
-    <div class="mb-6">
-      <h1 class="text-2xl font-bold text-gray-900">Audit Log</h1>
-      <p class="mt-1 text-sm text-gray-500">Track all changes made across the system.</p>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">{{ t('auditLog.title') }}</h1>
+        <p class="mt-1 text-sm text-gray-500">Track all changes made across the system.</p>
+      </div>
+      <div class="relative">
+        <button
+          @click="showExportMenu = !showExportMenu"
+          :disabled="exporting"
+          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
+        >
+          <ArrowDownTrayIcon class="h-5 w-5" />
+          {{ exporting ? 'Exporting...' : 'Export' }}
+          <ChevronDownIcon class="h-4 w-4" />
+        </button>
+        <div
+          v-if="showExportMenu"
+          class="absolute right-0 mt-1 w-40 rounded-lg bg-white shadow-lg ring-1 ring-gray-200 z-10"
+        >
+          <button
+            @click="handleExport('csv')"
+            class="block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+          >
+            Export as CSV
+          </button>
+          <button
+            @click="handleExport('pdf')"
+            class="block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg"
+          >
+            Export as PDF
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- Filters -->

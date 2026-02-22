@@ -8,13 +8,25 @@ import { useRouter } from 'vue-router'
 export function useKeyboardShortcuts() {
   const router = useRouter()
   const showHelp = ref(false)
+  const showSearch = ref(false)
 
   function handler(e) {
     const tag = e.target.tagName
     const isInput = tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable
 
+    // Cmd+K / Ctrl+K — global search (works even in inputs)
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault()
+      showSearch.value = !showSearch.value
+      return
+    }
+
     // Escape always works — close modals, blur inputs
     if (e.key === 'Escape') {
+      if (showSearch.value) {
+        showSearch.value = false
+        return
+      }
       if (showHelp.value) {
         showHelp.value = false
         return
@@ -91,5 +103,5 @@ export function useKeyboardShortcuts() {
     clearTimeout(goTimer)
   })
 
-  return { showHelp }
+  return { showHelp, showSearch }
 }

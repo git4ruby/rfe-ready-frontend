@@ -1,8 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '../stores/auth'
 import { useThemeStore } from '../stores/theme'
+import { useRateLimitStore } from '../stores/rateLimit'
+import { useOnboarding } from '../composables/useOnboarding'
 import {
   HomeIcon,
   FolderIcon,
@@ -15,25 +18,40 @@ import {
   XMarkIcon,
   SunIcon,
   MoonIcon,
+  QuestionMarkCircleIcon,
+  BellIcon,
+  CloudArrowUpIcon,
 } from '@heroicons/vue/24/outline'
+import NotificationPanel from '../components/NotificationPanel.vue'
+import { useLiveNotificationsStore } from '../stores/liveNotifications'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const themeStore = useThemeStore()
+const rateLimit = useRateLimitStore()
+const { restartTour } = useOnboarding()
+const notifStore = useLiveNotificationsStore()
+const { t } = useI18n()
 
 const sidebarOpen = ref(false)
+const notifPanelOpen = ref(false)
+
+// Start listening for real-time notifications
+notifStore.startListening()
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: HomeIcon, routeName: 'Dashboard' },
-  { name: 'Cases', href: '/cases', icon: FolderIcon, routeName: 'Cases' },
-  { name: 'Knowledge Base', href: '/knowledge', icon: BookOpenIcon, routeName: 'Knowledge' },
+  { nameKey: 'nav.dashboard', href: '/', icon: HomeIcon, routeName: 'Dashboard' },
+  { nameKey: 'nav.cases', href: '/cases', icon: FolderIcon, routeName: 'Cases' },
+  { nameKey: 'nav.knowledgeBase', href: '/knowledge', icon: BookOpenIcon, routeName: 'Knowledge' },
+  { nameKey: 'nav.help', href: '/help', icon: QuestionMarkCircleIcon, routeName: 'Help' },
 ]
 
 const adminNavigation = [
-  { name: 'Settings', href: '/settings', icon: CogIcon, routeName: 'Settings' },
-  { name: 'Users', href: '/users', icon: UsersIcon, routeName: 'Users' },
-  { name: 'Audit Log', href: '/audit-log', icon: ClipboardDocumentListIcon, routeName: 'AuditLog' },
+  { nameKey: 'nav.settings', href: '/settings', icon: CogIcon, routeName: 'Settings' },
+  { nameKey: 'nav.users', href: '/users', icon: UsersIcon, routeName: 'Users' },
+  { nameKey: 'nav.auditLog', href: '/audit-log', icon: ClipboardDocumentListIcon, routeName: 'AuditLog' },
+  { nameKey: 'nav.backups', href: '/backups', icon: CloudArrowUpIcon, routeName: 'Backups' },
 ]
 
 function isActive(item) {
@@ -86,6 +104,7 @@ async function handleLogout() {
         <router-link
           v-for="item in navigation"
           :key="item.name"
+          :id="`nav-${item.routeName.toLowerCase()}`"
           :to="item.href"
           :class="[
             'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
@@ -96,19 +115,20 @@ async function handleLogout() {
           @click="sidebarOpen = false"
         >
           <component :is="item.icon" class="h-5 w-5 shrink-0" />
-          {{ item.name }}
+          {{ t(item.nameKey) }}
         </router-link>
 
         <!-- Admin section -->
         <template v-if="authStore.isAdmin">
           <div class="pt-4 pb-2 px-3">
             <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">
-              Administration
+              {{ t('nav.administration') }}
             </p>
           </div>
           <router-link
             v-for="item in adminNavigation"
             :key="item.name"
+            :id="`nav-${item.routeName.toLowerCase()}`"
             :to="item.href"
             :class="[
               'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
@@ -119,10 +139,18 @@ async function handleLogout() {
             @click="sidebarOpen = false"
           >
             <component :is="item.icon" class="h-5 w-5 shrink-0" />
-            {{ item.name }}
+            {{ t(item.nameKey) }}
           </router-link>
         </template>
       </nav>
+
+      <!-- Rate limit warning -->
+      <div v-if="rateLimit.isWarning" class="px-4 py-2 bg-amber-900/50 border-t border-amber-700">
+        <p class="text-xs text-amber-300">API rate limit: {{ rateLimit.remaining }}/{{ rateLimit.limit }} remaining</p>
+        <div class="mt-1 w-full bg-amber-800 rounded-full h-1">
+          <div class="bg-amber-400 h-1 rounded-full" :style="{ width: rateLimit.percentUsed + '%' }" />
+        </div>
+      </div>
 
       <!-- User info -->
       <div class="border-t border-gray-800 p-4 space-y-3">
@@ -136,6 +164,26 @@ async function handleLogout() {
             <p class="text-sm font-medium text-white truncate">{{ authStore.fullName }}</p>
             <p class="text-xs text-gray-400 truncate">{{ authStore.user?.role }}</p>
           </router-link>
+          <button
+            @click="notifPanelOpen = true"
+            class="shrink-0 text-gray-400 hover:text-white transition-colors relative"
+            title="Notifications"
+          >
+            <BellIcon class="h-5 w-5" />
+            <span
+              v-if="notifStore.unreadCount > 0"
+              class="absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold"
+            >
+              {{ notifStore.unreadCount > 9 ? '9+' : notifStore.unreadCount }}
+            </span>
+          </button>
+          <button
+            @click="restartTour"
+            class="shrink-0 text-gray-400 hover:text-white transition-colors"
+            title="Restart guided tour"
+          >
+            <QuestionMarkCircleIcon class="h-5 w-5" />
+          </button>
           <button
             @click="themeStore.toggle()"
             class="shrink-0 text-gray-400 hover:text-white transition-colors"
@@ -174,5 +222,8 @@ async function handleLogout() {
         <router-view />
       </main>
     </div>
+
+    <!-- Notification slide-over -->
+    <NotificationPanel :show="notifPanelOpen" @close="notifPanelOpen = false" />
   </div>
 </template>

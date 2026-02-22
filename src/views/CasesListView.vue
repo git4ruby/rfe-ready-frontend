@@ -1,5 +1,6 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { useCasesStore } from '../stores/cases'
 import { useNotificationStore } from '../stores/notification'
 import { PlusIcon, MagnifyingGlassIcon, EyeIcon, PencilSquareIcon, ArchiveBoxIcon, ArrowPathIcon, XMarkIcon } from '@heroicons/vue/24/outline'
@@ -10,6 +11,7 @@ import EmptyState from '../components/EmptyState.vue'
 import PaginationBar from '../components/PaginationBar.vue'
 import { useQueryFilters } from '../composables/useQueryFilters'
 
+const { t } = useI18n()
 const casesStore = useCasesStore()
 const notify = useNotificationStore()
 
@@ -102,8 +104,8 @@ watch(currentPage, () => clearSelection())
     <!-- Page header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">Cases</h1>
-        <p class="mt-1 text-sm text-gray-500">Manage all RFE cases.</p>
+        <h1 class="text-2xl font-bold text-gray-900">{{ t('cases.title') }}</h1>
+        <p class="mt-1 text-sm text-gray-500">{{ t('cases.subtitle', 'Manage all RFE cases.') }}</p>
       </div>
       <router-link
         to="/cases/new"
@@ -111,7 +113,7 @@ watch(currentPage, () => clearSelection())
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
       >
         <PlusIcon class="h-5 w-5" />
-        New Case
+        {{ t('cases.newCase') }}
       </router-link>
     </div>
 
@@ -125,7 +127,7 @@ watch(currentPage, () => clearSelection())
           v-model="searchQuery"
           type="text"
           data-shortcut="search"
-          placeholder="Search cases... (press /)"
+          :placeholder="t('common.search') + '...'"
           class="block w-full rounded-lg border-gray-300 pl-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         />
       </div>
@@ -240,25 +242,25 @@ watch(currentPage, () => clearSelection())
                   />
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Case #
+                  {{ t('cases.caseNumber') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Petitioner
+                  {{ t('cases.petitioner') }}
                 </th>
                 <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Beneficiary
+                  {{ t('cases.beneficiary') }}
                 </th>
                 <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Visa Type
+                  {{ t('cases.visaType') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
+                  {{ t('common.status') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Deadline
+                  {{ t('cases.deadline') }}
                 </th>
                 <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
+                  {{ t('common.actions') }}
                 </th>
               </tr>
             </thead>
