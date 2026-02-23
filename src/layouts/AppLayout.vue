@@ -154,39 +154,41 @@ async function handleLogout() {
 
       <!-- User info -->
       <div class="border-t border-gray-800 p-4 space-y-3">
-        <div class="flex items-center gap-3">
+        <router-link to="/profile" class="flex items-center gap-3 hover:opacity-80 transition-opacity">
           <div class="h-9 w-9 rounded-full bg-indigo-600 flex items-center justify-center shrink-0">
             <span class="text-sm font-medium text-white">
               {{ authStore.user?.first_name?.[0] || 'U' }}{{ authStore.user?.last_name?.[0] || '' }}
             </span>
           </div>
-          <router-link to="/profile" class="flex-1 min-w-0 hover:opacity-80 transition-opacity">
+          <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-white truncate">{{ authStore.fullName }}</p>
             <p class="text-xs text-gray-400 truncate">{{ authStore.user?.role }}</p>
-          </router-link>
+          </div>
+        </router-link>
+        <div class="flex items-center justify-between">
           <button
             @click="notifPanelOpen = true"
-            class="shrink-0 text-gray-400 hover:text-white transition-colors relative"
+            class="text-gray-400 hover:text-white transition-colors relative p-1.5 rounded-lg hover:bg-gray-800"
             title="Notifications"
           >
             <BellIcon class="h-5 w-5" />
             <span
               v-if="notifStore.unreadCount > 0"
-              class="absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold"
+              class="absolute -top-0.5 -right-0.5 inline-flex items-center justify-center h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold"
             >
               {{ notifStore.unreadCount > 9 ? '9+' : notifStore.unreadCount }}
             </span>
           </button>
           <button
             @click="restartTour"
-            class="shrink-0 text-gray-400 hover:text-white transition-colors"
+            class="text-gray-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-gray-800"
             title="Restart guided tour"
           >
             <QuestionMarkCircleIcon class="h-5 w-5" />
           </button>
           <button
             @click="themeStore.toggle()"
-            class="shrink-0 text-gray-400 hover:text-white transition-colors"
+            class="text-gray-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-gray-800"
             :title="themeStore.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
           >
             <SunIcon v-if="themeStore.isDark" class="h-5 w-5" />
@@ -194,7 +196,7 @@ async function handleLogout() {
           </button>
           <button
             @click="handleLogout"
-            class="shrink-0 text-gray-400 hover:text-white transition-colors"
+            class="text-gray-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-gray-800"
             title="Sign out"
           >
             <ArrowRightOnRectangleIcon class="h-5 w-5" />
