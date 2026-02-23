@@ -44,7 +44,14 @@ apiClient.interceptors.response.use(
       notificationStore.show('Your session has expired. Please sign in again.', 'info', 8000)
       router.push('/login')
     } else if (status === 403) {
-      router.push('/forbidden')
+      // Only redirect if not already on an admin route (super admin 403s
+      // from tenant endpoints are expected and handled by the caller)
+      if (!error.config?.url?.startsWith('/admin')) {
+        const currentPath = router.currentRoute?.value?.path || ''
+        if (!currentPath.startsWith('/platform')) {
+          router.push('/forbidden')
+        }
+      }
     }
     return Promise.reject(error)
   }

@@ -25,7 +25,10 @@ watch(
   (isAuth) => {
     if (isAuth) {
       start(router)
-      featuresStore.fetchFlags()
+      // Feature flags are tenant-specific — skip for super admins
+      if (!authStore.isSuperAdmin) {
+        featuresStore.fetchFlags()
+      }
       // Sync locale from user preferences
       const userLocale = authStore.user?.preferences?.locale
       if (userLocale) setLocale(userLocale)
