@@ -133,14 +133,40 @@
   },
   "auditLog": {
     "title": "Registro de Auditoría",
-    "subtitle": "Ver toda la actividad del sistema y los cambios."
+    "subtitle": "Rastrear todos los cambios realizados en el sistema.",
+    "exporting": "Exportando...",
+    "exportCsv": "Exportar como CSV",
+    "exportPdf": "Exportar como PDF",
+    "allActions": "Todas las Acciones",
+    "actionCreate": "Crear",
+    "actionUpdate": "Actualizar",
+    "actionDestroy": "Eliminar",
+    "allResources": "Todos los Recursos",
+    "resourceCase": "Caso",
+    "resourceKnowledgeDoc": "Documento",
+    "resourceUser": "Usuario",
+    "resourceDraftResponse": "Borrador de Respuesta",
+    "noLogs": "Aún no hay registros de auditoría",
+    "noLogsDescription": "La actividad aparecerá aquí a medida que se realicen cambios en el sistema.",
+    "dateTime": "Fecha / Hora",
+    "user": "Usuario",
+    "action": "Acción",
+    "resource": "Recurso",
+    "ipAddress": "Dirección IP",
+    "changes": "Cambios",
+    "system": "Sistema",
+    "empty": "(vacío)"
   },
   "backups": {
     "title": "Copias de Seguridad",
     "subtitle": "Crear y administrar copias de seguridad de los datos de tu organización.",
     "createBackup": "Crear Copia de Seguridad",
     "creating": "Creando...",
-    "noBackups": "Aún no hay copias de seguridad. Crea tu primera copia para exportar los datos de tu organización."
+    "noBackups": "Aún no hay copias de seguridad. Crea tu primera copia para exportar los datos de tu organización.",
+    "created": "Creado",
+    "size": "Tamaño",
+    "createdBy": "Creado por",
+    "inProgress": "En Progreso"
   },
   "periods": {
     "7d": "7 Días",

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useAuditStore } from '../stores/audit'
 import { useNotificationStore } from '../stores/notification'
 import { useQueryFilters } from '../composables/useQueryFilters'
@@ -22,20 +22,20 @@ const notify = useNotificationStore()
 
 const expandedRow = ref(null)
 
-const actionOptions = [
-  { value: '', label: 'All Actions' },
-  { value: 'create', label: 'Create' },
-  { value: 'update', label: 'Update' },
-  { value: 'destroy', label: 'Destroy' },
-]
+const actionOptions = computed(() => [
+  { value: '', label: t('auditLog.allActions') },
+  { value: 'create', label: t('auditLog.actionCreate') },
+  { value: 'update', label: t('auditLog.actionUpdate') },
+  { value: 'destroy', label: t('auditLog.actionDestroy') },
+])
 
-const typeOptions = [
-  { value: '', label: 'All Resources' },
-  { value: 'RfeCase', label: 'Case' },
-  { value: 'KnowledgeDoc', label: 'Knowledge Doc' },
-  { value: 'User', label: 'User' },
-  { value: 'DraftResponse', label: 'Draft Response' },
-]
+const typeOptions = computed(() => [
+  { value: '', label: t('auditLog.allResources') },
+  { value: 'RfeCase', label: t('auditLog.resourceCase') },
+  { value: 'KnowledgeDoc', label: t('auditLog.resourceKnowledgeDoc') },
+  { value: 'User', label: t('auditLog.resourceUser') },
+  { value: 'DraftResponse', label: t('auditLog.resourceDraftResponse') },
+])
 
 async function loadLogs(page = 1) {
   try {
@@ -85,10 +85,10 @@ function actionClasses(action) {
 
 function typeLabel(type) {
   const labels = {
-    RfeCase: 'Case',
-    KnowledgeDoc: 'Knowledge Doc',
-    User: 'User',
-    DraftResponse: 'Draft Response',
+    RfeCase: t('auditLog.resourceCase'),
+    KnowledgeDoc: t('auditLog.resourceKnowledgeDoc'),
+    User: t('auditLog.resourceUser'),
+    DraftResponse: t('auditLog.resourceDraftResponse'),
   }
   return labels[type] || type
 }
@@ -127,7 +127,7 @@ async function handleExport(formatType) {
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
       <div>
         <h1 class="text-2xl font-bold text-gray-900">{{ t('auditLog.title') }}</h1>
-        <p class="mt-1 text-sm text-gray-500">Track all changes made across the system.</p>
+        <p class="mt-1 text-sm text-gray-500">{{ t('auditLog.subtitle') }}</p>
       </div>
       <div class="relative">
         <button
@@ -136,7 +136,7 @@ async function handleExport(formatType) {
           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
         >
           <ArrowDownTrayIcon class="h-5 w-5" />
-          {{ exporting ? 'Exporting...' : 'Export' }}
+          {{ exporting ? t('auditLog.exporting') : t('common.export') }}
           <ChevronDownIcon class="h-4 w-4" />
         </button>
         <div
@@ -147,13 +147,13 @@ async function handleExport(formatType) {
             @click="handleExport('csv')"
             class="block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
           >
-            Export as CSV
+            {{ t('auditLog.exportCsv') }}
           </button>
           <button
             @click="handleExport('pdf')"
             class="block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg"
           >
-            Export as PDF
+            {{ t('auditLog.exportPdf') }}
           </button>
         </div>
       </div>
@@ -188,8 +188,8 @@ async function handleExport(formatType) {
     <!-- Empty state -->
     <EmptyState
       v-else-if="!store.loading && store.logs.length === 0"
-      title="No audit logs yet"
-      description="Activity will appear here as changes are made in the system."
+      :title="t('auditLog.noLogs')"
+      :description="t('auditLog.noLogsDescription')"
       :icon="ClipboardDocumentListIcon"
     />
 
@@ -206,7 +206,7 @@ async function handleExport(formatType) {
         >
           <div class="flex items-start justify-between gap-2">
             <div class="min-w-0">
-              <p class="text-sm font-medium text-gray-900">{{ log.user_name || 'System' }}</p>
+              <p class="text-sm font-medium text-gray-900">{{ log.user_name || t('auditLog.system') }}</p>
               <p class="text-xs text-gray-500 mt-0.5">{{ formatDateTime(log.created_at) }}</p>
             </div>
             <span
@@ -228,9 +228,9 @@ async function handleExport(formatType) {
               class="text-xs"
             >
               <span class="font-medium text-gray-600">{{ formatFieldName(field) }}:</span>
-              <span class="text-red-600 line-through ml-1">{{ values[0] ?? '(empty)' }}</span>
+              <span class="text-red-600 line-through ml-1">{{ values[0] ?? t('auditLog.empty') }}</span>
               <span class="text-gray-400 mx-1">&rarr;</span>
-              <span class="text-green-700">{{ values[1] ?? '(empty)' }}</span>
+              <span class="text-green-700">{{ values[1] ?? t('auditLog.empty') }}</span>
             </div>
           </div>
         </div>
@@ -244,19 +244,19 @@ async function handleExport(formatType) {
               <tr>
                 <th class="w-10 px-4 py-3"></th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date / Time
+                  {{ t('auditLog.dateTime') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  User
+                  {{ t('auditLog.user') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Action
+                  {{ t('auditLog.action') }}
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Resource
+                  {{ t('auditLog.resource') }}
                 </th>
                 <th class="hidden lg:table-cell px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  IP Address
+                  {{ t('auditLog.ipAddress') }}
                 </th>
               </tr>
             </thead>
@@ -284,7 +284,7 @@ async function handleExport(formatType) {
                   </td>
                   <td class="px-6 py-4 whitespace-nowrap">
                     <div class="text-sm font-medium text-gray-900">
-                      {{ log.user_name || 'System' }}
+                      {{ log.user_name || t('auditLog.system') }}
                     </div>
                     <div v-if="log.user_email" class="text-xs text-gray-500">
                       {{ log.user_email }}
@@ -314,7 +314,7 @@ async function handleExport(formatType) {
                 <!-- Expanded changes row -->
                 <tr v-if="expandedRow === log.id && hasChanges(log)">
                   <td colspan="6" class="px-6 py-4 bg-gray-50">
-                    <div class="text-xs font-medium text-gray-500 uppercase mb-2">Changes</div>
+                    <div class="text-xs font-medium text-gray-500 uppercase mb-2">{{ t('auditLog.changes') }}</div>
                     <div class="space-y-2">
                       <div
                         v-for="(values, field) in log.changes_data"
@@ -324,9 +324,9 @@ async function handleExport(formatType) {
                         <span class="font-medium text-gray-700 min-w-[140px]">
                           {{ formatFieldName(field) }}
                         </span>
-                        <span class="text-red-600 line-through">{{ values[0] ?? '(empty)' }}</span>
+                        <span class="text-red-600 line-through">{{ values[0] ?? t('auditLog.empty') }}</span>
                         <span class="text-gray-400">&rarr;</span>
-                        <span class="text-green-700">{{ values[1] ?? '(empty)' }}</span>
+                        <span class="text-green-700">{{ values[1] ?? t('auditLog.empty') }}</span>
                       </div>
                     </div>
                   </td>

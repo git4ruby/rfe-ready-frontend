@@ -4,7 +4,6 @@ import { useAuthStore } from '../stores/auth'
 import { useNotificationStore } from '../stores/notification'
 import { usePreferencesStore } from '../stores/preferences'
 import profileApi from '../api/profile'
-import { availableLocales, setLocale } from '../i18n'
 import { useI18n } from 'vue-i18n'
 import twoFactorApi from '../api/twoFactor'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
@@ -13,8 +12,7 @@ import PasswordStrength from '../components/PasswordStrength.vue'
 const authStore = useAuthStore()
 const notify = useNotificationStore()
 const prefStore = usePreferencesStore()
-const { t, locale } = useI18n()
-const currentLocale = ref(locale.value)
+const { t } = useI18n()
 
 const loading = ref(true)
 const profile = ref(null)
@@ -51,7 +49,6 @@ async function loadProfile() {
     }
     init2FA()
     const p = profile.value.preferences || {}
-    if (p.locale) currentLocale.value = p.locale
     prefsForm.value = {
       timezone: p.timezone || Intl.DateTimeFormat().resolvedOptions().timeZone,
       dashboard_layout: p.dashboard_layout || 'expanded',
@@ -117,8 +114,7 @@ async function handleChangePassword() {
 
 async function handleSavePreferences() {
   try {
-    await prefStore.updatePreferences({ ...prefsForm.value, locale: currentLocale.value })
-    setLocale(currentLocale.value)
+    await prefStore.updatePreferences(prefsForm.value)
     notify.success('Preferences saved successfully.')
   } catch (err) {
     notify.error('Failed to save preferences.')
@@ -355,17 +351,6 @@ function close2FASetup() {
                   <span class="text-sm text-gray-700">{{ t('profile.compact') }}</span>
                 </label>
               </div>
-            </div>
-
-            <!-- Language -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700">Language</label>
-              <select
-                v-model="currentLocale"
-                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-              >
-                <option v-for="loc in availableLocales" :key="loc.code" :value="loc.code">{{ loc.name }}</option>
-              </select>
             </div>
 
             <!-- Email Notifications -->

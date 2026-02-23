@@ -133,14 +133,40 @@
   },
   "auditLog": {
     "title": "审计日志",
-    "subtitle": "查看所有系统活动和变更。"
+    "subtitle": "跟踪系统中所有的变更。",
+    "exporting": "导出中...",
+    "exportCsv": "导出为CSV",
+    "exportPdf": "导出为PDF",
+    "allActions": "所有操作",
+    "actionCreate": "创建",
+    "actionUpdate": "更新",
+    "actionDestroy": "删除",
+    "allResources": "所有资源",
+    "resourceCase": "案件",
+    "resourceKnowledgeDoc": "知识文档",
+    "resourceUser": "用户",
+    "resourceDraftResponse": "草稿回复",
+    "noLogs": "暂无审计日志",
+    "noLogsDescription": "系统中发生变更时，活动将显示在此处。",
+    "dateTime": "日期/时间",
+    "user": "用户",
+    "action": "操作",
+    "resource": "资源",
+    "ipAddress": "IP地址",
+    "changes": "变更",
+    "system": "系统",
+    "empty": "（空）"
   },
   "backups": {
     "title": "备份",
     "subtitle": "创建和管理组织的数据备份。",
     "createBackup": "创建备份",
     "creating": "创建中...",
-    "noBackups": "尚无备份。创建第一个备份以导出组织数据。"
+    "noBackups": "尚无备份。创建第一个备份以导出组织数据。",
+    "created": "创建时间",
+    "size": "大小",
+    "createdBy": "创建者",
+    "inProgress": "进行中"
   },
   "periods": {
     "7d": "7天",

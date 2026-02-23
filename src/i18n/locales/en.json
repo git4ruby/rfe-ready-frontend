@@ -133,14 +133,40 @@
   },
   "auditLog": {
     "title": "Audit Log",
-    "subtitle": "View all system activity and changes."
+    "subtitle": "Track all changes made across the system.",
+    "exporting": "Exporting...",
+    "exportCsv": "Export as CSV",
+    "exportPdf": "Export as PDF",
+    "allActions": "All Actions",
+    "actionCreate": "Create",
+    "actionUpdate": "Update",
+    "actionDestroy": "Destroy",
+    "allResources": "All Resources",
+    "resourceCase": "Case",
+    "resourceKnowledgeDoc": "Knowledge Doc",
+    "resourceUser": "User",
+    "resourceDraftResponse": "Draft Response",
+    "noLogs": "No audit logs yet",
+    "noLogsDescription": "Activity will appear here as changes are made in the system.",
+    "dateTime": "Date / Time",
+    "user": "User",
+    "action": "Action",
+    "resource": "Resource",
+    "ipAddress": "IP Address",
+    "changes": "Changes",
+    "system": "System",
+    "empty": "(empty)"
   },
   "backups": {
     "title": "Backups",
     "subtitle": "Create and manage data backups for your organization.",
     "createBackup": "Create Backup",
     "creating": "Creating...",
-    "noBackups": "No backups yet. Create your first backup to export your organization's data."
+    "noBackups": "No backups yet. Create your first backup to export your organization's data.",
+    "created": "Created",
+    "size": "Size",
+    "createdBy": "Created By",
+    "inProgress": "In Progress"
   },
   "periods": {
     "7d": "7 Days",
