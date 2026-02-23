@@ -25,6 +25,21 @@ export default [
     },
   },
   {
-    ignores: ['dist/**', 'node_modules/**'],
+    files: ['src/**/*.spec.js', 'src/test/**/*.js'],
+    languageOptions: {
+      globals: {
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+        beforeEach: 'readonly',
+        afterEach: 'readonly',
+        beforeAll: 'readonly',
+        afterAll: 'readonly',
+      },
+    },
+  },
+  {
+    ignores: ['dist/**', 'node_modules/**', 'coverage/**'],
   },
 ]
