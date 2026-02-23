@@ -154,6 +154,8 @@ router.beforeEach((to, from, next) => {
     next('/')
   } else if (to.meta.requiresAdmin && !authStore.isAdmin) {
     next('/')
+  } else if (authStore.isAuthenticated && authStore.isSuperAdmin && !to.path.startsWith('/platform') && !to.meta.guest && to.path !== '/forbidden') {
+    next('/platform')
   } else {
     next()
   }
