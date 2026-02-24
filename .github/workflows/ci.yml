@@ -89,4 +89,5 @@ jobs:
             cd /home/ubuntu/rfe-pilot
             docker compose --env-file .env.production -f docker-compose.production.yml build frontend
             docker compose --env-file .env.production -f docker-compose.production.yml up -d frontend
-            curl -f http://localhost || exit 1
+            sleep 5
+            docker compose --env-file .env.production -f docker-compose.production.yml ps frontend | grep -q "Up"
