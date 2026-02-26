@@ -23,6 +23,7 @@ import {
   CloudArrowUpIcon,
   FlagIcon,
   ChartBarIcon,
+  BoltIcon,
 } from '@heroicons/vue/24/outline'
 import NotificationPanel from '../components/NotificationPanel.vue'
 import TwoFactorBanner from '../components/TwoFactorBanner.vue'
@@ -57,6 +58,7 @@ const adminNavigation = [
   { nameKey: 'nav.auditLog', href: '/audit-log', icon: ClipboardDocumentListIcon, routeName: 'AuditLog' },
   { nameKey: 'nav.featureFlags', href: '/feature-flags', icon: FlagIcon, routeName: 'FeatureFlags' },
   { nameKey: 'nav.backups', href: '/backups', icon: CloudArrowUpIcon, routeName: 'Backups' },
+  { nameKey: 'nav.webhooks', href: '/webhooks', icon: BoltIcon, routeName: 'Webhooks' },
 ]
 
 function isActive(item) {

@@ -45,6 +45,7 @@
     "administration": "Administración",
     "backups": "Copias de Seguridad",
     "featureFlags": "Banderas de Funciones",
+    "webhooks": "Webhooks",
     "profile": "Perfil",
     "reports": "Informes"
   },
@@ -281,5 +282,34 @@
     "importAnother": "Importar Otro",
     "uploadFailed": "Error al importar archivo CSV.",
     "invalidFileType": "Seleccione un archivo CSV válido."
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "subtitle": "Administre los endpoints de webhook para recibir notificaciones de eventos.",
+    "createWebhook": "Crear Webhook",
+    "editWebhook": "Editar Webhook",
+    "url": "URL del Endpoint",
+    "urlPlaceholder": "https://ejemplo.com/webhook",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Descripción opcional",
+    "secret": "Secreto",
+    "secretPlaceholder": "Secreto de firma opcional para verificación HMAC",
+    "events": "Eventos",
+    "active": "Activo",
+    "noWebhooks": "No hay webhooks configurados aún.",
+    "testDelivery": "Probar",
+    "testSent": "Webhook de prueba en cola para entrega.",
+    "deleteConfirm": "¿Está seguro de que desea eliminar este webhook?",
+    "createSuccess": "Webhook creado.",
+    "updateSuccess": "Webhook actualizado.",
+    "deleteSuccess": "Webhook eliminado.",
+    "saveFailed": "Error al guardar webhook.",
+    "deleteFailed": "Error al eliminar webhook.",
+    "loadFailed": "Error al cargar webhooks.",
+    "eventGroups": {
+      "case": "Eventos de Caso",
+      "document": "Eventos de Documento",
+      "draft": "Eventos de Borrador"
+    }
   }
 }

@@ -45,6 +45,7 @@
     "administration": "管理",
     "backups": "备份",
     "featureFlags": "功能开关",
+    "webhooks": "Webhooks",
     "profile": "个人资料",
     "reports": "报告"
   },
@@ -281,5 +282,34 @@
     "importAnother": "再次导入",
     "uploadFailed": "CSV文件导入失败。",
     "invalidFileType": "请选择有效的CSV文件。"
+  },
+  "webhooks": {
+    "title": "Webhooks",
+    "subtitle": "管理webhook端点以接收事件通知。",
+    "createWebhook": "创建Webhook",
+    "editWebhook": "编辑Webhook",
+    "url": "端点URL",
+    "urlPlaceholder": "https://example.com/webhook",
+    "description": "描述",
+    "descriptionPlaceholder": "可选描述",
+    "secret": "密钥",
+    "secretPlaceholder": "用于HMAC验证的可选签名密钥",
+    "events": "事件",
+    "active": "启用",
+    "noWebhooks": "尚未配置webhook。",
+    "testDelivery": "测试",
+    "testSent": "测试webhook已排队发送。",
+    "deleteConfirm": "确定要删除此webhook吗？",
+    "createSuccess": "Webhook已创建。",
+    "updateSuccess": "Webhook已更新。",
+    "deleteSuccess": "Webhook已删除。",
+    "saveFailed": "保存webhook失败。",
+    "deleteFailed": "删除webhook失败。",
+    "loadFailed": "加载webhook失败。",
+    "eventGroups": {
+      "case": "案例事件",
+      "document": "文档事件",
+      "draft": "草稿事件"
+    }
   }
 }

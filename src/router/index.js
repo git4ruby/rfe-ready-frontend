@@ -130,6 +130,12 @@ const routes = [
         meta: { requiresAdmin: true },
       },
       {
+        path: 'webhooks',
+        name: 'Webhooks',
+        component: () => import('../views/WebhooksView.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('../views/ProfileView.vue'),
