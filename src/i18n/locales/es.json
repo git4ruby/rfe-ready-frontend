@@ -116,7 +116,16 @@
     "compact": "Compacto",
     "emailNotifications": "Notificaciones por Correo",
     "security": "Seguridad",
-    "twoFactor": "Autenticación de Dos Factores"
+    "twoFactor": "Autenticación de Dos Factores",
+    "emailNotifTypes": "Tipos de Notificación por Correo",
+    "commentMentions": "Menciones en Comentarios",
+    "commentMentionsDesc": "Recibir un correo cuando alguien te mencione en un comentario de caso.",
+    "caseStatusChanges": "Cambios de Estado de Caso",
+    "caseStatusChangesDesc": "Recibir un correo cuando un caso que creaste o que te fue asignado cambie de estado.",
+    "documentUploads": "Subida de Documentos",
+    "documentUploadsDesc": "Recibir un correo cuando se suba un nuevo documento a un caso.",
+    "draftResponsesReady": "Borradores Listos",
+    "draftResponsesReadyDesc": "Recibir un correo cuando los borradores generados por IA estén listos para revisión."
   },
   "users": {
     "title": "Usuarios",

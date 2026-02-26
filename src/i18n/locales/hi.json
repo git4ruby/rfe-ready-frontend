@@ -116,7 +116,16 @@
     "compact": "संक्षिप्त",
     "emailNotifications": "ईमेल सूचनाएं",
     "security": "सुरक्षा",
-    "twoFactor": "दो-चरणीय प्रमाणीकरण"
+    "twoFactor": "दो-चरणीय प्रमाणीकरण",
+    "emailNotifTypes": "ईमेल सूचना प्रकार",
+    "commentMentions": "टिप्पणी उल्लेख",
+    "commentMentionsDesc": "जब कोई आपको केस की टिप्पणी में उल्लेख करे तो ईमेल प्राप्त करें।",
+    "caseStatusChanges": "केस स्थिति परिवर्तन",
+    "caseStatusChangesDesc": "जब आपके द्वारा बनाए या सौंपे गए केस की स्थिति बदले तो ईमेल प्राप्त करें।",
+    "documentUploads": "दस्तावेज़ अपलोड",
+    "documentUploadsDesc": "जब किसी केस में नया दस्तावेज़ अपलोड हो तो ईमेल प्राप्त करें।",
+    "draftResponsesReady": "ड्राफ्ट उत्तर तैयार",
+    "draftResponsesReadyDesc": "जब AI-जनित ड्राफ्ट उत्तर समीक्षा के लिए तैयार हों तो ईमेल प्राप्त करें।"
   },
   "users": {
     "title": "उपयोगकर्ता",

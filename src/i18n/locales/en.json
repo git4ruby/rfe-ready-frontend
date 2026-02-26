@@ -116,7 +116,16 @@
     "compact": "Compact",
     "emailNotifications": "Email Notifications",
     "security": "Security",
-    "twoFactor": "Two-Factor Authentication"
+    "twoFactor": "Two-Factor Authentication",
+    "emailNotifTypes": "Email Notification Types",
+    "commentMentions": "Comment Mentions",
+    "commentMentionsDesc": "Receive an email when someone mentions you in a case comment.",
+    "caseStatusChanges": "Case Status Changes",
+    "caseStatusChangesDesc": "Receive an email when a case you created or are assigned to changes status.",
+    "documentUploads": "Document Uploads",
+    "documentUploadsDesc": "Receive an email when a new document is uploaded to a case.",
+    "draftResponsesReady": "Draft Responses Ready",
+    "draftResponsesReadyDesc": "Receive an email when AI-generated draft responses are ready for review."
   },
   "users": {
     "title": "Users",

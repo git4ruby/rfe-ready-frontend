@@ -116,7 +116,16 @@
     "compact": "紧凑",
     "emailNotifications": "邮件通知",
     "security": "安全",
-    "twoFactor": "双因素认证"
+    "twoFactor": "双因素认证",
+    "emailNotifTypes": "邮件通知类型",
+    "commentMentions": "评论提及",
+    "commentMentionsDesc": "当有人在案件评论中提到您时收到邮件通知。",
+    "caseStatusChanges": "案件状态变更",
+    "caseStatusChangesDesc": "当您创建或被分配的案件状态发生变更时收到邮件通知。",
+    "documentUploads": "文档上传",
+    "documentUploadsDesc": "当有新文档上传到案件时收到邮件通知。",
+    "draftResponsesReady": "草稿回复就绪",
+    "draftResponsesReadyDesc": "当AI生成的草稿回复准备好供审查时收到邮件通知。"
   },
   "users": {
     "title": "用户",

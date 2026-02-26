@@ -35,6 +35,14 @@ const prefsForm = ref({
   notify_draft_ready: true,
 })
 
+// Email notification preferences (stored in nested notifications key)
+const emailNotifForm = ref({
+  comment_mention: true,
+  case_status_change: true,
+  document_uploaded: true,
+  draft_ready: true,
+})
+
 const timezones = Intl.supportedValuesOf('timeZone')
 
 async function loadProfile() {
@@ -55,6 +63,13 @@ async function loadProfile() {
       notify_case_assigned: p.notify_case_assigned !== false,
       notify_deadline_approaching: p.notify_deadline_approaching !== false,
       notify_draft_ready: p.notify_draft_ready !== false,
+    }
+    const n = p.notifications || {}
+    emailNotifForm.value = {
+      comment_mention: n.comment_mention !== false,
+      case_status_change: n.case_status_change !== false,
+      document_uploaded: n.document_uploaded !== false,
+      draft_ready: n.draft_ready !== false,
     }
   } finally {
     loading.value = false
@@ -114,7 +129,10 @@ async function handleChangePassword() {
 
 async function handleSavePreferences() {
   try {
-    await prefStore.updatePreferences(prefsForm.value)
+    await prefStore.updatePreferences({
+      ...prefsForm.value,
+      notifications: emailNotifForm.value,
+    })
     notify.success('Preferences saved successfully.')
   } catch (err) {
     notify.error('Failed to save preferences.')
@@ -388,6 +406,57 @@ function close2FASetup() {
                   <div>
                     <span class="text-sm text-gray-900">Draft Ready</span>
                     <p class="text-xs text-gray-400">Get notified when an AI draft response is ready for review.</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Email Notification Types -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-3">Email Notification Types</label>
+              <div class="space-y-3">
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input
+                    v-model="emailNotifForm.comment_mention"
+                    type="checkbox"
+                    class="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <div>
+                    <span class="text-sm text-gray-900">Comment Mentions</span>
+                    <p class="text-xs text-gray-400">Receive an email when someone mentions you in a case comment.</p>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input
+                    v-model="emailNotifForm.case_status_change"
+                    type="checkbox"
+                    class="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <div>
+                    <span class="text-sm text-gray-900">Case Status Changes</span>
+                    <p class="text-xs text-gray-400">Receive an email when a case you created or are assigned to changes status.</p>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input
+                    v-model="emailNotifForm.document_uploaded"
+                    type="checkbox"
+                    class="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <div>
+                    <span class="text-sm text-gray-900">Document Uploads</span>
+                    <p class="text-xs text-gray-400">Receive an email when a new document is uploaded to a case.</p>
+                  </div>
+                </label>
+                <label class="flex items-start gap-3 cursor-pointer">
+                  <input
+                    v-model="emailNotifForm.draft_ready"
+                    type="checkbox"
+                    class="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500"
+                  />
+                  <div>
+                    <span class="text-sm text-gray-900">Draft Responses Ready</span>
+                    <p class="text-xs text-gray-400">Receive an email when AI-generated draft responses are ready for review.</p>
                   </div>
                 </label>
               </div>
