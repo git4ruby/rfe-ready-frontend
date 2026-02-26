@@ -251,6 +251,76 @@ export const useCasesStore = defineStore('cases', () => {
     return response.data.data
   }
 
+  // Comments
+  const comments = ref([])
+  const commentsLoading = ref(false)
+
+  async function fetchComments(caseId) {
+    commentsLoading.value = true
+    try {
+      const response = await apiClient.get(`/cases/${caseId}/comments`)
+      comments.value = response.data.data
+    } finally {
+      commentsLoading.value = false
+    }
+  }
+
+  async function createComment(caseId, body, parentId = null, mentionedUserIds = []) {
+    const response = await apiClient.post(`/cases/${caseId}/comments`, {
+      comment: { body, parent_id: parentId, mentioned_user_ids: mentionedUserIds },
+    })
+    const newComment = response.data.data
+    if (parentId) {
+      // Add reply to parent
+      const parent = comments.value.find((c) => c.id === parentId)
+      if (parent) {
+        if (!parent.replies) parent.replies = []
+        parent.replies.push(newComment)
+      }
+    } else {
+      comments.value.push(newComment)
+    }
+    return newComment
+  }
+
+  async function updateComment(caseId, commentId, body) {
+    const response = await apiClient.patch(`/cases/${caseId}/comments/${commentId}`, {
+      comment: { body },
+    })
+    const updated = response.data.data
+    const idx = comments.value.findIndex((c) => c.id === commentId)
+    if (idx !== -1) {
+      comments.value[idx] = { ...comments.value[idx], ...updated }
+    } else {
+      // Might be a reply
+      for (const comment of comments.value) {
+        if (comment.replies) {
+          const replyIdx = comment.replies.findIndex((r) => r.id === commentId)
+          if (replyIdx !== -1) {
+            comment.replies[replyIdx] = { ...comment.replies[replyIdx], ...updated }
+            break
+          }
+        }
+      }
+    }
+    return updated
+  }
+
+  async function deleteComment(caseId, commentId) {
+    await apiClient.delete(`/cases/${caseId}/comments/${commentId}`)
+    const idx = comments.value.findIndex((c) => c.id === commentId)
+    if (idx !== -1) {
+      comments.value.splice(idx, 1)
+    } else {
+      // Might be a reply
+      for (const comment of comments.value) {
+        if (comment.replies) {
+          comment.replies = comment.replies.filter((r) => r.id !== commentId)
+        }
+      }
+    }
+  }
+
   async function fetchExhibits(caseId) {
     const response = await apiClient.get(`/cases/${caseId}/exhibits`)
     exhibits.value = response.data.data
@@ -320,6 +390,12 @@ export const useCasesStore = defineStore('cases', () => {
     updateDraft,
     approveDraft,
     regenerateDraft,
+    comments,
+    commentsLoading,
+    fetchComments,
+    createComment,
+    updateComment,
+    deleteComment,
     fetchExhibits,
     createExhibit,
     updateExhibit,

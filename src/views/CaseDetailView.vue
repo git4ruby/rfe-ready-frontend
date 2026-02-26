@@ -35,6 +35,8 @@ import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
+import CaseComments from '../components/CaseComments.vue'
+import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   id: {
@@ -138,6 +140,7 @@ const tabs = [
   { key: 'drafts', label: 'Drafts', icon: PencilSquareIcon },
   { key: 'exhibits', label: 'Exhibits', icon: PhotoIcon },
   { key: 'export', label: 'Export', icon: ArrowDownTrayIcon },
+  { key: 'comments', label: 'Comments', icon: ChatBubbleLeftEllipsisIcon },
   { key: 'activity', label: 'Activity', icon: ClockIcon },
 ]
 
@@ -1886,6 +1889,11 @@ async function handleDelete() {
                 Last exported: {{ new Date(currentCase.exported_at).toLocaleString() }}
               </div>
             </div>
+          </div>
+
+          <!-- Comments tab -->
+          <div v-else-if="activeTab === 'comments'">
+            <CaseComments :case-id="props.id" />
           </div>
 
           <!-- Activity tab -->

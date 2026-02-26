@@ -168,6 +168,21 @@
     "createdBy": "Creado por",
     "inProgress": "En Progreso"
   },
+  "comments": {
+    "title": "Comentarios",
+    "addComment": "Agregar un comentario...",
+    "post": "Publicar",
+    "reply": "Responder",
+    "edited": "(editado)",
+    "noComments": "Aún no hay comentarios",
+    "noCommentsDescription": "Sé el primero en agregar un comentario a este caso.",
+    "deleteSuccess": "Comentario eliminado.",
+    "postFailed": "Error al publicar comentario.",
+    "replyFailed": "Error al publicar respuesta.",
+    "updateFailed": "Error al actualizar comentario.",
+    "deleteFailed": "Error al eliminar comentario.",
+    "loadFailed": "Error al cargar comentarios."
+  },
   "periods": {
     "7d": "7 Días",
     "30d": "30 Días",

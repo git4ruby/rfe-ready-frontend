@@ -168,6 +168,21 @@
     "createdBy": "Created By",
     "inProgress": "In Progress"
   },
+  "comments": {
+    "title": "Comments",
+    "addComment": "Add a comment...",
+    "post": "Post",
+    "reply": "Reply",
+    "edited": "(edited)",
+    "noComments": "No comments yet",
+    "noCommentsDescription": "Be the first to add a comment to this case.",
+    "deleteSuccess": "Comment deleted.",
+    "postFailed": "Failed to post comment.",
+    "replyFailed": "Failed to post reply.",
+    "updateFailed": "Failed to update comment.",
+    "deleteFailed": "Failed to delete comment.",
+    "loadFailed": "Failed to load comments."
+  },
   "periods": {
     "7d": "7 Days",
     "30d": "30 Days",

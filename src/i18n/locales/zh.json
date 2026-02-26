@@ -168,6 +168,21 @@
     "createdBy": "创建者",
     "inProgress": "进行中"
   },
+  "comments": {
+    "title": "评论",
+    "addComment": "添加评论...",
+    "post": "发布",
+    "reply": "回复",
+    "edited": "（已编辑）",
+    "noComments": "暂无评论",
+    "noCommentsDescription": "成为第一个在此案件中添加评论的人。",
+    "deleteSuccess": "评论已删除。",
+    "postFailed": "发布评论失败。",
+    "replyFailed": "发布回复失败。",
+    "updateFailed": "更新评论失败。",
+    "deleteFailed": "删除评论失败。",
+    "loadFailed": "加载评论失败。"
+  },
   "periods": {
     "7d": "7天",
     "30d": "30天",
