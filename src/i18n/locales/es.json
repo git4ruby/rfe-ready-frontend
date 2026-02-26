@@ -44,6 +44,7 @@
     "auditLog": "Registro de Auditoría",
     "administration": "Administración",
     "backups": "Copias de Seguridad",
+    "featureFlags": "Banderas de Funciones",
     "profile": "Perfil"
   },
   "dashboard": {
@@ -203,6 +204,28 @@
     "updateFailed": "Error al actualizar comentario.",
     "deleteFailed": "Error al eliminar comentario.",
     "loadFailed": "Error al cargar comentarios."
+  },
+  "featureFlags": {
+    "title": "Banderas de Funciones",
+    "subtitle": "Administra las banderas de funciones para controlar la disponibilidad de funciones.",
+    "createFlag": "Crear Bandera",
+    "flagName": "Nombre de la Bandera",
+    "enabled": "Habilitado",
+    "disabled": "Deshabilitado",
+    "allowedRoles": "Roles Permitidos",
+    "allowedPlans": "Planes Permitidos",
+    "emptyRolesHint": "Dejar vacío para permitir todos los roles.",
+    "emptyPlansHint": "Dejar vacío para permitir todos los planes.",
+    "noFlags": "Aún no hay banderas",
+    "noFlagsDesc": "Crea tu primera bandera de función para controlar la disponibilidad.",
+    "createSuccess": "Bandera de función creada.",
+    "createFailed": "Error al crear la bandera.",
+    "updateFailed": "Error al actualizar la bandera.",
+    "deleteTitle": "Eliminar Bandera",
+    "deleteMessage": "¿Estás seguro de que quieres eliminar esta bandera? Esta acción no se puede deshacer.",
+    "deleteSuccess": "Bandera eliminada.",
+    "deleteFailed": "Error al eliminar la bandera.",
+    "loadFailed": "Error al cargar las banderas."
   },
   "periods": {
     "7d": "7 Días",

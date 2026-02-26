@@ -44,6 +44,7 @@
     "auditLog": "审计日志",
     "administration": "管理",
     "backups": "备份",
+    "featureFlags": "功能开关",
     "profile": "个人资料"
   },
   "dashboard": {
@@ -203,6 +204,28 @@
     "updateFailed": "更新评论失败。",
     "deleteFailed": "删除评论失败。",
     "loadFailed": "加载评论失败。"
+  },
+  "featureFlags": {
+    "title": "功能开关",
+    "subtitle": "管理功能开关以控制组织的功能可用性。",
+    "createFlag": "创建开关",
+    "flagName": "开关名称",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "allowedRoles": "允许的角色",
+    "allowedPlans": "允许的计划",
+    "emptyRolesHint": "留空以允许所有角色。",
+    "emptyPlansHint": "留空以允许所有计划。",
+    "noFlags": "暂无功能开关",
+    "noFlagsDesc": "创建第一个功能开关以控制功能可用性。",
+    "createSuccess": "功能开关已创建。",
+    "createFailed": "创建功能开关失败。",
+    "updateFailed": "更新功能开关失败。",
+    "deleteTitle": "删除功能开关",
+    "deleteMessage": "确定要删除此功能开关吗？此操作无法撤销。",
+    "deleteSuccess": "功能开关已删除。",
+    "deleteFailed": "删除功能开关失败。",
+    "loadFailed": "加载功能开关失败。"
   },
   "periods": {
     "7d": "7天",

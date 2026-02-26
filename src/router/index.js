@@ -112,6 +112,12 @@ const routes = [
         meta: { requiresAdmin: true },
       },
       {
+        path: 'feature-flags',
+        name: 'FeatureFlags',
+        component: () => import('../views/FeatureFlagsView.vue'),
+        meta: { requiresAdmin: true },
+      },
+      {
         path: 'backups',
         name: 'Backups',
         component: () => import('../views/BackupsView.vue'),

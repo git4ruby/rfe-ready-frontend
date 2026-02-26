@@ -44,6 +44,7 @@
     "auditLog": "Audit Log",
     "administration": "Administration",
     "backups": "Backups",
+    "featureFlags": "Feature Flags",
     "profile": "Profile"
   },
   "dashboard": {
@@ -203,6 +204,28 @@
     "updateFailed": "Failed to update comment.",
     "deleteFailed": "Failed to delete comment.",
     "loadFailed": "Failed to load comments."
+  },
+  "featureFlags": {
+    "title": "Feature Flags",
+    "subtitle": "Manage feature flags to control feature availability for your organization.",
+    "createFlag": "Create Flag",
+    "flagName": "Flag Name",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "allowedRoles": "Allowed Roles",
+    "allowedPlans": "Allowed Plans",
+    "emptyRolesHint": "Leave empty to allow all roles.",
+    "emptyPlansHint": "Leave empty to allow all plans.",
+    "noFlags": "No feature flags yet",
+    "noFlagsDesc": "Create your first feature flag to control feature availability.",
+    "createSuccess": "Feature flag created.",
+    "createFailed": "Failed to create feature flag.",
+    "updateFailed": "Failed to update feature flag.",
+    "deleteTitle": "Delete Feature Flag",
+    "deleteMessage": "Are you sure you want to delete this feature flag? This action cannot be undone.",
+    "deleteSuccess": "Feature flag deleted.",
+    "deleteFailed": "Failed to delete feature flag.",
+    "loadFailed": "Failed to load feature flags."
   },
   "periods": {
     "7d": "7 Days",

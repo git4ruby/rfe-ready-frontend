@@ -21,6 +21,7 @@ import {
   QuestionMarkCircleIcon,
   BellIcon,
   CloudArrowUpIcon,
+  FlagIcon,
 } from '@heroicons/vue/24/outline'
 import NotificationPanel from '../components/NotificationPanel.vue'
 import { useLiveNotificationsStore } from '../stores/liveNotifications'
@@ -51,6 +52,7 @@ const adminNavigation = [
   { nameKey: 'nav.settings', href: '/settings', icon: CogIcon, routeName: 'Settings' },
   { nameKey: 'nav.users', href: '/users', icon: UsersIcon, routeName: 'Users' },
   { nameKey: 'nav.auditLog', href: '/audit-log', icon: ClipboardDocumentListIcon, routeName: 'AuditLog' },
+  { nameKey: 'nav.featureFlags', href: '/feature-flags', icon: FlagIcon, routeName: 'FeatureFlags' },
   { nameKey: 'nav.backups', href: '/backups', icon: CloudArrowUpIcon, routeName: 'Backups' },
 ]
 
