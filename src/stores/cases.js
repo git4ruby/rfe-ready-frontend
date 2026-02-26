@@ -321,6 +321,20 @@ export const useCasesStore = defineStore('cases', () => {
     }
   }
 
+  // Similar cases
+  const similarCases = ref([])
+  const similarLoading = ref(false)
+
+  async function fetchSimilarCases(caseId, limit = 5) {
+    similarLoading.value = true
+    try {
+      const response = await apiClient.get(`/cases/${caseId}/similar`, { params: { limit } })
+      similarCases.value = response.data.data
+    } finally {
+      similarLoading.value = false
+    }
+  }
+
   async function fetchExhibits(caseId) {
     const response = await apiClient.get(`/cases/${caseId}/exhibits`)
     exhibits.value = response.data.data
@@ -401,5 +415,8 @@ export const useCasesStore = defineStore('cases', () => {
     updateExhibit,
     deleteExhibit,
     reorderExhibits,
+    similarCases,
+    similarLoading,
+    fetchSimilarCases,
   }
 })

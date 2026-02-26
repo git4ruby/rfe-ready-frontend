@@ -227,6 +227,12 @@
     "deleteFailed": "Error al eliminar la bandera.",
     "loadFailed": "Error al cargar las banderas."
   },
+  "similarCases": {
+    "title": "Casos Similares",
+    "noResults": "No se encontraron casos similares.",
+    "match": "coincidencia",
+    "loadFailed": "Error al cargar casos similares."
+  },
   "periods": {
     "7d": "7 Días",
     "30d": "30 Días",

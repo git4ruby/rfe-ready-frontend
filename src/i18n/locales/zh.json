@@ -227,6 +227,12 @@
     "deleteFailed": "删除功能开关失败。",
     "loadFailed": "加载功能开关失败。"
   },
+  "similarCases": {
+    "title": "\u76f8\u4f3c\u6848\u4f8b",
+    "noResults": "\u672a\u627e\u5230\u76f8\u4f3c\u6848\u4f8b\u3002",
+    "match": "\u5339\u914d",
+    "loadFailed": "\u52a0\u8f7d\u76f8\u4f3c\u6848\u4f8b\u5931\u8d25\u3002"
+  },
   "periods": {
     "7d": "7天",
     "30d": "30天",

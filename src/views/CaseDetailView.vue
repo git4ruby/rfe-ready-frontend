@@ -36,6 +36,7 @@ import DeadlineIndicator from '../components/DeadlineIndicator.vue'
 import LoadingSpinner from '../components/LoadingSpinner.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import CaseComments from '../components/CaseComments.vue'
+import SimilarCases from '../components/case/SimilarCases.vue'
 import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
@@ -1084,6 +1085,9 @@ async function handleDelete() {
                 </div>
               </div>
             </div>
+
+            <!-- Similar Cases -->
+            <SimilarCases :case-id="props.id" />
           </div>
 
           <!-- Documents tab -->
