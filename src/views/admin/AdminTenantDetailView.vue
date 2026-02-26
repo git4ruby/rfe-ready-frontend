@@ -11,11 +11,13 @@ import {
   PencilSquareIcon,
   NoSymbolIcon,
 } from '@heroicons/vue/24/outline'
+import { useI18n } from 'vue-i18n'
 import LoadingSpinner from '../../components/LoadingSpinner.vue'
 import Breadcrumb from '../../components/Breadcrumb.vue'
 import PasswordStrength from '../../components/PasswordStrength.vue'
 import ConfirmDialog from '../../components/ConfirmDialog.vue'
 
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const store = useAdminStore()
@@ -27,7 +29,7 @@ const tenantId = computed(() => route.params.id)
 // Edit modal
 const showEditModal = ref(false)
 const saving = ref(false)
-const editForm = ref({ name: '', data_retention_days: 30 })
+const editForm = ref({ name: '', data_retention_days: 30, two_factor_required: false })
 
 // Create user modal
 const showUserModal = ref(false)
@@ -52,6 +54,7 @@ function openEdit() {
   editForm.value = {
     name: t.name,
     data_retention_days: t.data_retention_days || 30,
+    two_factor_required: t.two_factor_required || false,
   }
   showEditModal.value = true
 }
@@ -257,6 +260,21 @@ function formatDate(dateStr) {
               <dd class="text-sm font-medium text-gray-900">{{ store.currentTenant.data_retention_days }} days</dd>
             </div>
             <div class="flex justify-between">
+              <dt class="text-sm text-gray-500">{{ t('twoFactor.requireLabel') }}</dt>
+              <dd>
+                <span
+                  :class="[
+                    'inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium',
+                    store.currentTenant.two_factor_required
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-gray-100 text-gray-600',
+                  ]"
+                >
+                  {{ store.currentTenant.two_factor_required ? 'Enabled' : 'Disabled' }}
+                </span>
+              </dd>
+            </div>
+            <div class="flex justify-between">
               <dt class="text-sm text-gray-500">Created</dt>
               <dd class="text-sm font-medium text-gray-900">{{ formatDate(store.currentTenant.created_at) }}</dd>
             </div>
@@ -381,6 +399,29 @@ function formatDate(dateStr) {
                 min="1"
                 class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
               />
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">{{ t('twoFactor.requireLabel') }}</label>
+                <p class="text-xs text-gray-500 mt-0.5">{{ t('twoFactor.requireDesc') }}</p>
+              </div>
+              <button
+                type="button"
+                :class="[
+                  'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2',
+                  editForm.two_factor_required ? 'bg-red-600' : 'bg-gray-200',
+                ]"
+                role="switch"
+                :aria-checked="editForm.two_factor_required"
+                @click="editForm.two_factor_required = !editForm.two_factor_required"
+              >
+                <span
+                  :class="[
+                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                    editForm.two_factor_required ? 'translate-x-5' : 'translate-x-0',
+                  ]"
+                />
+              </button>
             </div>
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button type="button" @click="showEditModal = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">

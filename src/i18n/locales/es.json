@@ -260,6 +260,12 @@
     "90d": "90 Días",
     "all": "Todo el Tiempo"
   },
+  "twoFactor": {
+    "enforcementBanner": "Su organizaci\u00f3n requiere autenticaci\u00f3n de dos factores. Configure 2FA para continuar usando la aplicaci\u00f3n.",
+    "setupNow": "Configurar 2FA",
+    "requireLabel": "Requerir Autenticaci\u00f3n de Dos Factores",
+    "requireDesc": "Cuando est\u00e1 habilitado, todos los usuarios deben configurar 2FA antes de acceder a la aplicaci\u00f3n."
+  },
   "import": {
     "title": "Importar Casos desde CSV",
     "description": "Suba un archivo CSV para importar casos masivamente. Descargue la plantilla para el formato correcto.",

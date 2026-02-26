@@ -260,6 +260,12 @@
     "90d": "90天",
     "all": "全部时间"
   },
+  "twoFactor": {
+    "enforcementBanner": "\u60a8\u7684\u7ec4\u7ec7\u8981\u6c42\u53cc\u56e0\u7d20\u8ba4\u8bc1\u3002\u8bf7\u8bbe\u7f6e2FA\u4ee5\u7ee7\u7eed\u4f7f\u7528\u5e94\u7528\u7a0b\u5e8f\u3002",
+    "setupNow": "\u8bbe\u7f6e2FA",
+    "requireLabel": "\u8981\u6c42\u53cc\u56e0\u7d20\u8ba4\u8bc1",
+    "requireDesc": "\u542f\u7528\u540e\uff0c\u6240\u6709\u7528\u6237\u5fc5\u987b\u8bbe\u7f6e2FA\u624d\u80fd\u8bbf\u95ee\u5e94\u7528\u7a0b\u5e8f\u3002"
+  },
   "import": {
     "title": "从CSV导入案例",
     "description": "上传CSV文件批量导入案例。下载模板获取正确格式。",

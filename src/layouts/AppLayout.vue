@@ -25,6 +25,7 @@ import {
   ChartBarIcon,
 } from '@heroicons/vue/24/outline'
 import NotificationPanel from '../components/NotificationPanel.vue'
+import TwoFactorBanner from '../components/TwoFactorBanner.vue'
 import { useLiveNotificationsStore } from '../stores/liveNotifications'
 
 const router = useRouter()
@@ -222,6 +223,9 @@ async function handleLogout() {
         </button>
         <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-100">{{ route.meta?.title || route.name }}</span>
       </header>
+
+      <!-- 2FA enforcement banner -->
+      <TwoFactorBanner />
 
       <!-- Page content -->
       <main class="flex-1 p-4 lg:p-6 bg-gray-50 overflow-auto">

@@ -260,6 +260,12 @@
     "90d": "90 Days",
     "all": "All Time"
   },
+  "twoFactor": {
+    "enforcementBanner": "Your organization requires two-factor authentication. Please set up 2FA to continue using the application.",
+    "setupNow": "Set Up 2FA",
+    "requireLabel": "Require Two-Factor Authentication",
+    "requireDesc": "When enabled, all users must set up 2FA before accessing the application."
+  },
   "import": {
     "title": "Import Cases from CSV",
     "description": "Upload a CSV file to bulk import cases. Download the template for the correct format.",

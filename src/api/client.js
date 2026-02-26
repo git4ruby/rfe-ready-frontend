@@ -44,9 +44,14 @@ apiClient.interceptors.response.use(
       notificationStore.show('Your session has expired. Please sign in again.', 'info', 8000)
       router.push('/login')
     } else if (status === 403) {
-      // Only redirect if not already on an admin route (super admin 403s
-      // from tenant endpoints are expected and handled by the caller)
-      if (!error.config?.url?.startsWith('/admin')) {
+      // Check if the API requires 2FA enforcement
+      const responseCode = error.response?.data?.code
+      if (responseCode === '2fa_required') {
+        localStorage.setItem('2fa_enforcement_required', 'true')
+        router.push({ name: 'Profile', query: { setup_2fa: 'true' } })
+      } else if (!error.config?.url?.startsWith('/admin')) {
+        // Only redirect if not already on an admin route (super admin 403s
+        // from tenant endpoints are expected and handled by the caller)
         const currentPath = router.currentRoute?.value?.path || ''
         if (!currentPath.startsWith('/platform')) {
           router.push('/forbidden')
