@@ -259,5 +259,21 @@
     "30d": "30 Days",
     "90d": "90 Days",
     "all": "All Time"
+  },
+  "import": {
+    "title": "Import Cases from CSV",
+    "description": "Upload a CSV file to bulk import cases. Download the template for the correct format.",
+    "downloadTemplate": "Download CSV Template",
+    "dropZone": "Drag and drop your CSV file here, or click to browse",
+    "csvOnly": "CSV files only",
+    "upload": "Import",
+    "uploading": "Importing...",
+    "importedCount": "{count} case(s) imported successfully",
+    "failedCount": "{count} case(s) failed to import",
+    "errorDetails": "Error Details",
+    "rowError": "Row {row}",
+    "importAnother": "Import Another",
+    "uploadFailed": "Failed to import CSV file.",
+    "invalidFileType": "Please select a valid CSV file."
   }
 }

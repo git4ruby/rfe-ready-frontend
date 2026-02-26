@@ -2,18 +2,27 @@
 import { ref, watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCasesStore } from '../stores/cases'
+import { useAuthStore } from '../stores/auth'
 import { useNotificationStore } from '../stores/notification'
-import { PlusIcon, MagnifyingGlassIcon, EyeIcon, PencilSquareIcon, ArchiveBoxIcon, ArrowPathIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { PlusIcon, MagnifyingGlassIcon, EyeIcon, PencilSquareIcon, ArchiveBoxIcon, ArrowPathIcon, XMarkIcon, ArrowUpTrayIcon } from '@heroicons/vue/24/outline'
 import CaseStatusBadge from '../components/CaseStatusBadge.vue'
 import DeadlineIndicator from '../components/DeadlineIndicator.vue'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import EmptyState from '../components/EmptyState.vue'
 import PaginationBar from '../components/PaginationBar.vue'
+import BulkImportModal from '../components/case/BulkImportModal.vue'
 import { useQueryFilters } from '../composables/useQueryFilters'
 
 const { t } = useI18n()
 const casesStore = useCasesStore()
+const authStore = useAuthStore()
 const notify = useNotificationStore()
+
+const showImportModal = ref(false)
+
+function onImported() {
+  casesStore.fetchCases(currentPage.value)
+}
 
 const searchQuery = ref('')
 
@@ -107,14 +116,24 @@ watch(currentPage, () => clearSelection())
         <h1 class="text-2xl font-bold text-gray-900">{{ t('cases.title') }}</h1>
         <p class="mt-1 text-sm text-gray-500">{{ t('cases.subtitle', 'Manage all RFE cases.') }}</p>
       </div>
-      <router-link
-        to="/cases/new"
-        data-shortcut="new-case"
-        class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
-      >
-        <PlusIcon class="h-5 w-5" />
-        {{ t('cases.newCase') }}
-      </router-link>
+      <div class="flex items-center gap-3">
+        <button
+          v-if="authStore.isAdmin"
+          @click="showImportModal = true"
+          class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+        >
+          <ArrowUpTrayIcon class="h-5 w-5" />
+          {{ t('import.upload') }} CSV
+        </button>
+        <router-link
+          to="/cases/new"
+          data-shortcut="new-case"
+          class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+        >
+          <PlusIcon class="h-5 w-5" />
+          {{ t('cases.newCase') }}
+        </router-link>
+      </div>
     </div>
 
     <!-- Search -->
@@ -337,5 +356,11 @@ watch(currentPage, () => clearSelection())
         class="mt-3 md:mt-0"
       />
     </div>
+    <!-- Bulk Import Modal -->
+    <BulkImportModal
+      v-if="showImportModal"
+      @close="showImportModal = false"
+      @imported="onImported"
+    />
   </div>
 </template>

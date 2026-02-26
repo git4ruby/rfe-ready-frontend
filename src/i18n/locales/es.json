@@ -259,5 +259,21 @@
     "30d": "30 Días",
     "90d": "90 Días",
     "all": "Todo el Tiempo"
+  },
+  "import": {
+    "title": "Importar Casos desde CSV",
+    "description": "Suba un archivo CSV para importar casos masivamente. Descargue la plantilla para el formato correcto.",
+    "downloadTemplate": "Descargar Plantilla CSV",
+    "dropZone": "Arrastre y suelte su archivo CSV aquí, o haga clic para buscar",
+    "csvOnly": "Solo archivos CSV",
+    "upload": "Importar",
+    "uploading": "Importando...",
+    "importedCount": "{count} caso(s) importado(s) exitosamente",
+    "failedCount": "{count} caso(s) no se pudieron importar",
+    "errorDetails": "Detalles del Error",
+    "rowError": "Fila {row}",
+    "importAnother": "Importar Otro",
+    "uploadFailed": "Error al importar archivo CSV.",
+    "invalidFileType": "Seleccione un archivo CSV válido."
   }
 }
