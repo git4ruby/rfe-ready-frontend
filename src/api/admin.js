@@ -40,6 +40,14 @@ const adminApi = {
   createTenantUser(tenantId, data) {
     return apiClient.post(`/admin/tenants/${tenantId}/users`, { user: data })
   },
+
+  updateTenantUser(tenantId, userId, data) {
+    return apiClient.patch(`/admin/tenants/${tenantId}/users/${userId}`, { user: data })
+  },
+
+  deactivateTenantUser(tenantId, userId) {
+    return apiClient.delete(`/admin/tenants/${tenantId}/users/${userId}`)
+  },
 }
 
 export default adminApi

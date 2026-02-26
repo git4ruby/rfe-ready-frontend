@@ -90,6 +90,20 @@ export const useAdminStore = defineStore('admin', () => {
     return response.data.data
   }
 
+  async function updateTenantUser(tenantId, userId, data) {
+    const response = await adminApi.updateTenantUser(tenantId, userId, data)
+    const idx = tenantUsers.value.findIndex((u) => u.id === userId)
+    if (idx !== -1) tenantUsers.value[idx] = response.data.data
+    return response.data.data
+  }
+
+  async function deactivateTenantUser(tenantId, userId) {
+    const response = await adminApi.deactivateTenantUser(tenantId, userId)
+    const idx = tenantUsers.value.findIndex((u) => u.id === userId)
+    if (idx !== -1) tenantUsers.value[idx] = response.data.data
+    return response.data.data
+  }
+
   return {
     dashboard,
     dashboardLoading,
@@ -110,5 +124,7 @@ export const useAdminStore = defineStore('admin', () => {
     tenantUsersPagination,
     fetchTenantUsers,
     createTenantUser,
+    updateTenantUser,
+    deactivateTenantUser,
   }
 })

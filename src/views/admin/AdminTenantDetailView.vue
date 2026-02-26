@@ -8,10 +8,13 @@ import {
   PlusIcon,
   XMarkIcon,
   PencilIcon,
+  PencilSquareIcon,
+  NoSymbolIcon,
 } from '@heroicons/vue/24/outline'
 import LoadingSpinner from '../../components/LoadingSpinner.vue'
 import Breadcrumb from '../../components/Breadcrumb.vue'
 import PasswordStrength from '../../components/PasswordStrength.vue'
+import ConfirmDialog from '../../components/ConfirmDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -109,6 +112,66 @@ async function handleCreateUser() {
   } finally {
     creatingUser.value = false
   }
+}
+
+// Edit user modal
+const showEditUserModal = ref(false)
+const editingUser = ref(null)
+const editUserForm = ref({ first_name: '', last_name: '', role: '', bar_number: '' })
+const editingUserSaving = ref(false)
+
+// Deactivate user
+const showDeactivateConfirm = ref(false)
+const deactivatingUser = ref(null)
+const deactivating = ref(false)
+
+function openEditUser(user) {
+  editingUser.value = user
+  editUserForm.value = {
+    first_name: user.first_name,
+    last_name: user.last_name,
+    role: user.role,
+    bar_number: user.bar_number || '',
+  }
+  showEditUserModal.value = true
+}
+
+async function handleEditUser() {
+  editingUserSaving.value = true
+  try {
+    await store.updateTenantUser(tenantId.value, editingUser.value.id, editUserForm.value)
+    notify.success('User updated successfully.')
+    showEditUserModal.value = false
+  } catch (err) {
+    notify.error(err.response?.data?.details?.join(', ') || err.response?.data?.error || 'Failed to update user.')
+  } finally {
+    editingUserSaving.value = false
+  }
+}
+
+function confirmDeactivate(user) {
+  deactivatingUser.value = user
+  showDeactivateConfirm.value = true
+}
+
+async function handleDeactivate() {
+  if (!deactivatingUser.value) return
+  deactivating.value = true
+  try {
+    await store.deactivateTenantUser(tenantId.value, deactivatingUser.value.id)
+    notify.success('User deactivated.')
+    showDeactivateConfirm.value = false
+    deactivatingUser.value = null
+  } catch (err) {
+    notify.error(err.response?.data?.error || 'Failed to deactivate user.')
+  } finally {
+    deactivating.value = false
+  }
+}
+
+function userStatusColor(status) {
+  const colors = { active: 'bg-green-100 text-green-800', inactive: 'bg-gray-100 text-gray-600', invited: 'bg-yellow-100 text-yellow-800' }
+  return colors[status] || 'bg-gray-100 text-gray-800'
 }
 
 function planColor(plan) {
@@ -241,7 +304,9 @@ function formatDate(dateStr) {
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Role</th>
+                  <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                   <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Joined</th>
+                  <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-gray-200">
@@ -255,7 +320,31 @@ function formatDate(dateStr) {
                       {{ u.role }}
                     </span>
                   </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span :class="['inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize', userStatusColor(u.status)]">
+                      {{ u.status || 'active' }}
+                    </span>
+                  </td>
                   <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ formatDate(u.created_at) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-right">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        @click="openEditUser(u)"
+                        class="text-indigo-600 hover:text-indigo-500 transition-colors"
+                        title="Edit user"
+                      >
+                        <PencilSquareIcon class="h-4 w-4" />
+                      </button>
+                      <button
+                        v-if="u.status !== 'inactive'"
+                        @click="confirmDeactivate(u)"
+                        class="text-red-600 hover:text-red-500 transition-colors"
+                        title="Deactivate user"
+                      >
+                        <NoSymbolIcon class="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -386,5 +475,79 @@ function formatDate(dateStr) {
         </div>
       </div>
     </div>
+    <!-- Edit User Modal -->
+    <div v-if="showEditUserModal" class="fixed inset-0 z-50 overflow-y-auto">
+      <div class="flex min-h-full items-center justify-center p-4">
+        <div class="fixed inset-0 bg-gray-500/75 transition-opacity" @click="showEditUserModal = false" />
+        <div class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
+          <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
+            <h3 class="text-lg font-semibold text-gray-900">Edit User</h3>
+            <button @click="showEditUserModal = false" class="text-gray-400 hover:text-gray-500">
+              <XMarkIcon class="h-5 w-5" />
+            </button>
+          </div>
+          <form @submit.prevent="handleEditUser" class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">First Name</label>
+                <input
+                  v-model="editUserForm.first_name"
+                  type="text"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Last Name</label>
+                <input
+                  v-model="editUserForm.last_name"
+                  type="text"
+                  class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                />
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Role</label>
+              <select v-model="editUserForm.role" class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm">
+                <option value="admin">Admin</option>
+                <option value="attorney">Attorney</option>
+                <option value="paralegal">Paralegal</option>
+                <option value="viewer">Viewer</option>
+              </select>
+            </div>
+            <div v-if="editUserForm.role === 'attorney'">
+              <label class="block text-sm font-medium text-gray-700">Bar Number</label>
+              <input
+                v-model="editUserForm.bar_number"
+                type="text"
+                class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+              />
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
+              <button type="button" @click="showEditUserModal = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                Cancel
+              </button>
+              <button
+                type="submit"
+                :disabled="editingUserSaving"
+                class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {{ editingUserSaving ? 'Saving...' : 'Save Changes' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deactivate User Confirmation -->
+    <ConfirmDialog
+      :show="showDeactivateConfirm"
+      title="Deactivate User"
+      :message="`Are you sure you want to deactivate ${deactivatingUser?.first_name} ${deactivatingUser?.last_name}? They will no longer be able to sign in.`"
+      confirm-label="Deactivate"
+      :loading="deactivating"
+      @confirm="handleDeactivate"
+      @cancel="showDeactivateConfirm = false"
+    />
   </div>
 </template>
