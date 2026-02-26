@@ -16,6 +16,8 @@ import {
   ArrowUpTrayIcon,
   CloudArrowUpIcon,
   CpuChipIcon,
+  SparklesIcon,
+  ListBulletIcon,
 } from '@heroicons/vue/24/outline'
 import SkeletonLoader from '../components/SkeletonLoader.vue'
 import PaginationBar from '../components/PaginationBar.vue'
@@ -26,6 +28,46 @@ import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 const store = useKnowledgeStore()
 const notify = useNotificationStore()
+
+// View mode: 'list' or 'semantic'
+const viewMode = ref('list')
+
+// Semantic search
+const semanticQuery = ref('')
+const semanticVisaType = ref('')
+let semanticTimer = null
+
+async function handleSemanticSearch() {
+  const q = semanticQuery.value.trim()
+  if (!q || q.length < 2) return
+  try {
+    await store.semanticSearch(q, {
+      visaType: semanticVisaType.value || undefined,
+    })
+  } catch {
+    notify.error(t('knowledge.searchFailed'))
+  }
+}
+
+function onSemanticInput() {
+  clearTimeout(semanticTimer)
+  semanticTimer = setTimeout(() => handleSemanticSearch(), 500)
+}
+
+function clearSemanticSearch() {
+  semanticQuery.value = ''
+  store.clearSearch()
+}
+
+function relevanceColor(score) {
+  if (score >= 0.8) return 'bg-green-100 text-green-800'
+  if (score >= 0.6) return 'bg-yellow-100 text-yellow-800'
+  return 'bg-gray-100 text-gray-600'
+}
+
+function relevancePercent(score) {
+  return Math.round(score * 100) + '%'
+}
 
 // Filters via URL query params
 const searchQuery = ref('')
@@ -377,6 +419,29 @@ function statDocTypeColor(key) {
         </p>
       </div>
       <div class="flex items-center gap-3">
+        <!-- View mode toggle -->
+        <div class="inline-flex rounded-lg border border-gray-300 bg-white shadow-sm">
+          <button
+            @click="viewMode = 'list'"
+            :class="[
+              'inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-l-lg transition-colors',
+              viewMode === 'list' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'
+            ]"
+          >
+            <ListBulletIcon class="h-4 w-4" />
+            {{ t('knowledge.listView') }}
+          </button>
+          <button
+            @click="viewMode = 'semantic'"
+            :class="[
+              'inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-r-lg transition-colors',
+              viewMode === 'semantic' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'
+            ]"
+          >
+            <SparklesIcon class="h-4 w-4" />
+            {{ t('knowledge.aiSearch') }}
+          </button>
+        </div>
         <button
           @click="openBulkUpload"
           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
@@ -426,8 +491,125 @@ function statDocTypeColor(key) {
       </div>
     </div>
 
+    <!-- Semantic Search Panel -->
+    <div v-if="viewMode === 'semantic'" class="mb-6">
+      <div class="bg-white shadow rounded-lg p-6">
+        <div class="flex items-center gap-2 mb-4">
+          <SparklesIcon class="h-5 w-5 text-indigo-600" />
+          <h2 class="text-lg font-semibold text-gray-900">{{ t('knowledge.semanticSearch') }}</h2>
+        </div>
+        <p class="text-sm text-gray-500 mb-4">{{ t('knowledge.semanticSearchDesc') }}</p>
+
+        <!-- Search input row -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-4">
+          <div class="relative flex-1">
+            <MagnifyingGlassIcon class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <input
+              v-model="semanticQuery"
+              @input="onSemanticInput"
+              @keydown.enter="handleSemanticSearch"
+              type="text"
+              :placeholder="t('knowledge.semanticPlaceholder')"
+              class="block w-full rounded-lg border-gray-300 pl-10 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            />
+            <button
+              v-if="semanticQuery"
+              @click="clearSemanticSearch"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+            >
+              <XMarkIcon class="h-4 w-4" />
+            </button>
+          </div>
+          <select
+            v-model="semanticVisaType"
+            @change="semanticQuery.trim() && handleSemanticSearch()"
+            class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          >
+            <option v-for="opt in visaTypeOptions" :key="opt.value" :value="opt.value">
+              {{ opt.label }}
+            </option>
+          </select>
+          <button
+            @click="handleSemanticSearch"
+            :disabled="store.searchLoading || !semanticQuery.trim()"
+            class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <svg v-if="store.searchLoading" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+            </svg>
+            {{ store.searchLoading ? t('common.loading') : t('common.search') }}
+          </button>
+        </div>
+
+        <!-- Results -->
+        <div v-if="store.searchLoading" class="text-center py-8">
+          <svg class="animate-spin h-8 w-8 text-indigo-600 mx-auto mb-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+          <p class="text-sm text-gray-500">{{ t('knowledge.searching') }}</p>
+        </div>
+
+        <div v-else-if="store.searchResults.length > 0" class="space-y-3">
+          <p class="text-sm text-gray-500">
+            {{ store.searchResults.length }} {{ t('knowledge.resultsFound') }}
+          </p>
+          <div
+            v-for="(result, idx) in store.searchResults"
+            :key="idx"
+            class="border border-gray-200 rounded-lg p-4 hover:border-indigo-300 transition-colors"
+          >
+            <div class="flex items-start justify-between gap-3 mb-2">
+              <div class="flex items-center gap-2 flex-wrap">
+                <h3 class="text-sm font-semibold text-gray-900">{{ result.title || t('knowledge.untitled') }}</h3>
+                <span
+                  v-if="result.doc_type"
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+                  :class="docTypeBadgeClass(result.doc_type)"
+                >
+                  {{ docTypeLabel(result.doc_type) }}
+                </span>
+                <span
+                  v-if="result.visa_type"
+                  class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-blue-100 text-blue-800"
+                >
+                  {{ result.visa_type }}
+                </span>
+              </div>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold shrink-0"
+                :class="relevanceColor(result.relevance_score)"
+              >
+                {{ relevancePercent(result.relevance_score) }} {{ t('knowledge.match') }}
+              </span>
+            </div>
+            <p class="text-sm text-gray-700 whitespace-pre-wrap line-clamp-4">{{ result.content }}</p>
+            <router-link
+              v-if="result.knowledge_doc_id"
+              :to="'#'"
+              @click.prevent="viewMode = 'list'; toggleExpand({ id: result.knowledge_doc_id })"
+              class="inline-flex items-center gap-1 mt-2 text-xs text-indigo-600 hover:text-indigo-500 font-medium"
+            >
+              {{ t('knowledge.viewDocument') }}
+            </router-link>
+          </div>
+        </div>
+
+        <div v-else-if="store.searchQuery && !store.searchLoading" class="text-center py-8">
+          <MagnifyingGlassIcon class="h-10 w-10 text-gray-300 mx-auto mb-3" />
+          <p class="text-sm text-gray-500">{{ t('common.noResults') }}</p>
+        </div>
+
+        <div v-else class="text-center py-8">
+          <SparklesIcon class="h-10 w-10 text-gray-300 mx-auto mb-3" />
+          <p class="text-sm text-gray-500">{{ t('knowledge.semanticHint') }}</p>
+        </div>
+      </div>
+    </div>
+
     <!-- Filters bar -->
-    <div class="flex flex-col sm:flex-row gap-4 mb-6">
+    <div v-if="viewMode === 'list'" class="flex flex-col sm:flex-row gap-4 mb-6">
       <div class="relative flex-1 max-w-md">
         <MagnifyingGlassIcon
           class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
@@ -459,11 +641,11 @@ function statDocTypeColor(key) {
     </div>
 
     <!-- Loading -->
-    <SkeletonLoader v-if="store.loading && !showModal" variant="card" :rows="6" />
+    <SkeletonLoader v-if="viewMode === 'list' && store.loading && !showModal" variant="card" :rows="6" />
 
     <!-- Empty state -->
     <EmptyState
-      v-else-if="!store.loading && store.docs.length === 0"
+      v-else-if="viewMode === 'list' && !store.loading && store.docs.length === 0"
       title="No knowledge documents yet"
       description="Add your first document to build your knowledge base. Upload templates, sample responses, regulations, and firm knowledge for AI-powered draft generation."
       :icon="BookOpenIcon"
@@ -480,7 +662,7 @@ function statDocTypeColor(key) {
     </EmptyState>
 
     <!-- Documents list -->
-    <div v-else>
+    <div v-else-if="viewMode === 'list'">
       <!-- Mobile card layout -->
       <div class="md:hidden space-y-3">
         <div

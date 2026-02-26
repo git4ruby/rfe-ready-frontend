@@ -9,6 +9,9 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
   const pagination = ref({})
   const stats = ref(null)
   const uploadProgress = ref(0)
+  const searchResults = ref([])
+  const searchLoading = ref(false)
+  const searchQuery = ref('')
 
   function onUploadProgress(e) {
     uploadProgress.value = Math.round((e.loaded * 100) / (e.total || 1))
@@ -77,6 +80,26 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
     docs.value = docs.value.filter((d) => d.id !== id)
   }
 
+  async function semanticSearch(query, { visaType, limit } = {}) {
+    searchLoading.value = true
+    searchQuery.value = query
+    try {
+      const params = { q: query }
+      if (visaType) params.visa_type = visaType
+      if (limit) params.limit = limit
+      const response = await apiClient.get('/knowledge/search', { params })
+      searchResults.value = response.data.data.results || []
+      return response.data.data
+    } finally {
+      searchLoading.value = false
+    }
+  }
+
+  function clearSearch() {
+    searchResults.value = []
+    searchQuery.value = ''
+  }
+
   return {
     docs,
     currentDoc,
@@ -84,11 +107,16 @@ export const useKnowledgeStore = defineStore('knowledge', () => {
     pagination,
     stats,
     uploadProgress,
+    searchResults,
+    searchLoading,
+    searchQuery,
     fetchDocs,
     fetchDoc,
     createDoc,
     updateDoc,
     bulkCreate,
     deleteDoc,
+    semanticSearch,
+    clearSearch,
   }
 })
