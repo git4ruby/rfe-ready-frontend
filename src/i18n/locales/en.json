@@ -45,7 +45,8 @@
     "administration": "Administration",
     "backups": "Backups",
     "featureFlags": "Feature Flags",
-    "profile": "Profile"
+    "profile": "Profile",
+    "reports": "Reports"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -232,6 +233,26 @@
     "noResults": "No similar cases found.",
     "match": "match",
     "loadFailed": "Failed to load similar cases."
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Analytics and insights for your RFE cases.",
+    "totalCases": "Total Cases",
+    "completionRate": "Completion Rate",
+    "avgResponseTime": "Avg Response Time",
+    "days": "days",
+    "evidenceRate": "Evidence Collection",
+    "casesByStatus": "Cases by Status",
+    "casesByVisa": "Cases by Visa Type",
+    "attorneyPerformance": "Attorney Performance",
+    "attorney": "Attorney",
+    "caseCount": "Cases",
+    "avgResolution": "Avg Resolution (days)",
+    "draftStats": "Draft Approval",
+    "approved": "Approved",
+    "total": "Total",
+    "noData": "No report data available for this period.",
+    "loadFailed": "Failed to load reports."
   },
   "periods": {
     "7d": "7 Days",

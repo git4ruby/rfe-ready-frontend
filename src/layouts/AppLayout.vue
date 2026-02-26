@@ -22,6 +22,7 @@ import {
   BellIcon,
   CloudArrowUpIcon,
   FlagIcon,
+  ChartBarIcon,
 } from '@heroicons/vue/24/outline'
 import NotificationPanel from '../components/NotificationPanel.vue'
 import { useLiveNotificationsStore } from '../stores/liveNotifications'
@@ -45,6 +46,7 @@ const navigation = [
   { nameKey: 'nav.dashboard', href: '/', icon: HomeIcon, routeName: 'Dashboard' },
   { nameKey: 'nav.cases', href: '/cases', icon: FolderIcon, routeName: 'Cases' },
   { nameKey: 'nav.knowledgeBase', href: '/knowledge', icon: BookOpenIcon, routeName: 'Knowledge' },
+  { nameKey: 'nav.reports', href: '/reports', icon: ChartBarIcon, routeName: 'Reports' },
   { nameKey: 'nav.help', href: '/help', icon: QuestionMarkCircleIcon, routeName: 'Help' },
 ]
 

@@ -45,7 +45,8 @@
     "administration": "प्रशासन",
     "backups": "बैकअप",
     "featureFlags": "फीचर फ्लैग",
-    "profile": "प्रोफ़ाइल"
+    "profile": "प्रोफ़ाइल",
+    "reports": "रिपोर्ट"
   },
   "dashboard": {
     "title": "डैशबोर्ड",
@@ -232,6 +233,26 @@
     "noResults": "\u0915\u094b\u0908 \u0938\u092e\u093e\u0928 \u0915\u0947\u0938 \u0928\u0939\u0940\u0902 \u092e\u093f\u0932\u0947\u0964",
     "match": "\u092e\u0947\u0932",
     "loadFailed": "\u0938\u092e\u093e\u0928 \u0915\u0947\u0938 \u0932\u094b\u0921 \u0915\u0930\u0928\u0947 \u092e\u0947\u0902 \u0935\u093f\u092b\u0932\u0964"
+  },
+  "reports": {
+    "title": "रिपोर्ट",
+    "subtitle": "आपके RFE केस का विश्लेषण और अंतर्दृष्टि।",
+    "totalCases": "कुल केस",
+    "completionRate": "पूर्णता दर",
+    "avgResponseTime": "औसत प्रतिक्रिया समय",
+    "days": "दिन",
+    "evidenceRate": "साक्ष्य संग्रह",
+    "casesByStatus": "स्थिति के अनुसार केस",
+    "casesByVisa": "वीज़ा प्रकार के अनुसार केस",
+    "attorneyPerformance": "वकील प्रदर्शन",
+    "attorney": "वकील",
+    "caseCount": "केस",
+    "avgResolution": "औसत समाधान (दिन)",
+    "draftStats": "ड्राफ्ट अनुमोदन",
+    "approved": "स्वीकृत",
+    "total": "कुल",
+    "noData": "इस अवधि के लिए कोई रिपोर्ट डेटा उपलब्ध नहीं।",
+    "loadFailed": "रिपोर्ट लोड करने में विफल।"
   },
   "periods": {
     "7d": "7 दिन",

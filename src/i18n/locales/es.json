@@ -45,7 +45,8 @@
     "administration": "Administración",
     "backups": "Copias de Seguridad",
     "featureFlags": "Banderas de Funciones",
-    "profile": "Perfil"
+    "profile": "Perfil",
+    "reports": "Informes"
   },
   "dashboard": {
     "title": "Panel",
@@ -232,6 +233,26 @@
     "noResults": "No se encontraron casos similares.",
     "match": "coincidencia",
     "loadFailed": "Error al cargar casos similares."
+  },
+  "reports": {
+    "title": "Informes",
+    "subtitle": "Análisis e información de sus casos RFE.",
+    "totalCases": "Total de Casos",
+    "completionRate": "Tasa de Finalización",
+    "avgResponseTime": "Tiempo Promedio de Respuesta",
+    "days": "días",
+    "evidenceRate": "Recopilación de Evidencia",
+    "casesByStatus": "Casos por Estado",
+    "casesByVisa": "Casos por Tipo de Visa",
+    "attorneyPerformance": "Rendimiento del Abogado",
+    "attorney": "Abogado",
+    "caseCount": "Casos",
+    "avgResolution": "Resolución Promedio (días)",
+    "draftStats": "Aprobación de Borradores",
+    "approved": "Aprobados",
+    "total": "Total",
+    "noData": "No hay datos de informes disponibles para este período.",
+    "loadFailed": "Error al cargar informes."
   },
   "periods": {
     "7d": "7 Días",

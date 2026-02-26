@@ -94,6 +94,12 @@ const routes = [
         component: () => import('../views/KnowledgeView.vue'),
       },
       {
+        path: 'reports',
+        name: 'Reports',
+        component: () => import('../views/ReportsView.vue'),
+        meta: { requiresAuth: true, roles: ['admin', 'attorney'] },
+      },
+      {
         path: 'settings',
         name: 'Settings',
         component: () => import('../views/SettingsView.vue'),

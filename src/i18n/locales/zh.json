@@ -45,7 +45,8 @@
     "administration": "管理",
     "backups": "备份",
     "featureFlags": "功能开关",
-    "profile": "个人资料"
+    "profile": "个人资料",
+    "reports": "报告"
   },
   "dashboard": {
     "title": "仪表盘",
@@ -232,6 +233,26 @@
     "noResults": "\u672a\u627e\u5230\u76f8\u4f3c\u6848\u4f8b\u3002",
     "match": "\u5339\u914d",
     "loadFailed": "\u52a0\u8f7d\u76f8\u4f3c\u6848\u4f8b\u5931\u8d25\u3002"
+  },
+  "reports": {
+    "title": "报告",
+    "subtitle": "RFE案例的分析和洞察。",
+    "totalCases": "总案例数",
+    "completionRate": "完成率",
+    "avgResponseTime": "平均响应时间",
+    "days": "天",
+    "evidenceRate": "证据收集率",
+    "casesByStatus": "按状态分类",
+    "casesByVisa": "按签证类型分类",
+    "attorneyPerformance": "律师表现",
+    "attorney": "律师",
+    "caseCount": "案例数",
+    "avgResolution": "平均解决时间（天）",
+    "draftStats": "草稿审批",
+    "approved": "已批准",
+    "total": "总计",
+    "noData": "此期间无可用报告数据。",
+    "loadFailed": "加载报告失败。"
   },
   "periods": {
     "7d": "7天",
