@@ -47,8 +47,10 @@
     "featureFlags": "Banderas de Funciones",
     "webhooks": "Webhooks",
     "slack": "Slack",
+    "caseTemplates": "Plantillas",
     "profile": "Perfil",
-    "reports": "Informes"
+    "reports": "Informes",
+    "apiDocs": "Documentación API"
   },
   "dashboard": {
     "title": "Panel",
@@ -313,6 +315,37 @@
       "draft": "Eventos de Borrador"
     }
   },
+  "templates": {
+    "title": "Plantillas de Casos",
+    "subtitle": "Cree y administre plantillas reutilizables para tipos comunes de casos RFE.",
+    "createTemplate": "Crear Plantilla",
+    "editTemplate": "Editar Plantilla",
+    "name": "Nombre de Plantilla",
+    "namePlaceholder": "ej. H-1B Ocupación Especializada",
+    "description": "Descripción",
+    "descriptionPlaceholder": "Describa cuándo usar esta plantilla",
+    "visaCategory": "Categoría de Visa",
+    "sections": "Secciones Predeterminadas",
+    "sectionTitle": "Título de Sección",
+    "sectionDescription": "Descripción de Sección",
+    "addSection": "Agregar Sección",
+    "checklist": "Lista de Verificación",
+    "checklistItem": "Elemento",
+    "required": "Obligatorio",
+    "addChecklistItem": "Agregar Elemento",
+    "defaultNotes": "Notas Predeterminadas",
+    "noTemplates": "No hay plantillas configuradas.",
+    "noTemplatesDesc": "Cree su primera plantilla para agilizar la creación de casos.",
+    "deleteConfirm": "¿Está seguro de que desea eliminar esta plantilla?",
+    "createSuccess": "Plantilla creada.",
+    "updateSuccess": "Plantilla actualizada.",
+    "deleteSuccess": "Plantilla eliminada.",
+    "saveFailed": "Error al guardar la plantilla.",
+    "deleteFailed": "Error al eliminar la plantilla.",
+    "loadFailed": "Error al cargar las plantillas.",
+    "useTemplate": "Usar Plantilla",
+    "selectTemplate": "Seleccione una plantilla..."
+  },
   "slack": {
     "title": "Integración con Slack",
     "subtitle": "Conecte Slack para recibir notificaciones de casos en sus canales.",
@@ -334,5 +367,15 @@
     "saveFailed": "Error al guardar la integración.",
     "deleteFailed": "Error al eliminar la integración.",
     "loadFailed": "Error al cargar las integraciones."
+  },
+  "collaborative": {
+    "editingActive": "Estás editando este borrador",
+    "releaseLock": "Liberar bloqueo",
+    "lockedBy": "Siendo editado por {name}",
+    "anotherUser": "otro usuario",
+    "unlocked": "Disponible para editar",
+    "startEditing": "Comenzar a Editar",
+    "lockFailed": "No se pudo obtener el bloqueo de edición.",
+    "lockConflict": "Este borrador está siendo editado por otra persona."
   }
 }

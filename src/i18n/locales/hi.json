@@ -47,8 +47,10 @@
     "featureFlags": "फीचर फ्लैग",
     "webhooks": "वेबहुक",
     "slack": "Slack",
+    "caseTemplates": "टेम्पलेट",
     "profile": "प्रोफ़ाइल",
-    "reports": "रिपोर्ट"
+    "reports": "रिपोर्ट",
+    "apiDocs": "API दस्तावेज़"
   },
   "dashboard": {
     "title": "डैशबोर्ड",
@@ -313,6 +315,37 @@
       "draft": "ड्राफ्ट इवेंट"
     }
   },
+  "templates": {
+    "title": "केस टेम्पलेट",
+    "subtitle": "सामान्य RFE केस प्रकारों के लिए पुन: प्रयोज्य टेम्पलेट बनाएं और प्रबंधित करें।",
+    "createTemplate": "टेम्पलेट बनाएं",
+    "editTemplate": "टेम्पलेट संपादित करें",
+    "name": "टेम्पलेट नाम",
+    "namePlaceholder": "उदा. H-1B विशेष व्यवसाय",
+    "description": "विवरण",
+    "descriptionPlaceholder": "बताएं कि इस टेम्पलेट का उपयोग कब करें",
+    "visaCategory": "वीज़ा श्रेणी",
+    "sections": "डिफ़ॉल्ट अनुभाग",
+    "sectionTitle": "अनुभाग शीर्षक",
+    "sectionDescription": "अनुभाग विवरण",
+    "addSection": "अनुभाग जोड़ें",
+    "checklist": "डिफ़ॉल्ट चेकलिस्ट",
+    "checklistItem": "चेकलिस्ट आइटम",
+    "required": "आवश्यक",
+    "addChecklistItem": "आइटम जोड़ें",
+    "defaultNotes": "डिफ़ॉल्ट नोट्स",
+    "noTemplates": "अभी तक कोई केस टेम्पलेट कॉन्फ़िगर नहीं किया गया।",
+    "noTemplatesDesc": "केस निर्माण को सुव्यवस्थित करने के लिए अपना पहला टेम्पलेट बनाएं।",
+    "deleteConfirm": "क्या आप वाकई इस टेम्पलेट को हटाना चाहते हैं?",
+    "createSuccess": "टेम्पलेट बनाया गया।",
+    "updateSuccess": "टेम्पलेट अपडेट किया गया।",
+    "deleteSuccess": "टेम्पलेट हटाया गया।",
+    "saveFailed": "टेम्पलेट सहेजने में विफल।",
+    "deleteFailed": "टेम्पलेट हटाने में विफल।",
+    "loadFailed": "टेम्पलेट लोड करने में विफल।",
+    "useTemplate": "टेम्पलेट का उपयोग करें",
+    "selectTemplate": "प्री-फिल करने के लिए एक टेम्पलेट चुनें..."
+  },
   "slack": {
     "title": "Slack एकीकरण",
     "subtitle": "अपने चैनलों में केस सूचनाएं प्राप्त करने के लिए Slack कनेक्ट करें।",
@@ -334,5 +367,15 @@
     "saveFailed": "एकीकरण सहेजने में विफल।",
     "deleteFailed": "एकीकरण हटाने में विफल।",
     "loadFailed": "एकीकरण लोड करने में विफल।"
+  },
+  "collaborative": {
+    "editingActive": "आप इस ड्राफ्ट को संपादित कर रहे हैं",
+    "releaseLock": "लॉक छोड़ें",
+    "lockedBy": "{name} द्वारा संपादित किया जा रहा है",
+    "anotherUser": "अन्य उपयोगकर्ता",
+    "unlocked": "संपादन के लिए उपलब्ध",
+    "startEditing": "संपादन शुरू करें",
+    "lockFailed": "संपादन लॉक प्राप्त नहीं हो सका।",
+    "lockConflict": "यह ड्राफ्ट वर्तमान में किसी और द्वारा संपादित किया जा रहा है।"
   }
 }

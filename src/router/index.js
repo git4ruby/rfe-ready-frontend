@@ -142,6 +142,12 @@ const routes = [
         meta: { requiresAuth: true, roles: ['admin'] },
       },
       {
+        path: 'case-templates',
+        name: 'CaseTemplates',
+        component: () => import('../views/CaseTemplatesView.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('../views/ProfileView.vue'),

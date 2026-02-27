@@ -25,10 +25,12 @@ import {
   ChartBarIcon,
   BoltIcon,
   ChatBubbleLeftRightIcon,
+  DocumentDuplicateIcon,
 } from '@heroicons/vue/24/outline'
 import NotificationPanel from '../components/NotificationPanel.vue'
 import TwoFactorBanner from '../components/TwoFactorBanner.vue'
 import { useLiveNotificationsStore } from '../stores/liveNotifications'
+import apiClient from '../api/client'
 
 const router = useRouter()
 const route = useRoute()
@@ -61,6 +63,7 @@ const adminNavigation = [
   { nameKey: 'nav.backups', href: '/backups', icon: CloudArrowUpIcon, routeName: 'Backups' },
   { nameKey: 'nav.webhooks', href: '/webhooks', icon: BoltIcon, routeName: 'Webhooks' },
   { nameKey: 'nav.slack', href: '/slack', icon: ChatBubbleLeftRightIcon, routeName: 'SlackIntegrations' },
+  { nameKey: 'nav.caseTemplates', href: '/case-templates', icon: DocumentDuplicateIcon, routeName: 'CaseTemplates' },
 ]
 
 function isActive(item) {
@@ -150,6 +153,16 @@ async function handleLogout() {
             <component :is="item.icon" class="h-5 w-5 shrink-0" />
             {{ t(item.nameKey) }}
           </router-link>
+          <a
+            :href="(apiClient.defaults.baseURL || '/api/v1').replace('/api/v1', '') + '/api-docs'"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors text-gray-300 hover:bg-gray-800 hover:text-white"
+            @click="sidebarOpen = false"
+          >
+            <BookOpenIcon class="h-5 w-5 shrink-0" />
+            {{ t('nav.apiDocs') }}
+          </a>
         </template>
       </nav>
 

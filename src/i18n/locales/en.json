@@ -47,8 +47,10 @@
     "featureFlags": "Feature Flags",
     "webhooks": "Webhooks",
     "slack": "Slack",
+    "caseTemplates": "Templates",
     "profile": "Profile",
-    "reports": "Reports"
+    "reports": "Reports",
+    "apiDocs": "API Docs"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -313,6 +315,37 @@
       "draft": "Draft Events"
     }
   },
+  "templates": {
+    "title": "Case Templates",
+    "subtitle": "Create and manage reusable templates for common RFE case types.",
+    "createTemplate": "Create Template",
+    "editTemplate": "Edit Template",
+    "name": "Template Name",
+    "namePlaceholder": "e.g. H-1B Specialty Occupation",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe when to use this template",
+    "visaCategory": "Visa Category",
+    "sections": "Default Sections",
+    "sectionTitle": "Section Title",
+    "sectionDescription": "Section Description",
+    "addSection": "Add Section",
+    "checklist": "Default Checklist",
+    "checklistItem": "Checklist Item",
+    "required": "Required",
+    "addChecklistItem": "Add Item",
+    "defaultNotes": "Default Notes",
+    "noTemplates": "No case templates configured yet.",
+    "noTemplatesDesc": "Create your first template to streamline case creation.",
+    "deleteConfirm": "Are you sure you want to delete this template?",
+    "createSuccess": "Template created.",
+    "updateSuccess": "Template updated.",
+    "deleteSuccess": "Template deleted.",
+    "saveFailed": "Failed to save template.",
+    "deleteFailed": "Failed to delete template.",
+    "loadFailed": "Failed to load templates.",
+    "useTemplate": "Use Template",
+    "selectTemplate": "Select a template to pre-fill..."
+  },
   "slack": {
     "title": "Slack Integration",
     "subtitle": "Connect Slack to receive case notifications in your channels.",
@@ -334,5 +367,15 @@
     "saveFailed": "Failed to save integration.",
     "deleteFailed": "Failed to remove integration.",
     "loadFailed": "Failed to load integrations."
+  },
+  "collaborative": {
+    "editingActive": "You are editing this draft",
+    "releaseLock": "Release lock",
+    "lockedBy": "Being edited by {name}",
+    "anotherUser": "another user",
+    "unlocked": "Available to edit",
+    "startEditing": "Start Editing",
+    "lockFailed": "Could not acquire editing lock.",
+    "lockConflict": "This draft is currently being edited by someone else."
   }
 }

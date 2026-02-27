@@ -1,14 +1,33 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useCasesStore } from '../stores/cases'
 import { useNotificationStore } from '../stores/notification'
+import { useTemplatesStore } from '../stores/templates'
 import { useAutoSaveDraft } from '../composables/useAutoSaveDraft'
 import { ArrowLeftIcon, CheckIcon } from '@heroicons/vue/24/outline'
 
+const { t } = useI18n()
 const router = useRouter()
 const casesStore = useCasesStore()
 const notify = useNotificationStore()
+const templatesStore = useTemplatesStore()
+
+const selectedTemplate = ref('')
+
+onMounted(() => {
+  templatesStore.fetchTemplates().catch(() => {})
+})
+
+function applyTemplate() {
+  if (!selectedTemplate.value) return
+  const tmpl = templatesStore.templates.find(item => item.id === selectedTemplate.value)
+  if (tmpl) {
+    if (tmpl.visa_category) form.value.visa_type = tmpl.visa_category
+    if (tmpl.default_notes) form.value.notes = tmpl.default_notes
+  }
+}
 
 const loading = ref(false)
 const errors = ref({})
@@ -104,6 +123,20 @@ async function handleSubmit() {
           Restore Draft
         </button>
       </div>
+    </div>
+
+    <!-- Template selector -->
+    <div v-if="templatesStore.templates.length" class="mb-4 bg-white shadow rounded-lg px-6 py-4">
+      <label for="template-select" class="block text-sm font-medium text-gray-700">{{ t('templates.useTemplate') }}</label>
+      <select
+        id="template-select"
+        v-model="selectedTemplate"
+        @change="applyTemplate"
+        class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+      >
+        <option value="">{{ t('templates.selectTemplate') }}</option>
+        <option v-for="tmpl in templatesStore.templates" :key="tmpl.id" :value="tmpl.id">{{ tmpl.name }} ({{ tmpl.visa_category }})</option>
+      </select>
     </div>
 
     <!-- Form -->
