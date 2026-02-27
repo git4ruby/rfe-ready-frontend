@@ -46,6 +46,7 @@
     "backups": "Copias de Seguridad",
     "featureFlags": "Banderas de Funciones",
     "webhooks": "Webhooks",
+    "slack": "Slack",
     "profile": "Perfil",
     "reports": "Informes"
   },
@@ -311,5 +312,27 @@
       "document": "Eventos de Documento",
       "draft": "Eventos de Borrador"
     }
+  },
+  "slack": {
+    "title": "Integración con Slack",
+    "subtitle": "Conecte Slack para recibir notificaciones de casos en sus canales.",
+    "createIntegration": "Agregar Integración",
+    "editIntegration": "Editar Integración",
+    "webhookUrl": "URL del Webhook",
+    "webhookUrlPlaceholder": "https://hooks.slack.com/services/...",
+    "channelName": "Nombre del Canal",
+    "channelPlaceholder": "#general",
+    "events": "Eventos",
+    "active": "Activo",
+    "noIntegrations": "No hay integraciones de Slack configuradas.",
+    "testNotification": "Enviar Prueba",
+    "testSent": "Notificación de prueba enviada.",
+    "deleteConfirm": "¿Está seguro de que desea eliminar esta integración de Slack?",
+    "createSuccess": "Integración de Slack creada.",
+    "updateSuccess": "Integración de Slack actualizada.",
+    "deleteSuccess": "Integración de Slack eliminada.",
+    "saveFailed": "Error al guardar la integración.",
+    "deleteFailed": "Error al eliminar la integración.",
+    "loadFailed": "Error al cargar las integraciones."
   }
 }

@@ -46,6 +46,7 @@
     "backups": "बैकअप",
     "featureFlags": "फीचर फ्लैग",
     "webhooks": "वेबहुक",
+    "slack": "Slack",
     "profile": "प्रोफ़ाइल",
     "reports": "रिपोर्ट"
   },
@@ -311,5 +312,27 @@
       "document": "दस्तावेज़ इवेंट",
       "draft": "ड्राफ्ट इवेंट"
     }
+  },
+  "slack": {
+    "title": "Slack एकीकरण",
+    "subtitle": "अपने चैनलों में केस सूचनाएं प्राप्त करने के लिए Slack कनेक्ट करें।",
+    "createIntegration": "एकीकरण जोड़ें",
+    "editIntegration": "एकीकरण संपादित करें",
+    "webhookUrl": "Webhook URL",
+    "webhookUrlPlaceholder": "https://hooks.slack.com/services/...",
+    "channelName": "चैनल का नाम",
+    "channelPlaceholder": "#general",
+    "events": "इवेंट",
+    "active": "सक्रिय",
+    "noIntegrations": "कोई Slack एकीकरण कॉन्फ़िगर नहीं किया गया।",
+    "testNotification": "परीक्षण भेजें",
+    "testSent": "परीक्षण सूचना भेजी गई।",
+    "deleteConfirm": "क्या आप वाकई इस Slack एकीकरण को हटाना चाहते हैं?",
+    "createSuccess": "Slack एकीकरण बनाया गया।",
+    "updateSuccess": "Slack एकीकरण अपडेट किया गया।",
+    "deleteSuccess": "Slack एकीकरण हटाया गया।",
+    "saveFailed": "एकीकरण सहेजने में विफल।",
+    "deleteFailed": "एकीकरण हटाने में विफल।",
+    "loadFailed": "एकीकरण लोड करने में विफल।"
   }
 }

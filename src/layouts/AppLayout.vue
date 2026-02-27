@@ -24,6 +24,7 @@ import {
   FlagIcon,
   ChartBarIcon,
   BoltIcon,
+  ChatBubbleLeftRightIcon,
 } from '@heroicons/vue/24/outline'
 import NotificationPanel from '../components/NotificationPanel.vue'
 import TwoFactorBanner from '../components/TwoFactorBanner.vue'
@@ -59,6 +60,7 @@ const adminNavigation = [
   { nameKey: 'nav.featureFlags', href: '/feature-flags', icon: FlagIcon, routeName: 'FeatureFlags' },
   { nameKey: 'nav.backups', href: '/backups', icon: CloudArrowUpIcon, routeName: 'Backups' },
   { nameKey: 'nav.webhooks', href: '/webhooks', icon: BoltIcon, routeName: 'Webhooks' },
+  { nameKey: 'nav.slack', href: '/slack', icon: ChatBubbleLeftRightIcon, routeName: 'SlackIntegrations' },
 ]
 
 function isActive(item) {

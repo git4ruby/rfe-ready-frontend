@@ -46,6 +46,7 @@
     "backups": "备份",
     "featureFlags": "功能开关",
     "webhooks": "Webhooks",
+    "slack": "Slack",
     "profile": "个人资料",
     "reports": "报告"
   },
@@ -311,5 +312,27 @@
       "document": "文档事件",
       "draft": "草稿事件"
     }
+  },
+  "slack": {
+    "title": "Slack集成",
+    "subtitle": "连接Slack以在频道中接收案例通知。",
+    "createIntegration": "添加集成",
+    "editIntegration": "编辑集成",
+    "webhookUrl": "Webhook URL",
+    "webhookUrlPlaceholder": "https://hooks.slack.com/services/...",
+    "channelName": "频道名称",
+    "channelPlaceholder": "#general",
+    "events": "事件",
+    "active": "启用",
+    "noIntegrations": "尚未配置Slack集成。",
+    "testNotification": "发送测试",
+    "testSent": "测试通知已发送。",
+    "deleteConfirm": "确定要删除此Slack集成吗？",
+    "createSuccess": "Slack集成已创建。",
+    "updateSuccess": "Slack集成已更新。",
+    "deleteSuccess": "Slack集成已删除。",
+    "saveFailed": "保存集成失败。",
+    "deleteFailed": "删除集成失败。",
+    "loadFailed": "加载集成失败。"
   }
 }

@@ -136,6 +136,12 @@ const routes = [
         meta: { requiresAuth: true, roles: ['admin'] },
       },
       {
+        path: 'slack',
+        name: 'SlackIntegrations',
+        component: () => import('../views/SlackIntegrationsView.vue'),
+        meta: { requiresAuth: true, roles: ['admin'] },
+      },
+      {
         path: 'profile',
         name: 'Profile',
         component: () => import('../views/ProfileView.vue'),

@@ -46,6 +46,7 @@
     "backups": "Backups",
     "featureFlags": "Feature Flags",
     "webhooks": "Webhooks",
+    "slack": "Slack",
     "profile": "Profile",
     "reports": "Reports"
   },
@@ -311,5 +312,27 @@
       "document": "Document Events",
       "draft": "Draft Events"
     }
+  },
+  "slack": {
+    "title": "Slack Integration",
+    "subtitle": "Connect Slack to receive case notifications in your channels.",
+    "createIntegration": "Add Integration",
+    "editIntegration": "Edit Integration",
+    "webhookUrl": "Webhook URL",
+    "webhookUrlPlaceholder": "https://hooks.slack.com/services/...",
+    "channelName": "Channel Name",
+    "channelPlaceholder": "#general",
+    "events": "Events",
+    "active": "Active",
+    "noIntegrations": "No Slack integrations configured.",
+    "testNotification": "Send Test",
+    "testSent": "Test notification sent.",
+    "deleteConfirm": "Are you sure you want to remove this Slack integration?",
+    "createSuccess": "Slack integration created.",
+    "updateSuccess": "Slack integration updated.",
+    "deleteSuccess": "Slack integration removed.",
+    "saveFailed": "Failed to save integration.",
+    "deleteFailed": "Failed to remove integration.",
+    "loadFailed": "Failed to load integrations."
   }
 }
