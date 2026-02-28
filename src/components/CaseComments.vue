@@ -240,7 +240,7 @@ function formatTime(dateStr) {
             </div>
 
             <!-- Comment body -->
-            <p v-else class="mt-1 text-sm text-gray-700 whitespace-pre-wrap">{{ comment.body }}</p>
+            <p v-else class="mt-1 text-sm text-gray-700 whitespace-pre-wrap break-words">{{ comment.body }}</p>
 
             <!-- Reply button -->
             <div class="mt-2">
@@ -295,7 +295,7 @@ function formatTime(dateStr) {
                       </button>
                     </div>
                   </div>
-                  <p v-else class="text-sm text-gray-700 whitespace-pre-wrap">{{ reply.body }}</p>
+                  <p v-else class="text-sm text-gray-700 whitespace-pre-wrap break-words">{{ reply.body }}</p>
                 </div>
               </div>
             </div>

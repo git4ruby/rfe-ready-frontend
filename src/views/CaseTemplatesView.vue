@@ -178,7 +178,7 @@ async function handleDelete() {
     </EmptyState>
 
     <!-- Templates table -->
-    <div v-else class="bg-white shadow rounded-lg overflow-hidden">
+    <div v-else class="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -243,7 +243,7 @@ async function handleDelete() {
     <div v-if="showModal" class="fixed inset-0 z-50 overflow-y-auto">
       <div class="flex min-h-full items-center justify-center p-4">
         <div class="fixed inset-0 bg-gray-500/75 transition-opacity" @click="closeModal" />
-        <div class="relative w-full max-w-2xl transform rounded-xl bg-white shadow-2xl transition-all">
+        <div class="relative w-full max-w-lg sm:max-w-2xl transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">
               {{ editing ? t('templates.editTemplate') : t('templates.createTemplate') }}

@@ -137,7 +137,7 @@ function formatDate(dateStr) {
     </div>
 
     <!-- Backups Table -->
-    <div v-else class="bg-white shadow rounded-lg overflow-hidden">
+    <div v-else class="bg-white shadow rounded-lg overflow-hidden overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>

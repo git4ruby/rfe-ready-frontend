@@ -321,7 +321,7 @@ async function handleExport(formatType) {
                         :key="field"
                         class="flex items-start gap-3 text-sm"
                       >
-                        <span class="font-medium text-gray-700 min-w-[140px]">
+                        <span class="font-medium text-gray-700 min-w-[80px] sm:min-w-[140px]">
                           {{ formatFieldName(field) }}
                         </span>
                         <span class="text-red-600 line-through">{{ values[0] ?? t('auditLog.empty') }}</span>

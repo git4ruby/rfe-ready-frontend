@@ -92,7 +92,7 @@ onMounted(async () => {
               v-model="form.name"
               type="text"
               :disabled="!authStore.isAdmin"
-              class="mt-1 block w-full max-w-md rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
+              class="mt-1 block w-full sm:max-w-md rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm disabled:bg-gray-50 disabled:text-gray-500"
             />
           </div>
 
