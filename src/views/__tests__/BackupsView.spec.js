@@ -122,8 +122,6 @@ describe('BackupsView', () => {
   it('shows download button only for completed backups', async () => {
     const wrapper = await mountBackups()
 
-    // Check that download buttons exist in the table
-    const rows = wrapper.findAll('tr')
     // The completed backup row should have a download button
     // We rely on the v-if="backup.status === 'completed'" in the template
     const downloadButtons = wrapper.findAll('button[title="Download"]')

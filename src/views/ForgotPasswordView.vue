@@ -54,8 +54,8 @@ async function handleSubmit() {
             If an account exists for <strong>{{ email }}</strong>, you'll receive password reset instructions shortly.
           </p>
           <button
-            @click="router.push('/login')"
             class="mt-6 w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+            @click="router.push('/login')"
           >
             Back to Sign In
           </button>
@@ -70,7 +70,7 @@ async function handleSubmit() {
             <p class="text-sm text-red-700">{{ errorMessage }}</p>
           </div>
 
-          <form @submit.prevent="handleSubmit" class="space-y-6">
+          <form class="space-y-6" @submit.prevent="handleSubmit">
             <div>
               <label for="email" class="block text-sm font-medium text-gray-700">
                 Email address

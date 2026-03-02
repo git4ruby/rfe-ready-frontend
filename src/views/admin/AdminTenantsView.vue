@@ -155,8 +155,8 @@ function formatDate(dateStr) {
         <p class="mt-1 text-sm text-gray-500">Manage organizations using the RFE Ready platform.</p>
       </div>
       <button
-        @click="openCreate"
         class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
+        @click="openCreate"
       >
         <PlusIcon class="h-5 w-5" />
         Create Tenant
@@ -217,7 +217,7 @@ function formatDate(dateStr) {
             </div>
             <div class="flex items-center justify-end gap-3 mt-3 pt-3 border-t border-gray-100">
               <router-link :to="`/platform/tenants/${tenant.id}`" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">View</router-link>
-              <button @click="confirmDelete(tenant)" class="text-sm font-medium text-red-600 hover:text-red-500">Delete</button>
+              <button class="text-sm font-medium text-red-600 hover:text-red-500" @click="confirmDelete(tenant)">Delete</button>
             </div>
           </div>
         </div>
@@ -247,8 +247,8 @@ function formatDate(dateStr) {
                   <td class="px-6 py-4 whitespace-nowrap">
                     <select
                       :value="tenant.plan"
-                      @change="handleChangePlan(tenant, $event.target.value)"
                       class="rounded-md border-gray-300 text-xs py-1 focus:border-red-500 focus:ring-red-500"
+                      @change="handleChangePlan(tenant, $event.target.value)"
                     >
                       <option value="trial">Trial</option>
                       <option value="basic">Basic</option>
@@ -259,8 +259,8 @@ function formatDate(dateStr) {
                   <td class="px-6 py-4 whitespace-nowrap">
                     <select
                       :value="tenant.status"
-                      @change="handleChangeStatus(tenant, $event.target.value)"
                       class="rounded-md border-gray-300 text-xs py-1 focus:border-red-500 focus:ring-red-500"
+                      @change="handleChangeStatus(tenant, $event.target.value)"
                     >
                       <option value="active">Active</option>
                       <option value="suspended">Suspended</option>
@@ -278,9 +278,9 @@ function formatDate(dateStr) {
                         <EyeIcon class="h-4 w-4" />
                       </router-link>
                       <button
-                        @click="confirmDelete(tenant)"
                         class="text-red-600 hover:text-red-500 transition-colors"
                         title="Delete"
+                        @click="confirmDelete(tenant)"
                       >
                         <TrashIcon class="h-4 w-4" />
                       </button>
@@ -297,8 +297,8 @@ function formatDate(dateStr) {
           :total-pages="store.tenantsPagination?.total_pages || 1"
           :total-count="store.tenantsPagination?.total_count"
           active-class="bg-red-600 text-white"
-          @page-change="loadTenants"
           class="mt-3 md:mt-0"
+          @page-change="loadTenants"
         />
       </div>
     </template>
@@ -310,11 +310,11 @@ function formatDate(dateStr) {
         <div class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">Create Tenant</h3>
-            <button @click="showCreateModal = false" class="text-gray-400 hover:text-gray-500">
+            <button class="text-gray-400 hover:text-gray-500" @click="showCreateModal = false">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
-          <form @submit.prevent="handleCreate" class="p-6 space-y-4">
+          <form class="p-6 space-y-4" @submit.prevent="handleCreate">
             <div>
               <label class="block text-sm font-medium text-gray-700">Organization Name <span class="text-red-500">*</span></label>
               <input
@@ -344,7 +344,7 @@ function formatDate(dateStr) {
               />
             </div>
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
-              <button type="button" @click="showCreateModal = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+              <button type="button" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" @click="showCreateModal = false">
                 Cancel
               </button>
               <button

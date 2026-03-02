@@ -2,7 +2,6 @@ import { mount, flushPromises } from '@vue/test-utils'
 import SettingsView from '../SettingsView.vue'
 import { createMountOptions } from '../../test/helpers'
 import { useAuthStore } from '../../stores/auth'
-import { useSettingsStore } from '../../stores/settings'
 
 vi.mock('../../api/client')
 import apiClient from '../../api/client'

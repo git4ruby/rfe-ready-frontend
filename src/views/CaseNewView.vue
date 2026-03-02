@@ -110,15 +110,15 @@ async function handleSubmit() {
       <div class="flex gap-2">
         <button
           type="button"
-          @click="hasDraft = false"
           class="text-sm text-amber-700 hover:text-amber-900 font-medium"
+          @click="hasDraft = false"
         >
           Dismiss
         </button>
         <button
           type="button"
-          @click="restoreDraft"
           class="rounded-lg bg-amber-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-amber-500 transition-colors"
+          @click="restoreDraft"
         >
           Restore Draft
         </button>
@@ -131,8 +131,8 @@ async function handleSubmit() {
       <select
         id="template-select"
         v-model="selectedTemplate"
-        @change="applyTemplate"
         class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        @change="applyTemplate"
       >
         <option value="">{{ t('templates.selectTemplate') }}</option>
         <option v-for="tmpl in templatesStore.templates" :key="tmpl.id" :value="tmpl.id">{{ tmpl.name }} ({{ tmpl.visa_category }})</option>
@@ -140,7 +140,7 @@ async function handleSubmit() {
     </div>
 
     <!-- Form -->
-    <form @submit.prevent="handleSubmit" class="bg-white shadow rounded-lg">
+    <form class="bg-white shadow rounded-lg" @submit.prevent="handleSubmit">
       <div class="p-6 space-y-6">
         <!-- Case number and Receipt number row -->
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">

@@ -115,8 +115,8 @@ async function handleLogout() {
       <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto min-h-0">
         <router-link
           v-for="item in navigation"
-          :key="item.name"
           :id="`nav-${item.routeName.toLowerCase()}`"
+          :key="item.name"
           :to="item.href"
           :class="[
             'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
@@ -139,8 +139,8 @@ async function handleLogout() {
           </div>
           <router-link
             v-for="item in adminNavigation"
-            :key="item.name"
             :id="`nav-${item.routeName.toLowerCase()}`"
+            :key="item.name"
             :to="item.href"
             :class="[
               'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
@@ -189,9 +189,9 @@ async function handleLogout() {
         </router-link>
         <div class="flex items-center justify-between">
           <button
-            @click="notifPanelOpen = true"
             class="text-gray-400 hover:text-white transition-colors relative p-1.5 rounded-lg hover:bg-gray-800"
             title="Notifications"
+            @click="notifPanelOpen = true"
           >
             <BellIcon class="h-5 w-5" />
             <span
@@ -202,24 +202,24 @@ async function handleLogout() {
             </span>
           </button>
           <button
-            @click="restartTour"
             class="text-gray-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-gray-800"
             title="Restart guided tour"
+            @click="restartTour"
           >
             <QuestionMarkCircleIcon class="h-5 w-5" />
           </button>
           <button
-            @click="themeStore.toggle()"
             class="text-gray-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-gray-800"
             :title="themeStore.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="themeStore.toggle()"
           >
             <SunIcon v-if="themeStore.isDark" class="h-5 w-5" />
             <MoonIcon v-else class="h-5 w-5" />
           </button>
           <button
-            @click="handleLogout"
             class="text-gray-400 hover:text-white transition-colors p-1.5 rounded-lg hover:bg-gray-800"
             title="Sign out"
+            @click="handleLogout"
           >
             <ArrowRightOnRectangleIcon class="h-5 w-5" />
           </button>

@@ -26,14 +26,14 @@ function goHome() {
       </p>
       <div class="mt-8">
         <button
-          @click="goHome"
           class="rounded-lg bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+          @click="goHome"
         >
           Go to Dashboard
         </button>
       </div>
       <div class="mt-4">
-        <button @click="router.back()" class="text-sm font-medium text-gray-500 hover:text-gray-700">
+        <button class="text-sm font-medium text-gray-500 hover:text-gray-700" @click="router.back()">
           Go back
         </button>
       </div>

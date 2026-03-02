@@ -97,17 +97,17 @@ async function handleLogout() {
             <p class="text-xs text-red-400 truncate">Super Admin</p>
           </router-link>
           <button
-            @click="themeStore.toggle()"
             class="shrink-0 text-gray-400 hover:text-white transition-colors"
             :title="themeStore.isDark ? 'Switch to light mode' : 'Switch to dark mode'"
+            @click="themeStore.toggle()"
           >
             <SunIcon v-if="themeStore.isDark" class="h-5 w-5" />
             <MoonIcon v-else class="h-5 w-5" />
           </button>
           <button
-            @click="handleLogout"
             class="shrink-0 text-gray-400 hover:text-white transition-colors"
             title="Sign out"
+            @click="handleLogout"
           >
             <ArrowRightOnRectangleIcon class="h-5 w-5" />
           </button>

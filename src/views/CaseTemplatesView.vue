@@ -148,8 +148,8 @@ async function handleDelete() {
         <p class="mt-1 text-sm text-gray-500">{{ t('templates.subtitle') }}</p>
       </div>
       <button
-        @click="openCreate"
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+        @click="openCreate"
       >
         <PlusIcon class="h-5 w-5" />
         {{ t('templates.createTemplate') }}
@@ -168,8 +168,8 @@ async function handleDelete() {
     >
       <template #action>
         <button
-          @click="openCreate"
           class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+          @click="openCreate"
         >
           <PlusIcon class="h-5 w-5" />
           {{ t('templates.createTemplate') }}
@@ -219,16 +219,16 @@ async function handleDelete() {
             <td class="px-6 py-4 whitespace-nowrap text-right">
               <div class="flex items-center justify-end gap-2">
                 <button
-                  @click="openEdit(template)"
                   class="text-gray-400 hover:text-indigo-600 transition-colors p-1"
                   :title="t('common.edit')"
+                  @click="openEdit(template)"
                 >
                   <PencilSquareIcon class="h-4 w-4" />
                 </button>
                 <button
-                  @click="confirmDelete(template)"
                   class="text-gray-400 hover:text-red-600 transition-colors p-1"
                   :title="t('common.delete')"
+                  @click="confirmDelete(template)"
                 >
                   <TrashIcon class="h-4 w-4" />
                 </button>
@@ -248,11 +248,11 @@ async function handleDelete() {
             <h3 class="text-lg font-semibold text-gray-900">
               {{ editing ? t('templates.editTemplate') : t('templates.createTemplate') }}
             </h3>
-            <button @click="closeModal" class="text-gray-400 hover:text-gray-500 transition-colors">
+            <button class="text-gray-400 hover:text-gray-500 transition-colors" @click="closeModal">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
-          <form @submit.prevent="handleSave" class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+          <form class="p-6 space-y-4 max-h-[70vh] overflow-y-auto" @submit.prevent="handleSave">
             <!-- Name -->
             <div>
               <label for="template-name" class="block text-sm font-medium text-gray-700">
@@ -324,8 +324,8 @@ async function handleDelete() {
                     </div>
                     <button
                       type="button"
-                      @click="removeSection(idx)"
                       class="text-gray-400 hover:text-red-600 transition-colors p-1 mt-1"
+                      @click="removeSection(idx)"
                     >
                       <XMarkIcon class="h-4 w-4" />
                     </button>
@@ -334,8 +334,8 @@ async function handleDelete() {
               </div>
               <button
                 type="button"
-                @click="addSection"
                 class="mt-2 inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+                @click="addSection"
               >
                 <PlusIcon class="h-4 w-4" />
                 {{ t('templates.addSection') }}
@@ -369,8 +369,8 @@ async function handleDelete() {
                   </label>
                   <button
                     type="button"
-                    @click="removeChecklistItem(idx)"
                     class="text-gray-400 hover:text-red-600 transition-colors p-1"
+                    @click="removeChecklistItem(idx)"
                   >
                     <XMarkIcon class="h-4 w-4" />
                   </button>
@@ -378,8 +378,8 @@ async function handleDelete() {
               </div>
               <button
                 type="button"
-                @click="addChecklistItem"
                 class="mt-2 inline-flex items-center gap-1 text-sm text-indigo-600 hover:text-indigo-500 font-medium"
+                @click="addChecklistItem"
               >
                 <PlusIcon class="h-4 w-4" />
                 {{ t('templates.addChecklistItem') }}
@@ -403,8 +403,8 @@ async function handleDelete() {
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                @click="closeModal"
                 class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                @click="closeModal"
               >
                 {{ t('common.cancel') }}
               </button>

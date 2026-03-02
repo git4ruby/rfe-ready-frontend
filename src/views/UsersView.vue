@@ -318,8 +318,8 @@ function formatDate(dateStr) {
         <p class="mt-1 text-sm text-gray-500">{{ t('users.subtitle', 'Manage team members, invite new users, and assign roles.') }}</p>
       </div>
       <button
-        @click="openInvite"
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+        @click="openInvite"
       >
         <PlusIcon class="h-5 w-5" />
         {{ t('users.inviteUser') }}
@@ -338,8 +338,8 @@ function formatDate(dateStr) {
     >
       <template #action>
         <button
-          @click="openInvite"
           class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+          @click="openInvite"
         >
           <PlusIcon class="h-5 w-5" />
           Invite User
@@ -356,23 +356,23 @@ function formatDate(dateStr) {
       >
         <span class="text-sm font-medium text-indigo-800">{{ selectedIds.size }} user(s) selected</span>
         <button
-          @click="handleBulkAction('inactive')"
           :disabled="bulkProcessing"
           class="inline-flex items-center gap-1.5 rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-500 disabled:opacity-50"
+          @click="handleBulkAction('inactive')"
         >
           <NoSymbolIcon class="h-3.5 w-3.5" />
           Deactivate
         </button>
         <button
-          @click="handleBulkAction('active')"
           :disabled="bulkProcessing"
           class="inline-flex items-center gap-1.5 rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-green-500 disabled:opacity-50"
+          @click="handleBulkAction('active')"
         >
           Activate
         </button>
         <button
-          @click="clearSelection"
           class="text-xs text-gray-500 hover:text-gray-700 ml-auto"
+          @click="clearSelection"
         >
           Clear
         </button>
@@ -391,8 +391,8 @@ function formatDate(dateStr) {
                 v-if="user.id !== auth.user?.id"
                 type="checkbox"
                 :checked="selectedIds.has(user.id)"
-                @change="toggleSelect(user.id)"
                 class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 flex-shrink-0"
+                @change="toggleSelect(user.id)"
               />
               <div class="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
                 <span class="text-xs font-medium text-indigo-700">{{ initials(user) }}</span>
@@ -417,9 +417,9 @@ function formatDate(dateStr) {
               {{ user.role }}
             </span>
             <div class="flex items-center gap-3">
-              <button v-if="user.status === 'invited'" @click="handleResend(user)" class="text-yellow-600 hover:text-yellow-500" title="Resend"><EnvelopeIcon class="h-4 w-4" /></button>
-              <button @click="openEdit(user)" :disabled="user.id === auth.user?.id" :class="{ 'opacity-50': user.id === auth.user?.id }" class="text-indigo-600 hover:text-indigo-500" title="Edit"><PencilSquareIcon class="h-4 w-4" /></button>
-              <button v-if="user.status === 'active' && user.id !== auth.user?.id" @click="confirmDeactivate(user)" class="text-red-600 hover:text-red-500" title="Deactivate"><NoSymbolIcon class="h-4 w-4" /></button>
+              <button v-if="user.status === 'invited'" class="text-yellow-600 hover:text-yellow-500" title="Resend" @click="handleResend(user)"><EnvelopeIcon class="h-4 w-4" /></button>
+              <button :disabled="user.id === auth.user?.id" :class="{ 'opacity-50': user.id === auth.user?.id }" class="text-indigo-600 hover:text-indigo-500" title="Edit" @click="openEdit(user)"><PencilSquareIcon class="h-4 w-4" /></button>
+              <button v-if="user.status === 'active' && user.id !== auth.user?.id" class="text-red-600 hover:text-red-500" title="Deactivate" @click="confirmDeactivate(user)"><NoSymbolIcon class="h-4 w-4" /></button>
             </div>
           </div>
         </div>
@@ -435,8 +435,8 @@ function formatDate(dateStr) {
                   <input
                     type="checkbox"
                     :checked="allSelected"
-                    @change="toggleSelectAll"
                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    @change="toggleSelectAll"
                   />
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -470,8 +470,8 @@ function formatDate(dateStr) {
                     v-if="user.id !== auth.user?.id"
                     type="checkbox"
                     :checked="selectedIds.has(user.id)"
-                    @change="toggleSelect(user.id)"
                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    @change="toggleSelect(user.id)"
                   />
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
@@ -515,26 +515,26 @@ function formatDate(dateStr) {
                   <div class="flex items-center justify-end gap-2">
                     <button
                       v-if="user.status === 'invited'"
-                      @click="handleResend(user)"
                       class="text-yellow-600 hover:text-yellow-500 transition-colors"
                       title="Resend invitation"
+                      @click="handleResend(user)"
                     >
                       <EnvelopeIcon class="h-4 w-4" />
                     </button>
                     <button
-                      @click="openEdit(user)"
                       class="text-indigo-600 hover:text-indigo-500 transition-colors"
                       :class="{ 'opacity-50 cursor-not-allowed': user.id === auth.user?.id }"
                       :disabled="user.id === auth.user?.id"
                       title="Edit user"
+                      @click="openEdit(user)"
                     >
                       <PencilSquareIcon class="h-4 w-4" />
                     </button>
                     <button
                       v-if="user.status === 'active' && user.id !== auth.user?.id"
-                      @click="confirmDeactivate(user)"
                       class="text-red-600 hover:text-red-500 transition-colors"
                       title="Deactivate user"
+                      @click="confirmDeactivate(user)"
                     >
                       <NoSymbolIcon class="h-4 w-4" />
                     </button>
@@ -550,8 +550,8 @@ function formatDate(dateStr) {
         :current-page="store.pagination?.current_page || 1"
         :total-pages="store.pagination?.total_pages || 1"
         :total-count="store.pagination?.total_count"
-        @page-change="goToPage"
         class="mt-3 md:mt-0"
+        @page-change="goToPage"
       />
     </div>
 
@@ -563,12 +563,12 @@ function formatDate(dateStr) {
         <div class="relative w-full max-w-lg mx-4 transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">Invite User</h3>
-            <button @click="showInviteModal = false" class="text-gray-400 hover:text-gray-500 transition-colors">
+            <button class="text-gray-400 hover:text-gray-500 transition-colors" @click="showInviteModal = false">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
 
-          <form @submit.prevent="handleInvite" class="p-6 space-y-5">
+          <form class="p-6 space-y-5" @submit.prevent="handleInvite">
             <!-- Name row -->
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
@@ -676,8 +676,8 @@ function formatDate(dateStr) {
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                @click="showInviteModal = false"
                 class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                @click="showInviteModal = false"
               >
                 Cancel
               </button>
@@ -712,12 +712,12 @@ function formatDate(dateStr) {
         <div class="relative w-full max-w-lg mx-4 transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">Edit User</h3>
-            <button @click="showEditModal = false" class="text-gray-400 hover:text-gray-500 transition-colors">
+            <button class="text-gray-400 hover:text-gray-500 transition-colors" @click="showEditModal = false">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
 
-          <form @submit.prevent="handleEdit" class="p-6 space-y-5">
+          <form class="p-6 space-y-5" @submit.prevent="handleEdit">
             <!-- Name row -->
             <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <div>
@@ -797,8 +797,8 @@ function formatDate(dateStr) {
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                @click="showEditModal = false"
                 class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                @click="showEditModal = false"
               >
                 Cancel
               </button>

@@ -50,8 +50,8 @@ function navigateToCase(id) {
       <div
         v-for="item in casesStore.similarCases"
         :key="item.id"
-        @click="navigateToCase(item.id)"
         class="flex items-center justify-between rounded-lg border border-gray-200 bg-white p-4 hover:border-indigo-300 hover:shadow-sm cursor-pointer transition-all"
+        @click="navigateToCase(item.id)"
       >
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-2">

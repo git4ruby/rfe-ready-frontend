@@ -240,7 +240,7 @@ function close2FASetup() {
         <!-- Personal Info -->
         <div class="bg-white shadow rounded-lg p-6">
           <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">{{ t('profile.personalInfo') }}</h2>
-          <form @submit.prevent="handleSaveProfile" class="space-y-4">
+          <form class="space-y-4" @submit.prevent="handleSaveProfile">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700">{{ t('profile.firstName') }}</label>
@@ -284,7 +284,7 @@ function close2FASetup() {
         <!-- Change Password -->
         <div class="bg-white shadow rounded-lg p-6">
           <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">{{ t('profile.changePassword') }}</h2>
-          <form @submit.prevent="handleChangePassword" class="space-y-4">
+          <form class="space-y-4" @submit.prevent="handleChangePassword">
             <div>
               <label class="block text-sm font-medium text-gray-700">{{ t('profile.currentPassword') }}</label>
               <input
@@ -333,7 +333,7 @@ function close2FASetup() {
         <!-- Preferences -->
         <div class="bg-white shadow rounded-lg p-6">
           <h2 class="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-4">{{ t('profile.preferences') }}</h2>
-          <form @submit.prevent="handleSavePreferences" class="space-y-5">
+          <form class="space-y-5" @submit.prevent="handleSavePreferences">
             <!-- Timezone -->
             <div>
               <label class="block text-sm font-medium text-gray-700">{{ t('profile.timezone') }}</label>
@@ -488,16 +488,16 @@ function close2FASetup() {
             </div>
             <button
               v-if="!twoFAEnabled"
-              @click="startSetup2FA"
               :disabled="setting2FA"
               class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+              @click="startSetup2FA"
             >
               {{ setting2FA ? 'Loading...' : 'Enable 2FA' }}
             </button>
             <button
               v-else
-              @click="twoFAStep = 'disable'"
               class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
+              @click="twoFAStep = 'disable'"
             >
               Disable 2FA
             </button>
@@ -523,13 +523,13 @@ function close2FASetup() {
               />
             </div>
             <div class="flex gap-3 justify-end">
-              <button @click="close2FASetup" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+              <button class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors" @click="close2FASetup">
                 Cancel
               </button>
               <button
-                @click="verify2FA"
                 :disabled="setting2FA || twoFASetupCode.length < 6"
                 class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+                @click="verify2FA"
               >
                 {{ setting2FA ? 'Verifying...' : 'Verify & Enable' }}
               </button>
@@ -550,7 +550,7 @@ function close2FASetup() {
               >{{ code }}</code>
             </div>
             <div class="flex justify-end">
-              <button @click="close2FASetup" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors">
+              <button class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors" @click="close2FASetup">
                 Done
               </button>
             </div>
@@ -579,13 +579,13 @@ function close2FASetup() {
               />
             </div>
             <div class="flex gap-3 justify-end">
-              <button @click="twoFAStep = 'idle'" class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+              <button class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors" @click="twoFAStep = 'idle'">
                 Cancel
               </button>
               <button
-                @click="disable2FA"
                 :disabled="setting2FA || !twoFADisablePassword || twoFADisableCode.length < 6"
                 class="rounded-lg bg-red-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50 transition-colors"
+                @click="disable2FA"
               >
                 {{ setting2FA ? 'Disabling...' : 'Disable 2FA' }}
               </button>

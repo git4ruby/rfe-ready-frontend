@@ -42,8 +42,8 @@ async function handleUnlock() {
       <LockClosedIcon class="h-4 w-4 text-green-600" />
       <span class="text-sm text-green-700 font-medium">{{ t('collaborative.editingActive') }}</span>
       <button
-        @click="handleUnlock"
         class="ml-auto text-xs text-gray-500 hover:text-gray-700 underline"
+        @click="handleUnlock"
       >{{ t('collaborative.releaseLock') }}</button>
     </template>
     <template v-else-if="isLockedByOther">
@@ -54,9 +54,9 @@ async function handleUnlock() {
       <LockOpenIcon class="h-4 w-4 text-gray-400" />
       <span class="text-sm text-gray-500">{{ t('collaborative.unlocked') }}</span>
       <button
-        @click="handleLock"
         :disabled="lockLoading"
         class="ml-auto rounded bg-indigo-600 px-2.5 py-1 text-xs font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
+        @click="handleLock"
       >{{ lockLoading ? t('common.loading') : t('collaborative.startEditing') }}</button>
     </template>
   </div>

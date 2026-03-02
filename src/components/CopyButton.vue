@@ -29,9 +29,9 @@ async function handleCopy() {
 
 <template>
   <button
-    @click.stop="handleCopy"
     :title="copied ? 'Copied!' : label"
     class="inline-flex items-center text-gray-400 hover:text-gray-600 transition-colors"
+    @click.stop="handleCopy"
   >
     <ClipboardDocumentCheckIcon v-if="copied" class="h-4 w-4 text-green-500" />
     <ClipboardDocumentIcon v-else class="h-4 w-4" />

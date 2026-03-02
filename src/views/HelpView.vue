@@ -82,8 +82,8 @@ function isExpanded(slug) {
         <div class="bg-white shadow rounded-lg divide-y divide-gray-200">
           <div v-for="article in articles" :key="article.slug">
             <button
-              @click="toggle(article.slug)"
               class="w-full flex items-center justify-between px-6 py-4 text-left hover:bg-gray-50 transition-colors"
+              @click="toggle(article.slug)"
             >
               <span class="text-sm font-medium text-gray-900">{{ article.title }}</span>
               <ChevronUpIcon v-if="isExpanded(article.slug)" class="h-5 w-5 text-gray-400 shrink-0" />

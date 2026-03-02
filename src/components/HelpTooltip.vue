@@ -22,9 +22,9 @@ const summary = computed(() => {
 <template>
   <span class="relative inline-flex">
     <button
-      @click.stop="show = !show"
       class="text-gray-400 hover:text-indigo-500 transition-colors"
       type="button"
+      @click.stop="show = !show"
     >
       <QuestionMarkCircleIcon class="h-4 w-4" />
     </button>
@@ -34,7 +34,7 @@ const summary = computed(() => {
     >
       <div class="flex items-start justify-between gap-2 mb-2">
         <h4 class="text-sm font-semibold text-gray-900">{{ articleData.title }}</h4>
-        <button @click.stop="show = false" class="text-gray-400 hover:text-gray-600 shrink-0">
+        <button class="text-gray-400 hover:text-gray-600 shrink-0" @click.stop="show = false">
           <XMarkIcon class="h-4 w-4" />
         </button>
       </div>

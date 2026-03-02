@@ -422,36 +422,36 @@ function statDocTypeColor(key) {
         <!-- View mode toggle -->
         <div class="inline-flex rounded-lg border border-gray-300 bg-white shadow-sm">
           <button
-            @click="viewMode = 'list'"
             :class="[
               'inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-l-lg transition-colors',
               viewMode === 'list' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'
             ]"
+            @click="viewMode = 'list'"
           >
             <ListBulletIcon class="h-4 w-4" />
             {{ t('knowledge.listView') }}
           </button>
           <button
-            @click="viewMode = 'semantic'"
             :class="[
               'inline-flex items-center gap-1.5 px-3 py-2 text-sm font-medium rounded-r-lg transition-colors',
               viewMode === 'semantic' ? 'bg-indigo-600 text-white' : 'text-gray-700 hover:bg-gray-50'
             ]"
+            @click="viewMode = 'semantic'"
           >
             <SparklesIcon class="h-4 w-4" />
             {{ t('knowledge.aiSearch') }}
           </button>
         </div>
         <button
-          @click="openBulkUpload"
           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+          @click="openBulkUpload"
         >
           <ArrowUpTrayIcon class="h-5 w-5" />
           Bulk Upload
         </button>
         <button
-          @click="openCreate"
           class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+          @click="openCreate"
         >
           <PlusIcon class="h-5 w-5" />
           Add Document
@@ -506,33 +506,33 @@ function statDocTypeColor(key) {
             <MagnifyingGlassIcon class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
             <input
               v-model="semanticQuery"
-              @input="onSemanticInput"
-              @keydown.enter="handleSemanticSearch"
               type="text"
               :placeholder="t('knowledge.semanticPlaceholder')"
               class="block w-full rounded-lg border-gray-300 pl-10 pr-10 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              @input="onSemanticInput"
+              @keydown.enter="handleSemanticSearch"
             />
             <button
               v-if="semanticQuery"
-              @click="clearSemanticSearch"
               class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              @click="clearSemanticSearch"
             >
               <XMarkIcon class="h-4 w-4" />
             </button>
           </div>
           <select
             v-model="semanticVisaType"
-            @change="semanticQuery.trim() && handleSemanticSearch()"
             class="rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            @change="semanticQuery.trim() && handleSemanticSearch()"
           >
             <option v-for="opt in visaTypeOptions" :key="opt.value" :value="opt.value">
               {{ opt.label }}
             </option>
           </select>
           <button
-            @click="handleSemanticSearch"
             :disabled="store.searchLoading || !semanticQuery.trim()"
             class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            @click="handleSemanticSearch"
           >
             <svg v-if="store.searchLoading" class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
@@ -588,8 +588,8 @@ function statDocTypeColor(key) {
             <router-link
               v-if="result.knowledge_doc_id"
               :to="'#'"
-              @click.prevent="viewMode = 'list'; toggleExpand({ id: result.knowledge_doc_id })"
               class="inline-flex items-center gap-1 mt-2 text-xs text-indigo-600 hover:text-indigo-500 font-medium"
+              @click.prevent="viewMode = 'list'; toggleExpand({ id: result.knowledge_doc_id })"
             >
               {{ t('knowledge.viewDocument') }}
             </router-link>
@@ -652,8 +652,8 @@ function statDocTypeColor(key) {
     >
       <template #action>
         <button
-          @click="openCreate"
           class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+          @click="openCreate"
         >
           <PlusIcon class="h-5 w-5" />
           Add Document
@@ -723,8 +723,8 @@ function statDocTypeColor(key) {
             </div>
           </div>
           <div class="flex items-center justify-end gap-3 mt-3 pt-3 border-t border-gray-100" @click.stop>
-            <button @click="openEdit(doc)" class="text-sm font-medium text-indigo-600 hover:text-indigo-500">Edit</button>
-            <button @click="confirmDelete(doc)" class="text-sm font-medium text-red-600 hover:text-red-500">Delete</button>
+            <button class="text-sm font-medium text-indigo-600 hover:text-indigo-500" @click="openEdit(doc)">Edit</button>
+            <button class="text-sm font-medium text-red-600 hover:text-red-500" @click="confirmDelete(doc)">Delete</button>
           </div>
         </div>
       </div>
@@ -829,16 +829,16 @@ function statDocTypeColor(key) {
                   <td class="px-6 py-4 whitespace-nowrap text-right" @click.stop>
                     <div class="flex items-center justify-end gap-2">
                       <button
-                        @click="openEdit(doc)"
                         class="text-indigo-600 hover:text-indigo-500 transition-colors"
                         title="Edit"
+                        @click="openEdit(doc)"
                       >
                         <PencilSquareIcon class="h-4 w-4" />
                       </button>
                       <button
-                        @click="confirmDelete(doc)"
                         class="text-red-600 hover:text-red-500 transition-colors"
                         title="Delete"
+                        @click="confirmDelete(doc)"
                       >
                         <TrashIcon class="h-4 w-4" />
                       </button>
@@ -875,8 +875,8 @@ function statDocTypeColor(key) {
         :current-page="store.pagination?.current_page || 1"
         :total-pages="store.pagination?.total_pages || 1"
         :total-count="store.pagination?.total_count"
-        @page-change="goToPage"
         class="mt-3 md:mt-0"
+        @page-change="goToPage"
       />
     </div>
 
@@ -894,15 +894,15 @@ function statDocTypeColor(key) {
               {{ editingDoc ? 'Edit Document' : 'Add Document' }}
             </h3>
             <button
-              @click="showModal = false"
               class="text-gray-400 hover:text-gray-500 transition-colors"
+              @click="showModal = false"
             >
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
 
           <!-- Body -->
-          <form @submit.prevent="handleSave" class="p-6 space-y-5">
+          <form class="p-6 space-y-5" @submit.prevent="handleSave">
             <!-- Title -->
             <div>
               <label for="doc-title" class="block text-sm font-medium text-gray-700">
@@ -1002,8 +1002,8 @@ function statDocTypeColor(key) {
                   <span>{{ selectedFile.name }}</span>
                   <button
                     type="button"
-                    @click="removeSelectedFile"
                     class="text-red-500 hover:text-red-700"
+                    @click="removeSelectedFile"
                   >
                     <XMarkIcon class="h-4 w-4" />
                   </button>
@@ -1012,8 +1012,8 @@ function statDocTypeColor(key) {
                   ref="fileInput"
                   type="file"
                   accept=".pdf,.doc,.docx,.txt,.rtf"
-                  @change="onFileSelect"
                   class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                  @change="onFileSelect"
                 />
                 <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX, TXT, or RTF. Optional.</p>
               </div>
@@ -1023,13 +1023,13 @@ function statDocTypeColor(key) {
             <div class="flex items-center gap-3">
               <button
                 type="button"
-                @click="form.is_active = !form.is_active"
                 :class="[
                   form.is_active ? 'bg-indigo-600' : 'bg-gray-200',
                   'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
                 ]"
                 role="switch"
                 :aria-checked="form.is_active"
+                @click="form.is_active = !form.is_active"
               >
                 <span
                   :class="[
@@ -1047,8 +1047,8 @@ function statDocTypeColor(key) {
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                @click="showModal = false"
                 class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                @click="showModal = false"
               >
                 Cancel
               </button>
@@ -1094,7 +1094,7 @@ function statDocTypeColor(key) {
         <div class="relative w-full max-w-lg transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">Bulk Upload Documents</h3>
-            <button @click="showBulkModal = false" class="text-gray-400 hover:text-gray-500 transition-colors">
+            <button class="text-gray-400 hover:text-gray-500 transition-colors" @click="showBulkModal = false">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
@@ -1102,17 +1102,17 @@ function statDocTypeColor(key) {
           <div class="p-6 space-y-5">
             <!-- Drop zone -->
             <div
-              @dragover.prevent="bulkDragOver = true"
-              @dragleave="bulkDragOver = false"
-              @drop.prevent="onBulkDrop"
               :class="[
                 'relative rounded-lg border-2 border-dashed p-6 text-center transition-colors',
                 bulkDragOver ? 'border-indigo-500 bg-indigo-50' : 'border-gray-300 hover:border-gray-400',
               ]"
+              @dragover.prevent="bulkDragOver = true"
+              @dragleave="bulkDragOver = false"
+              @drop.prevent="onBulkDrop"
             >
               <CloudArrowUpIcon class="mx-auto h-10 w-10 text-gray-400" />
               <p class="mt-2 text-sm text-gray-600">
-                <button type="button" @click="bulkFileInput?.click()" class="font-semibold text-indigo-600 hover:text-indigo-500">
+                <button type="button" class="font-semibold text-indigo-600 hover:text-indigo-500" @click="bulkFileInput?.click()">
                   Choose files
                 </button>
                 or drag and drop
@@ -1141,7 +1141,7 @@ function statDocTypeColor(key) {
                   <span class="text-sm text-gray-700 truncate">{{ file.name }}</span>
                   <span class="text-xs text-gray-400 shrink-0">{{ (file.size / 1024).toFixed(0) }} KB</span>
                 </div>
-                <button @click="removeBulkFile(index)" class="text-red-500 hover:text-red-700 shrink-0 ml-2">
+                <button class="text-red-500 hover:text-red-700 shrink-0 ml-2" @click="removeBulkFile(index)">
                   <XMarkIcon class="h-4 w-4" />
                 </button>
               </div>
@@ -1195,16 +1195,16 @@ function statDocTypeColor(key) {
 
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button
-                @click="showBulkModal = false"
                 :disabled="bulkUploading"
                 class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
+                @click="showBulkModal = false"
               >
                 Cancel
               </button>
               <button
-                @click="handleBulkUpload"
                 :disabled="bulkUploading || bulkFiles.length === 0"
                 class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                @click="handleBulkUpload"
               >
                 {{ bulkUploading ? `Uploading ${store.uploadProgress}%...` : `Upload ${bulkFiles.length} File(s)` }}
               </button>

@@ -59,8 +59,8 @@ const emit = defineEmits(['continue'])
 
             <!-- Button -->
             <button
-              @click="emit('continue')"
               class="w-full px-4 py-2.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors"
+              @click="emit('continue')"
             >
               I'm still here — Keep me logged in
             </button>

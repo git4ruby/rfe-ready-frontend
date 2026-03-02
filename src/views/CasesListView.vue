@@ -119,8 +119,8 @@ watch(currentPage, () => clearSelection())
       <div class="flex items-center gap-3">
         <button
           v-if="authStore.isAdmin"
-          @click="showImportModal = true"
           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+          @click="showImportModal = true"
         >
           <ArrowUpTrayIcon class="h-5 w-5" />
           {{ t('import.upload') }} CSV
@@ -182,24 +182,24 @@ watch(currentPage, () => clearSelection())
         <span class="text-sm font-medium text-indigo-700">{{ selectedIds.size }} case{{ selectedIds.size > 1 ? 's' : '' }} selected</span>
         <div class="flex items-center gap-2 ml-auto">
           <button
-            @click="handleBulkAction('archive')"
             :disabled="bulkLoading"
             class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            @click="handleBulkAction('archive')"
           >
             <ArchiveBoxIcon class="h-4 w-4" />
             Archive
           </button>
           <button
-            @click="handleBulkAction('reopen')"
             :disabled="bulkLoading"
             class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+            @click="handleBulkAction('reopen')"
           >
             <ArrowPathIcon class="h-4 w-4" />
             Reopen
           </button>
           <button
-            @click="clearSelection"
             class="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 ml-2"
+            @click="clearSelection"
           >
             <XMarkIcon class="h-4 w-4" />
             Clear
@@ -219,8 +219,8 @@ watch(currentPage, () => clearSelection())
               <input
                 type="checkbox"
                 :checked="selectedIds.has(rfeCase.id)"
-                @change="toggleSelect(rfeCase.id)"
                 class="mt-1 h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                @change="toggleSelect(rfeCase.id)"
               />
               <div class="min-w-0">
                 <router-link
@@ -256,8 +256,8 @@ watch(currentPage, () => clearSelection())
                   <input
                     type="checkbox"
                     :checked="allSelected"
-                    @change="toggleSelectAll"
                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    @change="toggleSelectAll"
                   />
                 </th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -293,8 +293,8 @@ watch(currentPage, () => clearSelection())
                   <input
                     type="checkbox"
                     :checked="selectedIds.has(rfeCase.id)"
-                    @change="toggleSelect(rfeCase.id)"
                     class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                    @change="toggleSelect(rfeCase.id)"
                   />
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -352,8 +352,8 @@ watch(currentPage, () => clearSelection())
         :current-page="casesStore.pagination?.current_page || 1"
         :total-pages="casesStore.pagination?.total_pages || 1"
         :total-count="casesStore.pagination?.total_count"
-        @page-change="goToPage"
         class="mt-3 md:mt-0"
+        @page-change="goToPage"
       />
     </div>
     <!-- Bulk Import Modal -->

@@ -111,9 +111,9 @@ function formatDate(dateStr) {
         <p class="mt-1 text-sm text-gray-500">{{ t('backups.subtitle') }}</p>
       </div>
       <button
-        @click="createBackup"
         :disabled="creating"
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+        @click="createBackup"
       >
         <PlusIcon class="h-4 w-4" />
         {{ creating ? t('backups.creating') : t('backups.createBackup') }}
@@ -168,16 +168,16 @@ function formatDate(dateStr) {
               <div class="flex items-center justify-end gap-2">
                 <button
                   v-if="backup.status === 'completed'"
-                  @click="downloadBackup(backup.id)"
                   class="text-indigo-600 hover:text-indigo-500 transition-colors"
                   title="Download"
+                  @click="downloadBackup(backup.id)"
                 >
                   <ArrowDownTrayIcon class="h-5 w-5" />
                 </button>
                 <button
-                  @click="deleteBackup(backup.id)"
                   class="text-red-500 hover:text-red-700 transition-colors"
                   title="Delete"
+                  @click="deleteBackup(backup.id)"
                 >
                   <TrashIcon class="h-5 w-5" />
                 </button>

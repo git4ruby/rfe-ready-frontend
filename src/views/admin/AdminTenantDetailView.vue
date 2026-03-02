@@ -201,7 +201,8 @@ function formatDate(dateStr) {
 <template>
   <div>
     <!-- Breadcrumb -->
-    <Breadcrumb :items="[
+    <Breadcrumb
+:items="[
       { label: 'Tenants', to: '/platform/tenants' },
       { label: store.currentTenant?.name || 'Tenant Detail' },
     ]" />
@@ -215,7 +216,7 @@ function formatDate(dateStr) {
           <h1 class="text-2xl font-bold text-gray-900">{{ store.currentTenant.name }}</h1>
           <p class="mt-1 text-sm text-gray-500 font-mono">{{ store.currentTenant.slug }}</p>
         </div>
-        <button @click="openEdit" class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+        <button class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" @click="openEdit">
           <PencilIcon class="h-4 w-4" />
           Edit Tenant
         </button>
@@ -231,8 +232,8 @@ function formatDate(dateStr) {
               <dd>
                 <select
                   :value="store.currentTenant.plan"
-                  @change="handleChangePlan($event.target.value)"
                   class="rounded-md border-gray-300 text-xs py-1 focus:border-red-500 focus:ring-red-500"
+                  @change="handleChangePlan($event.target.value)"
                 >
                   <option value="trial">Trial</option>
                   <option value="basic">Basic</option>
@@ -246,8 +247,8 @@ function formatDate(dateStr) {
               <dd>
                 <select
                   :value="store.currentTenant.status"
-                  @change="handleChangeStatus($event.target.value)"
                   class="rounded-md border-gray-300 text-xs py-1 focus:border-red-500 focus:ring-red-500"
+                  @change="handleChangeStatus($event.target.value)"
                 >
                   <option value="active">Active</option>
                   <option value="suspended">Suspended</option>
@@ -301,8 +302,8 @@ function formatDate(dateStr) {
         <div class="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
           <h2 class="text-lg font-semibold text-gray-900">Users</h2>
           <button
-            @click="openCreateUser"
             class="inline-flex items-center gap-2 rounded-lg bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 transition-colors"
+            @click="openCreateUser"
           >
             <PlusIcon class="h-4 w-4" />
             Add User
@@ -347,17 +348,17 @@ function formatDate(dateStr) {
                   <td class="px-6 py-4 whitespace-nowrap text-right">
                     <div class="flex items-center justify-end gap-2">
                       <button
-                        @click="openEditUser(u)"
                         class="text-indigo-600 hover:text-indigo-500 transition-colors"
                         title="Edit user"
+                        @click="openEditUser(u)"
                       >
                         <PencilSquareIcon class="h-4 w-4" />
                       </button>
                       <button
                         v-if="u.status !== 'inactive'"
-                        @click="confirmDeactivate(u)"
                         class="text-red-600 hover:text-red-500 transition-colors"
                         title="Deactivate user"
+                        @click="confirmDeactivate(u)"
                       >
                         <NoSymbolIcon class="h-4 w-4" />
                       </button>
@@ -378,11 +379,11 @@ function formatDate(dateStr) {
         <div class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">Edit Tenant</h3>
-            <button @click="showEditModal = false" class="text-gray-400 hover:text-gray-500">
+            <button class="text-gray-400 hover:text-gray-500" @click="showEditModal = false">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
-          <form @submit.prevent="handleEdit" class="p-6 space-y-4">
+          <form class="p-6 space-y-4" @submit.prevent="handleEdit">
             <div>
               <label class="block text-sm font-medium text-gray-700">Organization Name</label>
               <input
@@ -424,7 +425,7 @@ function formatDate(dateStr) {
               </button>
             </div>
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
-              <button type="button" @click="showEditModal = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+              <button type="button" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" @click="showEditModal = false">
                 Cancel
               </button>
               <button
@@ -447,11 +448,11 @@ function formatDate(dateStr) {
         <div class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">Add User to {{ store.currentTenant?.name }}</h3>
-            <button @click="showUserModal = false" class="text-gray-400 hover:text-gray-500">
+            <button class="text-gray-400 hover:text-gray-500" @click="showUserModal = false">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
-          <form @submit.prevent="handleCreateUser" class="p-6 space-y-4">
+          <form class="p-6 space-y-4" @submit.prevent="handleCreateUser">
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700">First Name <span class="text-red-500">*</span></label>
@@ -501,7 +502,7 @@ function formatDate(dateStr) {
               </select>
             </div>
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
-              <button type="button" @click="showUserModal = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+              <button type="button" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" @click="showUserModal = false">
                 Cancel
               </button>
               <button
@@ -523,11 +524,11 @@ function formatDate(dateStr) {
         <div class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">Edit User</h3>
-            <button @click="showEditUserModal = false" class="text-gray-400 hover:text-gray-500">
+            <button class="text-gray-400 hover:text-gray-500" @click="showEditUserModal = false">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
-          <form @submit.prevent="handleEditUser" class="p-6 space-y-4">
+          <form class="p-6 space-y-4" @submit.prevent="handleEditUser">
             <div class="grid grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700">First Name</label>
@@ -564,7 +565,7 @@ function formatDate(dateStr) {
               />
             </div>
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
-              <button type="button" @click="showEditUserModal = false" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+              <button type="button" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50" @click="showEditUserModal = false">
                 Cancel
               </button>
               <button

@@ -219,8 +219,8 @@ function formatEventName(event) {
         <p class="mt-1 text-sm text-gray-500">{{ t('webhooks.subtitle') }}</p>
       </div>
       <button
-        @click="openCreate"
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+        @click="openCreate"
       >
         <PlusIcon class="h-5 w-5" />
         {{ t('webhooks.createWebhook') }}
@@ -238,8 +238,8 @@ function formatEventName(event) {
     >
       <template #action>
         <button
-          @click="openCreate"
           class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+          @click="openCreate"
         >
           <PlusIcon class="h-5 w-5" />
           {{ t('webhooks.createWebhook') }}
@@ -290,13 +290,13 @@ function formatEventName(event) {
           <div class="flex items-center gap-2 shrink-0">
             <!-- Active toggle -->
             <button
-              @click="toggleActive(webhook)"
               :class="[
                 webhook.active ? 'bg-indigo-600' : 'bg-gray-200',
                 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
               ]"
               role="switch"
               :aria-checked="webhook.active"
+              @click="toggleActive(webhook)"
             >
               <span
                 :class="[
@@ -307,27 +307,27 @@ function formatEventName(event) {
             </button>
             <!-- Test -->
             <button
-              @click="handleTest(webhook)"
               :disabled="testingId === webhook.id"
               class="inline-flex items-center gap-1 rounded-md bg-gray-100 px-2.5 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               :title="t('webhooks.testDelivery')"
+              @click="handleTest(webhook)"
             >
               <PaperAirplaneIcon class="h-3.5 w-3.5" />
               {{ t('webhooks.testDelivery') }}
             </button>
             <!-- Edit -->
             <button
-              @click="openEdit(webhook)"
               class="text-gray-400 hover:text-indigo-600 transition-colors p-1"
               :title="t('common.edit')"
+              @click="openEdit(webhook)"
             >
               <PencilSquareIcon class="h-4 w-4" />
             </button>
             <!-- Delete -->
             <button
-              @click="confirmDelete(webhook)"
               class="text-gray-400 hover:text-red-600 transition-colors p-1"
               :title="t('common.delete')"
+              @click="confirmDelete(webhook)"
             >
               <TrashIcon class="h-4 w-4" />
             </button>
@@ -345,11 +345,11 @@ function formatEventName(event) {
             <h3 class="text-lg font-semibold text-gray-900">
               {{ editing ? t('webhooks.editWebhook') : t('webhooks.createWebhook') }}
             </h3>
-            <button @click="closeModal" class="text-gray-400 hover:text-gray-500 transition-colors">
+            <button class="text-gray-400 hover:text-gray-500 transition-colors" @click="closeModal">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
-          <form @submit.prevent="handleSave" class="p-6 space-y-4">
+          <form class="p-6 space-y-4" @submit.prevent="handleSave">
             <!-- URL -->
             <div>
               <label for="webhook-url" class="block text-sm font-medium text-gray-700">
@@ -398,13 +398,13 @@ function formatEventName(event) {
             <div class="flex items-center gap-3">
               <button
                 type="button"
-                @click="form.active = !form.active"
                 :class="[
                   form.active ? 'bg-indigo-600' : 'bg-gray-200',
                   'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
                 ]"
                 role="switch"
                 :aria-checked="form.active"
+                @click="form.active = !form.active"
               >
                 <span
                   :class="[
@@ -430,8 +430,8 @@ function formatEventName(event) {
                       type="checkbox"
                       :checked="isGroupAllSelected(group)"
                       :indeterminate="isGroupPartiallySelected(group)"
-                      @change="toggleGroupEvents(group)"
                       class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                      @change="toggleGroupEvents(group)"
                     />
                     <span class="text-sm font-semibold text-gray-700">{{ group.label }}</span>
                   </label>
@@ -444,8 +444,8 @@ function formatEventName(event) {
                       <input
                         type="checkbox"
                         :checked="form.events.includes(event)"
-                        @change="toggleEvent(event)"
                         class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                        @change="toggleEvent(event)"
                       />
                       <span class="text-sm text-gray-600">{{ formatEventName(event) }}</span>
                     </label>
@@ -458,8 +458,8 @@ function formatEventName(event) {
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                @click="closeModal"
                 class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                @click="closeModal"
               >
                 {{ t('common.cancel') }}
               </button>

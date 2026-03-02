@@ -118,8 +118,8 @@ async function handleDelete() {
         <p class="mt-1 text-sm text-gray-500">{{ t('featureFlags.subtitle') }}</p>
       </div>
       <button
-        @click="openCreate"
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+        @click="openCreate"
       >
         <PlusIcon class="h-5 w-5" />
         {{ t('featureFlags.createFlag') }}
@@ -138,8 +138,8 @@ async function handleDelete() {
     >
       <template #action>
         <button
-          @click="openCreate"
           class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 transition-colors"
+          @click="openCreate"
         >
           <PlusIcon class="h-5 w-5" />
           {{ t('featureFlags.createFlag') }}
@@ -165,13 +165,13 @@ async function handleDelete() {
           <div class="flex items-center gap-3">
             <!-- Toggle switch -->
             <button
-              @click="toggleFlag(flag)"
               :class="[
                 flag.enabled ? 'bg-indigo-600' : 'bg-gray-200',
                 'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
               ]"
               role="switch"
               :aria-checked="flag.enabled"
+              @click="toggleFlag(flag)"
             >
               <span
                 :class="[
@@ -187,9 +187,9 @@ async function handleDelete() {
               {{ flag.enabled ? t('featureFlags.enabled') : t('featureFlags.disabled') }}
             </span>
             <button
-              @click="confirmDelete(flag)"
               class="text-red-500 hover:text-red-700 transition-colors"
               :title="t('common.delete')"
+              @click="confirmDelete(flag)"
             >
               <TrashIcon class="h-4 w-4" />
             </button>
@@ -209,8 +209,8 @@ async function handleDelete() {
                 <input
                   type="checkbox"
                   :checked="flag.allowed_roles.includes(role)"
-                  @change="updateRoles(flag, role, $event.target.checked)"
                   class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                  @change="updateRoles(flag, role, $event.target.checked)"
                 />
                 <span class="text-gray-700 capitalize">{{ role }}</span>
               </label>
@@ -228,8 +228,8 @@ async function handleDelete() {
                 <input
                   type="checkbox"
                   :checked="flag.allowed_plans.includes(plan)"
-                  @change="updatePlans(flag, plan, $event.target.checked)"
                   class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                  @change="updatePlans(flag, plan, $event.target.checked)"
                 />
                 <span class="text-gray-700 capitalize">{{ plan }}</span>
               </label>
@@ -247,11 +247,11 @@ async function handleDelete() {
         <div class="relative w-full max-w-md transform rounded-xl bg-white shadow-2xl transition-all">
           <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4">
             <h3 class="text-lg font-semibold text-gray-900">{{ t('featureFlags.createFlag') }}</h3>
-            <button @click="showCreateModal = false" class="text-gray-400 hover:text-gray-500 transition-colors">
+            <button class="text-gray-400 hover:text-gray-500 transition-colors" @click="showCreateModal = false">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
-          <form @submit.prevent="handleCreate" class="p-6 space-y-4">
+          <form class="p-6 space-y-4" @submit.prevent="handleCreate">
             <div>
               <label for="flag-name" class="block text-sm font-medium text-gray-700">
                 {{ t('featureFlags.flagName') }} <span class="text-red-500">*</span>
@@ -267,13 +267,13 @@ async function handleDelete() {
             <div class="flex items-center gap-3">
               <button
                 type="button"
-                @click="createForm.enabled = !createForm.enabled"
                 :class="[
                   createForm.enabled ? 'bg-indigo-600' : 'bg-gray-200',
                   'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
                 ]"
                 role="switch"
                 :aria-checked="createForm.enabled"
+                @click="createForm.enabled = !createForm.enabled"
               >
                 <span
                   :class="[
@@ -289,8 +289,8 @@ async function handleDelete() {
             <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
               <button
                 type="button"
-                @click="showCreateModal = false"
                 class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                @click="showCreateModal = false"
               >
                 {{ t('common.cancel') }}
               </button>

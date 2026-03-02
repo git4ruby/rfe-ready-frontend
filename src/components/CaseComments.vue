@@ -170,9 +170,9 @@ function formatTime(dateStr) {
           <div class="mt-2 flex justify-between items-center">
             <p class="text-xs text-gray-400">Press Cmd+Enter to submit</p>
             <button
-              @click="submitComment"
               :disabled="submitting || !newCommentBody.trim()"
               class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              @click="submitComment"
             >
               <PaperAirplaneIcon class="h-4 w-4" />
               Post
@@ -211,10 +211,10 @@ function formatTime(dateStr) {
                 <span v-if="comment.updated_at !== comment.created_at" class="text-xs text-gray-400 italic">(edited)</span>
               </div>
               <div v-if="canModify(comment)" class="flex items-center gap-1">
-                <button @click="startEdit(comment)" class="p-1 text-gray-400 hover:text-gray-600 rounded" title="Edit">
+                <button class="p-1 text-gray-400 hover:text-gray-600 rounded" title="Edit" @click="startEdit(comment)">
                   <PencilIcon class="h-3.5 w-3.5" />
                 </button>
-                <button @click="removeComment(comment.id)" class="p-1 text-gray-400 hover:text-red-500 rounded" title="Delete">
+                <button class="p-1 text-gray-400 hover:text-red-500 rounded" title="Delete" @click="removeComment(comment.id)">
                   <TrashIcon class="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -228,11 +228,11 @@ function formatTime(dateStr) {
                 class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm resize-none"
               />
               <div class="mt-2 flex gap-2 justify-end">
-                <button @click="cancelEdit" class="px-2 py-1 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
+                <button class="px-2 py-1 text-sm text-gray-600 hover:text-gray-800" @click="cancelEdit">Cancel</button>
                 <button
-                  @click="saveEdit(comment.id)"
                   :disabled="!editBody.trim()"
                   class="px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-500 disabled:opacity-50"
+                  @click="saveEdit(comment.id)"
                 >
                   Save
                 </button>
@@ -246,8 +246,8 @@ function formatTime(dateStr) {
             <div class="mt-2">
               <button
                 v-if="authStore.canEdit && replyingTo !== comment.id"
-                @click="startReply(comment.id)"
                 class="inline-flex items-center gap-1 text-xs text-gray-500 hover:text-indigo-600"
+                @click="startReply(comment.id)"
               >
                 <ArrowUturnLeftIcon class="h-3.5 w-3.5" />
                 Reply
@@ -269,10 +269,10 @@ function formatTime(dateStr) {
                       <span class="text-xs text-gray-400">{{ formatTime(reply.created_at) }}</span>
                     </div>
                     <div v-if="canModify(reply)" class="flex items-center gap-1">
-                      <button @click="startEdit(reply)" class="p-0.5 text-gray-400 hover:text-gray-600 rounded" title="Edit">
+                      <button class="p-0.5 text-gray-400 hover:text-gray-600 rounded" title="Edit" @click="startEdit(reply)">
                         <PencilIcon class="h-3 w-3" />
                       </button>
-                      <button @click="removeComment(reply.id)" class="p-0.5 text-gray-400 hover:text-red-500 rounded" title="Delete">
+                      <button class="p-0.5 text-gray-400 hover:text-red-500 rounded" title="Delete" @click="removeComment(reply.id)">
                         <TrashIcon class="h-3 w-3" />
                       </button>
                     </div>
@@ -285,11 +285,11 @@ function formatTime(dateStr) {
                       class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-xs resize-none"
                     />
                     <div class="mt-1 flex gap-2 justify-end">
-                      <button @click="cancelEdit" class="px-2 py-0.5 text-xs text-gray-600 hover:text-gray-800">Cancel</button>
+                      <button class="px-2 py-0.5 text-xs text-gray-600 hover:text-gray-800" @click="cancelEdit">Cancel</button>
                       <button
-                        @click="saveEdit(reply.id)"
                         :disabled="!editBody.trim()"
                         class="px-2 py-0.5 text-xs bg-indigo-600 text-white rounded hover:bg-indigo-500 disabled:opacity-50"
+                        @click="saveEdit(reply.id)"
                       >
                         Save
                       </button>
@@ -311,13 +311,13 @@ function formatTime(dateStr) {
                 @keydown.ctrl.enter="submitReply(comment.id)"
               />
               <div class="mt-2 flex gap-2 justify-end">
-                <button @click="cancelReply" class="px-2 py-1 text-sm text-gray-600 hover:text-gray-800">
+                <button class="px-2 py-1 text-sm text-gray-600 hover:text-gray-800" @click="cancelReply">
                   Cancel
                 </button>
                 <button
-                  @click="submitReply(comment.id)"
                   :disabled="submitting || !replyBody.trim()"
                   class="inline-flex items-center gap-1 px-3 py-1 text-sm bg-indigo-600 text-white rounded-md hover:bg-indigo-500 disabled:opacity-50"
+                  @click="submitReply(comment.id)"
                 >
                   Reply
                 </button>

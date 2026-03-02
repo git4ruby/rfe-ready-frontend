@@ -47,12 +47,12 @@ function typeColor(type) {
           <div class="flex items-center gap-2">
             <button
               v-if="notifStore.unreadCount > 0"
-              @click="notifStore.markAllRead()"
               class="text-xs text-indigo-600 hover:text-indigo-500 font-medium"
+              @click="notifStore.markAllRead()"
             >
               Mark all read
             </button>
-            <button @click="emit('close')" class="text-gray-400 hover:text-gray-600">
+            <button class="text-gray-400 hover:text-gray-600" @click="emit('close')">
               <XMarkIcon class="h-5 w-5" />
             </button>
           </div>
@@ -79,9 +79,9 @@ function typeColor(type) {
               </div>
               <button
                 v-if="!n.read"
-                @click="notifStore.markAsRead(n.id)"
                 class="shrink-0 text-gray-300 hover:text-indigo-500 mt-1"
                 title="Mark as read"
+                @click="notifStore.markAsRead(n.id)"
               >
                 <CheckIcon class="h-4 w-4" />
               </button>

@@ -126,8 +126,8 @@ async function testNotification(id) {
         <p class="mt-1 text-sm text-gray-500">{{ t('slack.subtitle') }}</p>
       </div>
       <button
-        @click="openCreate"
         class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
+        @click="openCreate"
       >
         <PlusIcon class="h-4 w-4" />
         {{ t('slack.createIntegration') }}
@@ -178,17 +178,17 @@ async function testNotification(id) {
           </div>
           <div class="flex items-center gap-2 ml-4">
             <button
-              @click="testNotification(integration.id)"
               :disabled="testingId === integration.id"
               class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50"
+              @click="testNotification(integration.id)"
             >
               <PaperAirplaneIcon class="h-3.5 w-3.5" />
               {{ t('slack.testNotification') }}
             </button>
-            <button @click="openEdit(integration)" class="text-gray-400 hover:text-indigo-600">
+            <button class="text-gray-400 hover:text-indigo-600" @click="openEdit(integration)">
               <PencilSquareIcon class="h-4 w-4" />
             </button>
-            <button @click="deleteTarget = integration.id" class="text-gray-400 hover:text-red-600">
+            <button class="text-gray-400 hover:text-red-600" @click="deleteTarget = integration.id">
               <TrashIcon class="h-4 w-4" />
             </button>
           </div>
@@ -203,7 +203,7 @@ async function testNotification(id) {
           <h2 class="text-lg font-semibold text-gray-900">
             {{ editing ? t('slack.editIntegration') : t('slack.createIntegration') }}
           </h2>
-          <button @click="closeForm" class="text-gray-400 hover:text-gray-500">
+          <button class="text-gray-400 hover:text-gray-500" @click="closeForm">
             <XMarkIcon class="h-5 w-5" />
           </button>
         </div>
@@ -237,8 +237,8 @@ async function testNotification(id) {
                 <input
                   type="checkbox"
                   :checked="form.events.includes(event)"
-                  @change="toggleEvent(event)"
                   class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                  @change="toggleEvent(event)"
                 />
                 <span class="text-sm text-gray-700">{{ event }}</span>
               </label>
@@ -250,22 +250,22 @@ async function testNotification(id) {
               type="button"
               role="switch"
               :aria-checked="form.active"
-              @click="form.active = !form.active"
               :class="form.active ? 'bg-indigo-600' : 'bg-gray-200'"
               class="relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full transition-colors"
+              @click="form.active = !form.active"
             >
               <span :class="form.active ? 'translate-x-5' : 'translate-x-0'" class="inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition-transform mt-0.5 ml-0.5" />
             </button>
           </div>
         </div>
         <div class="flex justify-end gap-3 px-6 py-4 border-t border-gray-200">
-          <button @click="closeForm" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          <button class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" @click="closeForm">
             {{ t('common.cancel') }}
           </button>
           <button
-            @click="saveForm"
             :disabled="saving || !form.webhook_url || form.events.length === 0"
             class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-50"
+            @click="saveForm"
           >
             {{ saving ? t('common.loading') : t('common.save') }}
           </button>

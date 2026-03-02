@@ -1,7 +1,6 @@
 import { mount, flushPromises } from '@vue/test-utils'
 import ProfileView from '../ProfileView.vue'
 import { createMountOptions } from '../../test/helpers'
-import { useAuthStore } from '../../stores/auth'
 
 vi.mock('../../api/client')
 

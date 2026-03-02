@@ -88,7 +88,7 @@ function reset() {
       <!-- Header -->
       <div class="flex items-center justify-between px-6 py-4 border-b border-gray-200">
         <h2 class="text-lg font-semibold text-gray-900">{{ t('import.title') }}</h2>
-        <button @click="emit('close')" class="text-gray-400 hover:text-gray-500">
+        <button class="text-gray-400 hover:text-gray-500" @click="emit('close')">
           <XMarkIcon class="h-5 w-5" />
         </button>
       </div>
@@ -120,10 +120,10 @@ function reset() {
           </div>
 
           <div class="flex justify-end gap-3">
-            <button @click="reset" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <button class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" @click="reset">
               {{ t('import.importAnother') }}
             </button>
-            <button @click="emit('close')" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">
+            <button class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500" @click="emit('close')">
               {{ t('common.close') }}
             </button>
           </div>
@@ -134,20 +134,20 @@ function reset() {
           <p class="text-sm text-gray-500">{{ t('import.description') }}</p>
 
           <!-- Download template -->
-          <button @click="downloadTemplate" class="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-500 font-medium">
+          <button class="inline-flex items-center gap-2 text-sm text-indigo-600 hover:text-indigo-500 font-medium" @click="downloadTemplate">
             <DocumentArrowDownIcon class="h-4 w-4" />
             {{ t('import.downloadTemplate') }}
           </button>
 
           <!-- Drop zone -->
           <div
-            @dragover.prevent="dragOver = true"
-            @dragleave="dragOver = false"
-            @drop.prevent="onDrop"
             :class="[
               'border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer',
               dragOver ? 'border-indigo-400 bg-indigo-50' : 'border-gray-300 hover:border-gray-400'
             ]"
+            @dragover.prevent="dragOver = true"
+            @dragleave="dragOver = false"
+            @drop.prevent="onDrop"
             @click="$refs.fileInput.click()"
           >
             <CloudArrowUpIcon class="mx-auto h-10 w-10 text-gray-400" />
@@ -163,13 +163,13 @@ function reset() {
 
           <!-- Actions -->
           <div class="flex justify-end gap-3">
-            <button @click="emit('close')" class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+            <button class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50" @click="emit('close')">
               {{ t('common.cancel') }}
             </button>
             <button
-              @click="uploadFile"
               :disabled="!file || uploading"
               class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              @click="uploadFile"
             >
               {{ uploading ? t('import.uploading') : t('import.upload') }}
             </button>

@@ -96,7 +96,7 @@ async function handle2FASubmit() {
             <h3 class="text-lg font-semibold text-gray-900">{{ t('auth.twoFactorTitle') }}</h3>
             <p class="mt-1 text-sm text-gray-500">{{ t('auth.twoFactorDescription') }}</p>
           </div>
-          <form @submit.prevent="handle2FASubmit" class="space-y-6">
+          <form class="space-y-6" @submit.prevent="handle2FASubmit">
             <div>
               <label for="otp" class="block text-sm font-medium text-gray-700">{{ t('auth.verificationCode') }}</label>
               <input
@@ -122,7 +122,7 @@ async function handle2FASubmit() {
         </template>
 
         <!-- Normal Login Form -->
-        <form v-else @submit.prevent="handleSubmit" class="space-y-6">
+        <form v-else class="space-y-6" @submit.prevent="handleSubmit">
           <!-- Email -->
           <div>
             <label for="email" class="block text-sm font-medium text-gray-700">

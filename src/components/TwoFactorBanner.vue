@@ -32,12 +32,12 @@ function dismiss() {
       </div>
       <div class="flex items-center gap-3">
         <button
-          @click="goToSetup"
           class="rounded-md bg-amber-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-amber-500"
+          @click="goToSetup"
         >
           {{ t('twoFactor.setupNow') }}
         </button>
-        <button @click="dismiss" class="text-amber-400 hover:text-amber-500">
+        <button class="text-amber-400 hover:text-amber-500" @click="dismiss">
           <XMarkIcon class="h-4 w-4" />
         </button>
       </div>

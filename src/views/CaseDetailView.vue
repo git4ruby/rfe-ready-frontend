@@ -697,7 +697,8 @@ async function handleDelete() {
 
     <template v-else-if="caseData">
       <!-- Breadcrumb -->
-      <Breadcrumb :items="[
+      <Breadcrumb
+:items="[
         { label: 'Cases', to: '/cases' },
         { label: caseData.case_number },
       ]" />
@@ -727,9 +728,9 @@ async function handleDelete() {
             <!-- Workflow actions -->
             <button
               v-if="canStartAnalysis"
-              @click="performAction('start_analysis', casesStore.startAnalysis)"
               :disabled="actionLoading"
               class="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500 disabled:opacity-50 transition-colors"
+              @click="performAction('start_analysis', casesStore.startAnalysis)"
             >
               <PlayIcon class="h-4 w-4" />
               Start Analysis
@@ -737,9 +738,9 @@ async function handleDelete() {
 
             <button
               v-if="canMarkReviewed"
-              @click="performAction('mark_reviewed', casesStore.markReviewed)"
               :disabled="actionLoading"
               class="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-500 disabled:opacity-50 transition-colors"
+              @click="performAction('mark_reviewed', casesStore.markReviewed)"
             >
               <CheckIcon class="h-4 w-4" />
               Complete Review
@@ -747,9 +748,9 @@ async function handleDelete() {
 
             <button
               v-if="canMarkResponded"
-              @click="performAction('mark_responded', casesStore.markResponded)"
               :disabled="actionLoading"
               class="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-emerald-500 disabled:opacity-50 transition-colors"
+              @click="performAction('mark_responded', casesStore.markResponded)"
             >
               <PaperAirplaneIcon class="h-4 w-4" />
               Mark Responded
@@ -757,9 +758,9 @@ async function handleDelete() {
 
             <button
               v-if="canReopen"
-              @click="performAction('reopen', casesStore.reopenCase)"
               :disabled="actionLoading"
               class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+              @click="performAction('reopen', casesStore.reopenCase)"
             >
               <ArrowPathIcon class="h-4 w-4" />
               Reopen
@@ -767,9 +768,9 @@ async function handleDelete() {
 
             <button
               v-if="canArchive"
-              @click="performAction('archive', casesStore.archiveCase)"
               :disabled="actionLoading"
               class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              @click="performAction('archive', casesStore.archiveCase)"
             >
               <ArchiveBoxIcon class="h-4 w-4" />
               Archive
@@ -777,9 +778,9 @@ async function handleDelete() {
 
             <button
               v-if="canDelete"
-              @click="showDeleteConfirm = true"
               :disabled="actionLoading"
               class="inline-flex items-center gap-1.5 rounded-lg border border-red-300 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 disabled:opacity-50 transition-colors"
+              @click="showDeleteConfirm = true"
             >
               <TrashIcon class="h-4 w-4" />
               Delete
@@ -806,13 +807,13 @@ async function handleDelete() {
             <button
               v-for="tab in tabs"
               :key="tab.key"
-              @click="activeTab = tab.key"
               :class="[
                 'flex items-center gap-2 whitespace-nowrap border-b-2 px-4 py-3 text-sm font-medium transition-colors',
                 activeTab === tab.key
                   ? 'border-indigo-500 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700',
               ]"
+              @click="activeTab = tab.key"
             >
               <component :is="tab.icon" class="h-4 w-4" />
               {{ tab.label }}
@@ -905,15 +906,15 @@ async function handleDelete() {
 
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
                   <button
-                    @click="cancelEditMode"
                     class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                    @click="cancelEditMode"
                   >
                     Cancel
                   </button>
                   <button
-                    @click="saveEdit"
                     :disabled="editSaving"
                     class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    @click="saveEdit"
                   >
                     <svg
                       v-if="editSaving"
@@ -936,8 +937,8 @@ async function handleDelete() {
               <div class="flex items-center justify-between mb-4">
                 <p class="text-xs text-gray-400">Click any field value to edit inline</p>
                 <button
-                  @click="startEditMode"
                   class="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors"
+                  @click="startEditMode"
                 >
                   <PencilSquareIcon class="h-4 w-4" />
                   Edit All
@@ -954,8 +955,8 @@ async function handleDelete() {
                     <div>
                       <dt class="text-sm font-medium text-gray-500">Case Number</dt>
                       <dd v-if="inlineField === 'case_number'" class="mt-0.5">
-                        <input v-model="inlineValue" type="text" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
-                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                        <input v-model="inlineValue" type="text" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" />
+                        <div class="flex gap-1 mt-1"><button :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium" @click="saveInlineEdit">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button class="text-xs text-gray-500" @click="cancelInlineEdit">Cancel</button></div>
                       </dd>
                       <dd v-else class="mt-0.5 text-sm text-gray-900 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('case_number', caseData.case_number)">
                         {{ caseData.case_number }}
@@ -965,8 +966,8 @@ async function handleDelete() {
                     <div>
                       <dt class="text-sm font-medium text-gray-500">USCIS Receipt Number</dt>
                       <dd v-if="inlineField === 'uscis_receipt_number'" class="mt-0.5">
-                        <input v-model="inlineValue" type="text" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
-                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                        <input v-model="inlineValue" type="text" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" />
+                        <div class="flex gap-1 mt-1"><button :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium" @click="saveInlineEdit">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button class="text-xs text-gray-500" @click="cancelInlineEdit">Cancel</button></div>
                       </dd>
                       <dd v-else class="mt-0.5 text-sm text-gray-900 flex items-center gap-1 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('uscis_receipt_number', caseData.uscis_receipt_number)">
                         {{ caseData.uscis_receipt_number || '--' }}
@@ -996,8 +997,8 @@ async function handleDelete() {
                     <div>
                       <dt class="text-sm font-medium text-gray-500">Petitioner</dt>
                       <dd v-if="inlineField === 'petitioner_name'" class="mt-0.5">
-                        <input v-model="inlineValue" type="text" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
-                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                        <input v-model="inlineValue" type="text" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" />
+                        <div class="flex gap-1 mt-1"><button :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium" @click="saveInlineEdit">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button class="text-xs text-gray-500" @click="cancelInlineEdit">Cancel</button></div>
                       </dd>
                       <dd v-else class="mt-0.5 text-sm text-gray-900 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('petitioner_name', caseData.petitioner_name)">
                         {{ caseData.petitioner_name }}
@@ -1007,8 +1008,8 @@ async function handleDelete() {
                     <div>
                       <dt class="text-sm font-medium text-gray-500">Beneficiary</dt>
                       <dd v-if="inlineField === 'beneficiary_name'" class="mt-0.5">
-                        <input v-model="inlineValue" type="text" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
-                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                        <input v-model="inlineValue" type="text" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" />
+                        <div class="flex gap-1 mt-1"><button :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium" @click="saveInlineEdit">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button class="text-xs text-gray-500" @click="cancelInlineEdit">Cancel</button></div>
                       </dd>
                       <dd v-else class="mt-0.5 text-sm text-gray-900 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('beneficiary_name', caseData.beneficiary_name)">
                         {{ caseData.beneficiary_name }}
@@ -1037,8 +1038,8 @@ async function handleDelete() {
                     <div>
                       <dt class="text-sm font-medium text-gray-500">RFE Received Date</dt>
                       <dd v-if="inlineField === 'rfe_received_date'" class="mt-0.5">
-                        <input v-model="inlineValue" type="date" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
-                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                        <input v-model="inlineValue" type="date" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" />
+                        <div class="flex gap-1 mt-1"><button :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium" @click="saveInlineEdit">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button class="text-xs text-gray-500" @click="cancelInlineEdit">Cancel</button></div>
                       </dd>
                       <dd v-else class="mt-0.5 text-sm text-gray-900 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('rfe_received_date', caseData.rfe_received_date)">
                         {{ caseData.rfe_received_date || '--' }}
@@ -1048,8 +1049,8 @@ async function handleDelete() {
                     <div>
                       <dt class="text-sm font-medium text-gray-500">RFE Deadline</dt>
                       <dd v-if="inlineField === 'rfe_deadline'" class="mt-0.5">
-                        <input v-model="inlineValue" type="date" @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
-                        <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                        <input v-model="inlineValue" type="date" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus @keyup.enter="saveInlineEdit" @keyup.escape="cancelInlineEdit" />
+                        <div class="flex gap-1 mt-1"><button :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium" @click="saveInlineEdit">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button class="text-xs text-gray-500" @click="cancelInlineEdit">Cancel</button></div>
                       </dd>
                       <dd v-else class="mt-1 flex items-center gap-2 cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('rfe_deadline', caseData.rfe_deadline)">
                         <span class="text-sm text-gray-900 group-hover:text-indigo-600">{{ caseData.rfe_deadline || '--' }}</span>
@@ -1075,8 +1076,8 @@ async function handleDelete() {
                     Notes
                   </h3>
                   <div v-if="inlineField === 'notes'">
-                    <textarea v-model="inlineValue" rows="4" @keyup.escape="cancelInlineEdit" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus />
-                    <div class="flex gap-1 mt-1"><button @click="saveInlineEdit" :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button @click="cancelInlineEdit" class="text-xs text-gray-500">Cancel</button></div>
+                    <textarea v-model="inlineValue" rows="4" class="block w-full rounded border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500" autofocus @keyup.escape="cancelInlineEdit" />
+                    <div class="flex gap-1 mt-1"><button :disabled="inlineSaving" class="text-xs text-indigo-600 font-medium" @click="saveInlineEdit">{{ inlineSaving ? 'Saving...' : 'Save' }}</button><button class="text-xs text-gray-500" @click="cancelInlineEdit">Cancel</button></div>
                   </div>
                   <p v-else class="text-sm text-gray-700 whitespace-pre-wrap cursor-pointer hover:text-indigo-600 group" @click="startInlineEdit('notes', caseData.notes)">
                     {{ caseData.notes || 'No notes added. Click to add.' }}
@@ -1107,22 +1108,22 @@ async function handleDelete() {
               </div>
 
               <div
-                @dragover.prevent="dragOver = true"
-                @dragleave="dragOver = false"
-                @drop.prevent="onDrop"
                 :class="[
                   'relative rounded-lg border-2 border-dashed p-8 text-center transition-colors',
                   dragOver
                     ? 'border-indigo-500 bg-indigo-50'
                     : 'border-gray-300 hover:border-gray-400',
                 ]"
+                @dragover.prevent="dragOver = true"
+                @dragleave="dragOver = false"
+                @drop.prevent="onDrop"
               >
                 <CloudArrowUpIcon class="mx-auto h-10 w-10 text-gray-400" />
                 <p class="mt-2 text-sm text-gray-600">
                   <button
                     type="button"
-                    @click="fileInput?.click()"
                     class="font-semibold text-indigo-600 hover:text-indigo-500"
+                    @click="fileInput?.click()"
                   >
                     Choose files
                   </button>
@@ -1190,8 +1191,8 @@ async function handleDelete() {
                       Download
                     </a>
                     <button
-                      @click="handleDeleteDoc(doc.id)"
                       class="text-sm font-medium text-red-600 hover:text-red-500"
+                      @click="handleDeleteDoc(doc.id)"
                     >
                       Delete
                     </button>
@@ -1385,13 +1386,13 @@ async function handleDelete() {
                       <div class="flex items-start gap-3">
                         <!-- Checkbox -->
                         <button
-                          @click="handleToggle(item.id)"
                           :class="[
                             'mt-0.5 shrink-0 h-5 w-5 rounded border-2 flex items-center justify-center transition-colors',
                             item.is_collected
                               ? 'bg-green-500 border-green-500'
                               : 'border-gray-300 hover:border-green-400'
                           ]"
+                          @click="handleToggle(item.id)"
                         >
                           <CheckIcon v-if="item.is_collected" class="h-3.5 w-3.5 text-white" />
                         </button>
@@ -1473,22 +1474,22 @@ async function handleDelete() {
                     <div class="flex items-center gap-2">
                       <button
                         v-if="draft.status !== 'approved' && editingDraftId !== draft.id"
-                        @click="startEditing(draft)"
                         class="text-xs font-medium text-indigo-600 hover:text-indigo-500"
+                        @click="startEditing(draft)"
                       >
                         Edit
                       </button>
                       <button
                         v-if="draft.status !== 'approved' && authStore.isAttorney"
-                        @click="handleApproveDraft(draft.id)"
                         class="text-xs font-medium text-green-600 hover:text-green-500"
+                        @click="handleApproveDraft(draft.id)"
                       >
                         Approve
                       </button>
                       <button
                         v-if="draft.status !== 'approved'"
-                        @click="handleRegenerateDraft(draft.id)"
                         class="text-xs font-medium text-gray-500 hover:text-gray-700"
+                        @click="handleRegenerateDraft(draft.id)"
                       >
                         Regenerate
                       </button>
@@ -1502,7 +1503,7 @@ async function handleDelete() {
                       <!-- Restored from local draft banner -->
                       <div v-if="draftHasLocalSave" class="mb-3 rounded-lg bg-amber-50 border border-amber-200 p-3 flex items-center justify-between">
                         <p class="text-sm text-amber-800">Restored from unsaved draft.</p>
-                        <button @click="discardLocalDraft" class="text-sm font-medium text-amber-700 hover:text-amber-900">Discard &amp; reset</button>
+                        <button class="text-sm font-medium text-amber-700 hover:text-amber-900" @click="discardLocalDraft">Discard &amp; reset</button>
                       </div>
                       <textarea
                         v-model="editContent"
@@ -1516,15 +1517,15 @@ async function handleDelete() {
                         </div>
                         <div class="flex gap-2">
                           <button
-                            @click="cancelEditing"
                             class="rounded-lg border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            @click="cancelEditing"
                           >
                             Cancel
                           </button>
                           <button
-                            @click="saveDraft(draft.id)"
                             :disabled="savingDraft"
                             class="rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50"
+                            @click="saveDraft(draft.id)"
                           >
                             {{ savingDraft ? 'Saving...' : 'Save' }}
                           </button>
@@ -1568,9 +1569,9 @@ async function handleDelete() {
               </p>
               <button
                 v-if="casesStore.rfeSections.length > 0"
-                @click="handleGenerateDrafts"
                 :disabled="generatingDrafts"
                 class="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500 disabled:opacity-50 transition-colors"
+                @click="handleGenerateDrafts"
               >
                 <template v-if="generatingDrafts">
                   <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
@@ -1600,8 +1601,8 @@ async function handleDelete() {
                   Exhibits ({{ casesStore.exhibits.length }})
                 </h3>
                 <button
-                  @click="openExhibitForm()"
                   class="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-500 transition-colors"
+                  @click="openExhibitForm()"
                 >
                   <PlusIcon class="h-4 w-4" />
                   Add Exhibit
@@ -1668,14 +1669,14 @@ async function handleDelete() {
                   </div>
                   <div class="mt-6 flex justify-end gap-3">
                     <button
-                      @click="showExhibitForm = false"
                       class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                      @click="showExhibitForm = false"
                     >
                       Cancel
                     </button>
                     <button
-                      @click="saveExhibit"
                       class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-500"
+                      @click="saveExhibit"
                     >
                       {{ editingExhibitId ? 'Update' : 'Add' }}
                     </button>
@@ -1693,18 +1694,18 @@ async function handleDelete() {
                   <!-- Reorder buttons -->
                   <div class="flex flex-col gap-0.5 shrink-0">
                     <button
-                      @click="moveExhibit(index, -1)"
                       :disabled="index === 0"
                       class="text-gray-400 hover:text-gray-600 disabled:opacity-25"
                       title="Move up"
+                      @click="moveExhibit(index, -1)"
                     >
                       <ChevronUpIcon class="h-4 w-4" />
                     </button>
                     <button
-                      @click="moveExhibit(index, 1)"
                       :disabled="index === casesStore.exhibits.length - 1"
                       class="text-gray-400 hover:text-gray-600 disabled:opacity-25"
                       title="Move down"
+                      @click="moveExhibit(index, 1)"
                     >
                       <ChevronDownIcon class="h-4 w-4" />
                     </button>
@@ -1734,14 +1735,14 @@ async function handleDelete() {
                   <!-- Actions -->
                   <div class="flex items-center gap-2 shrink-0">
                     <button
-                      @click="openExhibitForm(exhibit)"
                       class="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+                      @click="openExhibitForm(exhibit)"
                     >
                       Edit
                     </button>
                     <button
-                      @click="handleDeleteExhibit(exhibit.id)"
                       class="text-sm font-medium text-red-600 hover:text-red-500"
+                      @click="handleDeleteExhibit(exhibit.id)"
                     >
                       Delete
                     </button>
@@ -1813,7 +1814,7 @@ async function handleDelete() {
                     class="relative flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all"
                     :class="exportFormat === 'pdf' ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' : 'border-gray-200 hover:border-gray-300'"
                   >
-                    <input type="radio" v-model="exportFormat" value="pdf" class="mt-1" />
+                    <input v-model="exportFormat" type="radio" value="pdf" class="mt-1" />
                     <div>
                       <p class="font-medium text-gray-900">PDF Document</p>
                       <p class="text-sm text-gray-500">Response letter only. Best for final submission.</p>
@@ -1823,7 +1824,7 @@ async function handleDelete() {
                     class="relative flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all"
                     :class="exportFormat === 'docx' ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' : 'border-gray-200 hover:border-gray-300'"
                   >
-                    <input type="radio" v-model="exportFormat" value="docx" class="mt-1" />
+                    <input v-model="exportFormat" type="radio" value="docx" class="mt-1" />
                     <div>
                       <p class="font-medium text-gray-900">Word Document</p>
                       <p class="text-sm text-gray-500">Editable response letter. Best for attorney review.</p>
@@ -1833,7 +1834,7 @@ async function handleDelete() {
                     class="relative flex items-start gap-3 p-4 border rounded-lg cursor-pointer transition-all"
                     :class="exportFormat === 'zip' ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' : 'border-gray-200 hover:border-gray-300'"
                   >
-                    <input type="radio" v-model="exportFormat" value="zip" class="mt-1" />
+                    <input v-model="exportFormat" type="radio" value="zip" class="mt-1" />
                     <div>
                       <p class="font-medium text-gray-900">Full Package (ZIP)</p>
                       <p class="text-sm text-gray-500">Response PDF + all exhibit documents in one download.</p>
@@ -1845,9 +1846,9 @@ async function handleDelete() {
                 <div class="space-y-2">
                   <button
                     v-if="!exportSuccess"
-                    @click="handleExport"
                     :disabled="casesStore.exporting || casesStore.rfeSections.length === 0"
                     class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    @click="handleExport"
                   >
                     <ArrowDownTrayIcon v-if="!casesStore.exporting" class="h-5 w-5" />
                     <ArrowPathIcon v-else class="h-5 w-5 animate-spin" />
@@ -1876,12 +1877,14 @@ async function handleDelete() {
                     Table of contents
                   </li>
                   <li class="flex items-center gap-2">
-                    <component :is="casesStore.rfeSections.length > 0 ? CheckIcon : ExclamationTriangleIcon"
+                    <component
+:is="casesStore.rfeSections.length > 0 ? CheckIcon : ExclamationTriangleIcon"
                       :class="casesStore.rfeSections.length > 0 ? 'h-4 w-4 text-green-500' : 'h-4 w-4 text-amber-500'" />
                     {{ casesStore.rfeSections.length }} response section{{ casesStore.rfeSections.length !== 1 ? 's' : '' }} with legal arguments
                   </li>
                   <li class="flex items-center gap-2">
-                    <component :is="casesStore.exhibits.length > 0 ? CheckIcon : ExclamationTriangleIcon"
+                    <component
+:is="casesStore.exhibits.length > 0 ? CheckIcon : ExclamationTriangleIcon"
                       :class="casesStore.exhibits.length > 0 ? 'h-4 w-4 text-green-500' : 'h-4 w-4 text-amber-500'" />
                     Exhibit list ({{ casesStore.exhibits.length }} exhibit{{ casesStore.exhibits.length !== 1 ? 's' : '' }})
                   </li>

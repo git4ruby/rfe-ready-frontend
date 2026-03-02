@@ -98,8 +98,8 @@ function iconColor(type) {
 
         <!-- Dismiss button -->
         <button
-          @click="notificationStore.remove(notification.id)"
           class="shrink-0 rounded-md p-1 hover:bg-black/10 focus:outline-none focus:ring-2 focus:ring-offset-2"
+          @click="notificationStore.remove(notification.id)"
         >
           <XMarkIcon class="h-4 w-4" />
         </button>

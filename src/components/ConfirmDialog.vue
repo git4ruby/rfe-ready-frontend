@@ -85,19 +85,19 @@ const variantClasses = {
             <!-- Actions -->
             <div class="mt-6 flex justify-end gap-3">
               <button
-                @click="emit('cancel')"
                 :disabled="loading"
                 class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
+                @click="emit('cancel')"
               >
                 {{ cancelLabel }}
               </button>
               <button
-                @click="emit('confirm')"
                 :disabled="loading"
                 :class="[
                   'px-4 py-2 text-sm font-medium text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors disabled:opacity-50',
                   variantClasses[variant].button,
                 ]"
+                @click="emit('confirm')"
               >
                 <span v-if="loading" class="flex items-center gap-2">
                   <svg class="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

@@ -98,10 +98,10 @@ function statusColor(status) {
               ref="inputRef"
               type="text"
               :value="searchStore.query"
-              @input="onInput"
-              @keydown="onKeydown"
               placeholder="Search cases, documents, users..."
               class="w-full border-0 py-3.5 px-3 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-0"
+              @input="onInput"
+              @keydown="onKeydown"
             />
             <kbd class="hidden sm:inline-flex items-center rounded border border-gray-300 px-1.5 text-xs text-gray-400 font-sans">ESC</kbd>
           </div>
@@ -125,12 +125,12 @@ function statusColor(status) {
                 <button
                   v-for="(item, i) in searchStore.results.cases"
                   :key="item.id"
-                  @click="navigate({ type: 'case', ...item })"
-                  @mouseenter="selectedIndex = flatResults.findIndex(f => f.id === item.id && f.type === 'case')"
                   :class="[
                     'w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors',
                     flatResults.findIndex(f => f.id === item.id && f.type === 'case') === selectedIndex ? 'bg-indigo-50' : 'hover:bg-gray-50'
                   ]"
+                  @click="navigate({ type: 'case', ...item })"
+                  @mouseenter="selectedIndex = flatResults.findIndex(f => f.id === item.id && f.type === 'case')"
                 >
                   <FolderIcon class="h-5 w-5 text-gray-400 shrink-0" />
                   <div class="flex-1 min-w-0">
@@ -149,12 +149,12 @@ function statusColor(status) {
                 <button
                   v-for="item in searchStore.results.knowledge_docs"
                   :key="item.id"
-                  @click="navigate({ type: 'knowledge_doc', ...item })"
-                  @mouseenter="selectedIndex = flatResults.findIndex(f => f.id === item.id && f.type === 'knowledge_doc')"
                   :class="[
                     'w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors',
                     flatResults.findIndex(f => f.id === item.id && f.type === 'knowledge_doc') === selectedIndex ? 'bg-indigo-50' : 'hover:bg-gray-50'
                   ]"
+                  @click="navigate({ type: 'knowledge_doc', ...item })"
+                  @mouseenter="selectedIndex = flatResults.findIndex(f => f.id === item.id && f.type === 'knowledge_doc')"
                 >
                   <BookOpenIcon class="h-5 w-5 text-gray-400 shrink-0" />
                   <div class="flex-1 min-w-0">
@@ -170,12 +170,12 @@ function statusColor(status) {
                 <button
                   v-for="item in searchStore.results.users"
                   :key="item.id"
-                  @click="navigate({ type: 'user', ...item })"
-                  @mouseenter="selectedIndex = flatResults.findIndex(f => f.id === item.id && f.type === 'user')"
                   :class="[
                     'w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors',
                     flatResults.findIndex(f => f.id === item.id && f.type === 'user') === selectedIndex ? 'bg-indigo-50' : 'hover:bg-gray-50'
                   ]"
+                  @click="navigate({ type: 'user', ...item })"
+                  @mouseenter="selectedIndex = flatResults.findIndex(f => f.id === item.id && f.type === 'user')"
                 >
                   <UserIcon class="h-5 w-5 text-gray-400 shrink-0" />
                   <div class="flex-1 min-w-0">

@@ -76,8 +76,8 @@ const pages = computed(() => {
       <!-- Previous -->
       <button
         :disabled="currentPage <= 1"
-        @click="emit('page-change', currentPage - 1)"
         class="relative inline-flex items-center rounded-md px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        @click="emit('page-change', currentPage - 1)"
       >
         <ChevronLeftIcon class="h-4 w-4" />
       </button>
@@ -90,13 +90,13 @@ const pages = computed(() => {
         >...</span>
         <button
           v-else
-          @click="emit('page-change', page)"
           :class="[
             'relative inline-flex items-center rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
             page === currentPage
               ? activeClass
               : 'text-gray-700 hover:bg-gray-50',
           ]"
+          @click="emit('page-change', page)"
         >
           {{ page }}
         </button>
@@ -105,8 +105,8 @@ const pages = computed(() => {
       <!-- Next -->
       <button
         :disabled="currentPage >= totalPages"
-        @click="emit('page-change', currentPage + 1)"
         class="relative inline-flex items-center rounded-md px-2 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        @click="emit('page-change', currentPage + 1)"
       >
         <ChevronRightIcon class="h-4 w-4" />
       </button>

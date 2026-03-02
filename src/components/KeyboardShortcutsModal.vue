@@ -25,7 +25,7 @@ const shortcuts = [
       <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden">
         <div class="flex items-center justify-between px-5 py-4 border-b border-gray-200">
           <h3 class="text-base font-semibold text-gray-900">Keyboard Shortcuts</h3>
-          <button @click="emit('close')" class="text-gray-400 hover:text-gray-500 text-sm">Esc</button>
+          <button class="text-gray-400 hover:text-gray-500 text-sm" @click="emit('close')">Esc</button>
         </div>
         <div class="px-5 py-3 space-y-2">
           <div

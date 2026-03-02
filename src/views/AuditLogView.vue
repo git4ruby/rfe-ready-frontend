@@ -131,9 +131,9 @@ async function handleExport(formatType) {
       </div>
       <div class="relative">
         <button
-          @click="showExportMenu = !showExportMenu"
           :disabled="exporting"
           class="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 transition-colors disabled:opacity-50"
+          @click="showExportMenu = !showExportMenu"
         >
           <ArrowDownTrayIcon class="h-5 w-5" />
           {{ exporting ? t('auditLog.exporting') : t('common.export') }}
@@ -144,14 +144,14 @@ async function handleExport(formatType) {
           class="absolute right-0 mt-1 w-40 rounded-lg bg-white shadow-lg ring-1 ring-gray-200 z-10"
         >
           <button
-            @click="handleExport('csv')"
             class="block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-t-lg"
+            @click="handleExport('csv')"
           >
             {{ t('auditLog.exportCsv') }}
           </button>
           <button
-            @click="handleExport('pdf')"
             class="block w-full px-4 py-2.5 text-left text-sm text-gray-700 hover:bg-gray-50 rounded-b-lg"
+            @click="handleExport('pdf')"
           >
             {{ t('auditLog.exportPdf') }}
           </button>
@@ -341,8 +341,8 @@ async function handleExport(formatType) {
         :current-page="store.pagination?.current_page || 1"
         :total-pages="store.pagination?.total_pages || 1"
         :total-count="store.pagination?.total_count"
-        @page-change="goToPage"
         class="mt-3 md:mt-0"
+        @page-change="goToPage"
       />
     </div>
   </div>
