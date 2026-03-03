@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { useCasesStore } from '../stores/cases'
 import { useAuthStore } from '../stores/auth'
 import { useNotificationStore } from '../stores/notification'
@@ -10,7 +10,6 @@ import {
   PencilIcon,
   TrashIcon,
   ArrowUturnLeftIcon,
-  XMarkIcon,
 } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
@@ -54,7 +53,8 @@ async function loadComments() {
 function setupWebSocket() {
   cableSubscription = subscribe('CaseUpdatesChannel', {}, {
     received(data) {
-      if (data.type === 'comment_added' && data.case_id === props.caseId) {
+      if (data.case_id === props.caseId &&
+          (data.type === 'comment_added' || data.type === 'comment_updated' || data.type === 'comment_deleted')) {
         loadComments()
       }
     },

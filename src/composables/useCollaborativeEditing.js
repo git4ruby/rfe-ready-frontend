@@ -1,4 +1,4 @@
-import { ref, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import apiClient from '../api/client'
 

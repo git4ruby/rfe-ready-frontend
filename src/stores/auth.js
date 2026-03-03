@@ -59,7 +59,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function logout() {
     try {
       await apiClient.delete('/users/sign_out')
-    } catch (e) {
+    } catch {
       // Ignore errors on logout
     } finally {
       user.value = null

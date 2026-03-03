@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useCollaborativeEditing } from '../../composables/useCollaborativeEditing'
-import { LockClosedIcon, LockOpenIcon, UserGroupIcon } from '@heroicons/vue/24/outline'
+import { LockClosedIcon, LockOpenIcon } from '@heroicons/vue/24/outline'
 
 const props = defineProps({
   draftId: { type: String, required: true },
