@@ -1,7 +1,6 @@
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useNotificationStore } from '../stores/notification'
-import { useRouter } from 'vue-router'
 
 const IDLE_TIMEOUT = 15 * 60 * 1000 // 15 minutes
 const WARNING_BEFORE = 60 * 1000 // Show warning 1 minute before logout

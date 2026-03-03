@@ -49,7 +49,7 @@ async function loadLogs(page = 1) {
   }
 }
 
-const { filters, currentPage, updateFilters, goToPage } = useQueryFilters(
+const { filters, goToPage } = useQueryFilters(
   { action_type: '', auditable_type: '' },
   { onLoad: loadLogs }
 )
