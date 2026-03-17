@@ -25,6 +25,14 @@ export const rateLimitData = { limit: 0, remaining: 0, resetAt: 0 }
 // Response interceptor — handle auth, server errors, and rate limit headers
 apiClient.interceptors.response.use(
   (response) => {
+    // Capture refreshed JWT token from response headers
+    const authHeader = response.headers['authorization']
+    if (authHeader) {
+      const newToken = authHeader.replace('Bearer ', '')
+      localStorage.setItem('auth_token', newToken)
+    }
+
+    // Capture rate limit headers
     const l = response.headers['x-ratelimit-limit']
     const r = response.headers['x-ratelimit-remaining']
     const reset = response.headers['x-ratelimit-reset']
